@@ -1,0 +1,17 @@
+{
+  "name": "candy-box",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "/home/grisha/node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=webpack.config.js",
+    "test": "/home/grisha/node_modules/mocha/bin/mocha --require @babel/register --require babel-polyfill"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@babel/plugin-transform-instanceof": "^7.10.1"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "moment": "^2.27.0",
+    "validate.js": "^0.13.1"
+  }
+}
