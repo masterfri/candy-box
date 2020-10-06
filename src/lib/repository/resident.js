@@ -2,9 +2,9 @@ import Collection from '../structures/collection';
 import { 
     assertType,
 } from '../helpers';
-import {
-    BaseRepository,
-} from './base';
+import BaseRepository, {
+    EntityNotFoundError,
+ } from './base';
 import {
     CountAggregator,
     SumAggregator,
@@ -27,7 +27,7 @@ const makeSorter = (sort) => {
 
 const assertKeyFound = (key) => {
     if (key === -1) {
-        throw new Error(`Element with key '${key}' was not found in repository`);
+        throw new EntityNotFoundError(`Element with key '${key}' was not found in repository`);
     }
 }
 
@@ -67,6 +67,10 @@ class ResidentRepository extends BaseRepository
     
     getIndex(index) {
         return this._items.at(index);
+    }
+
+    purge() {
+        this._items.clear();
     }
     
     get(key) {

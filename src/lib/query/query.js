@@ -333,8 +333,7 @@ class Query
 
 class SerializedQuery
 {
-    constructor(query, safe = true) {
-        this._safe = safe;
+    constructor(query) {
         if (is(query, Query)) {
             this._data = {};
             if (!query.condition.isEmpty()) {
@@ -457,10 +456,6 @@ class SerializedQuery
             query.limitTo(this._data.limit);
         }
         return query;
-    }
-
-    get isSafe() {
-        return this._safe;
     }
 }
 

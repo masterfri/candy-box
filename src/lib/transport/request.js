@@ -1,8 +1,5 @@
-import app from '../app';
 import {
-    TransportInterface,
-    RequestInterface,
-    Method,
+    TransportSymbol,
 } from './base';
 import {
     Mixture, 
@@ -13,9 +10,22 @@ import {
     isString,
 } from '../helpers';
 import {
-    ValidatorInterface,
     ValidationError,
+    ValidatorSymbol,
 } from '../validation/validator';
+import App from '../app';
+
+const GET = 'GET';
+const POST = 'POST';
+const PUT = 'PUT';
+const DELETE = 'DELETE';
+
+const Method = {
+    GET,
+    POST,
+    PUT,
+    DELETE, 
+};
 
 class Request extends Mixture
 {
@@ -27,14 +37,12 @@ class Request extends Mixture
         this._errors = {};
     }
 
-    mixins() {
-        return [
-            RequestInterface,
-        ];
+    method() {
+        return GET;
     }
 
-    method() {
-        return Method.GET;
+    route() {
+        throw new Error('Request route is not defined');
     }
 
     getQuery() {
@@ -60,11 +68,11 @@ class Request extends Mixture
     }
     
     transport() {
-        return app.make(TransportInterface);
+        return App.make(TransportSymbol);
     }
     
     validator() {
-        return app.make(ValidatorInterface);
+        return App.make(ValidatorSymbol);
     }
 
     options() {
@@ -112,7 +120,7 @@ class Request extends Mixture
 
 class PlainRequest extends Request
 {
-    constructor(route, method = Method.GET, data = {}, query = {}) {
+    constructor(route, method = GET, data = {}, query = {}) {
         super(data, query);
         this._method = method;
         this._route = route;
@@ -142,8 +150,8 @@ class RequestMap
             };
         } else if (isObject(request)) {
             let route = request.route;
-            let requestMethod = request.method || Method.GET;
-            let factory = request.factory || ((data, query) => new PlainRequest(route, requestMethod, data, query)),
+            let requestMethod = request.method || GET;
+            let factory = request.factory || ((data, query) => new PlainRequest(route, requestMethod, data, query));
             this._map[method] = {
                 method: requestMethod,
                 route,
@@ -151,9 +159,9 @@ class RequestMap
             };
         } else if (isString(request)) {
             this._map[method] = {
-                method: Method.GET,
+                method: GET,
                 route: request,
-                factory: (data, query) => new PlainRequest(request, Method.GET, data, query),
+                factory: (data, query) => new PlainRequest(request, GET, data, query),
             };
         } else {
             throw new Error('Invalid request mapping');

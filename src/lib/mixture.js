@@ -3,23 +3,8 @@ import {
     isSubclass,
 } from './helpers';
 
-const hasMixin = (mixin, instance) => {
-    if (Mixture.prototype.isPrototypeOf(instance)) {
-        return instance.mixins().some(target => isMixin(target, mixin));
-    }
-    return false;
-}
-
-const isMixin = (target, parent) => {
-    return target === parent || isSubclass(target, parent);
-}
-
 const isTrait = (target) => {
     return isSubclass(target, Trait);
-}
-
-const isInterface = (target) => {
-    return isSubclass(target, Interface);
 }
 
 const forbidConstructor = (obj) => {
@@ -52,47 +37,6 @@ const collectTraitMethods = (trait) => {
     return result;
 }
 
-const collectInterfaceMethods = (iface) => {
-    let result = [];
-    getPrototypeChain(iface).forEach(proto => {
-        if (proto.hasOwnProperty('methods')) {
-            let methods = proto.methods();
-            for (let name of methods) {
-                if (result.indexOf(name) === -1) {
-                    result.push(name);
-                }
-            }
-        }
-    });
-    return result;
-}
-
-class Interface 
-{
-    constructor() {
-        forbidConstructor(this);
-    }
-
-    static validate(object, throwException = false) {
-        let methods = collectInterfaceMethods(this);
-        for (let method of methods) {
-            if (!isFunction(object[method])) {
-                if (throwException) {
-                    throw new InterfaceError(
-                        `${object.constructor.name} must implement ${this.constructor.name}::${method}`
-                    );
-                }
-                return false;
-            }
-        }
-        return true;
-    }
-
-    static [Symbol.hasInstance](instance) {
-        return hasMixin(this, instance);
-    }
-}
-
 class Trait
 {
     constructor() {
@@ -115,10 +59,6 @@ class Trait
             }
         });
     }
-
-    static [Symbol.hasInstance](instance) {
-        return hasMixin(this, instance);
-    }
 }
 
 class Mixture
@@ -129,12 +69,6 @@ class Mixture
                 mixin.boot(this);
             }
         });
-
-        this.mixins().forEach(mixin => {
-            if (isInterface(mixin)) {
-                mixin.validate(this, true);
-            }
-        });
     }
 
     mixins() {
@@ -142,12 +76,7 @@ class Mixture
     }
 }
 
-class InterfaceError extends Error {
-}
-
 export {
-    Interface,
     Trait,
     Mixture,
-    InterfaceError,
 }

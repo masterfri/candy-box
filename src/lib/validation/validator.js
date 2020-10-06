@@ -2,7 +2,6 @@ import validate from 'validate.js';
 import moment from 'moment';
 import {
     Mixture, 
-    Interface,
 } from '../mixture';
 
 const DateHelper = {
@@ -66,27 +65,12 @@ class Rule
     }
 }
 
-class ValidatorInterface extends Interface
-{
-    static methods() {
-        return [
-            'validate', 
-        ];
-    }
-}
-
 class Validator extends Mixture
 {
     constructor(every = true) {
         super();
         this._every = every;
         this._chain = [];
-    }
-
-    mixins() {
-        return [
-            ValidatorInterface,
-        ];
     }
 
     async validate(attribute, data) {
@@ -304,10 +288,12 @@ class ValidationError extends Error
     }
 }
 
+const ValidatorSymbol = Symbol('Validator');
+
 export default Validator;
 
 export {
-    ValidatorInterface,
     ValidationError,
     DateHelper,
+    ValidatorSymbol,
 };

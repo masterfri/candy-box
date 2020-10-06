@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "moment": "^2.27.0",
+    "mysql2": "^2.2.5",
     "validate.js": "^0.13.1"
   }
 }

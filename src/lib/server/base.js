@@ -1,37 +1,13 @@
 import {
     Mixture, 
-    Interface,
 } from '../mixture';
 import {
-    Method,
-} from '../transport/base';
-import {
     PlainRequest,
+    Method,
 } from '../transport/request';
-
-class ServerInterface extends Interface
-{
-    static methods() {
-        return [
-            'start',
-            'route',
-            'get',
-            'post',
-            'put',
-            'delete',
-            'stop', 
-        ];
-    }
-}
 
 class BaseServer extends Mixture
 {
-    mixins() {
-        return [
-            ServerInterface,
-        ];
-    }
-
     route(request, target) {
         this.register(
             request.prototype.method.call({}).toLowerCase(),
@@ -43,10 +19,10 @@ class BaseServer extends Mixture
     }
 
     map(mapping, target) {
-        mapping.forEach((request) => {
+        mapping.forEach((request, method) => {
             this.register(
                 request.method.toLowerCase(), request.route, 
-                request.factory, target
+                request.factory, target[method].bind(target)
             );
         });
         return this;
@@ -89,7 +65,10 @@ class BaseServer extends Mixture
     }
 }
 
+const ServerSymbol = Symbol('Server');
+
+export default BaseServer;
+
 export {
-    ServerInterface,
-    BaseServer,
+    ServerSymbol,
 };

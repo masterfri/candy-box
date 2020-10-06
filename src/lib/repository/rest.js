@@ -1,6 +1,4 @@
-import {
-    BaseRepository,
-} from './base';
+import BaseRepository from './base';
 import {
     SerializedQuery,
 } from '../query/query';
@@ -41,14 +39,14 @@ class RestRepository extends BaseRepository
     }
     
     store(object) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             assertType(object, this._type);
-            return this.request('store', object.toObject()).then((result) => {
+            this.request('store', object.toObject()).then((result) => {
                 if (isObject(result)) {
                     object.assign(result);
                 }
                 resolve(object);
-            });
+            }).catch(reject);
         });
     }
     
@@ -114,8 +112,9 @@ class RestRepository extends BaseRepository
 
     request(method, data) {
         return this._mapping.create(method, data)
-            .send((response) => {
-                return response.data;
+            .send()
+            .then((response) => {
+                return response.getBody();
             });
     }
 

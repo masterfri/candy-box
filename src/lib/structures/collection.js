@@ -52,6 +52,10 @@ class Collection
     removeIndex(index) {
         this._items.splice(index, 1);
     }
+
+    clear() {
+        return this._items.splice(0);
+    }
     
     map(...args) {
         return this.make(this._items.map(...args));

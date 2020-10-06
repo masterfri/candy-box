@@ -1,6 +1,5 @@
 import {
     Mixture, 
-    Interface,
 } from '../mixture';
 import {
     is,
@@ -9,39 +8,14 @@ import {
 } from '../helpers';
 import Query from '../query/query';
 
-class RepositoryInterface extends Interface
-{
-    static methods() {
-        return [
-            'getKeyName',
-            'get',
-            'search',
-            'store',
-            'delete',
-            'exists',
-            'count',
-            'sum',
-            'avg',
-            'min',
-            'max', 
-        ];
-    }
-}
-
 class BaseRepository extends Mixture
 {
     constructor(type) {
         super();
         this._type = type;
-        this._keyName = type.prototype.getKeyName.call({});
+        this._keyName = type.prototype.getKeyName();
     }
 
-    mixins() {
-        return [
-            RepositoryInterface,
-        ];
-    }
-    
     factory(data = {}) {
         if (is(data, this._type)) {
             return data;
@@ -78,7 +52,15 @@ class BaseRepository extends Mixture
     }
 }
 
+class EntityNotFoundError extends Error
+{
+    constructor(message = 'Not found') {
+        super(message);
+    }
+}
+
+export default BaseRepository;
+
 export {
-    RepositoryInterface,
-    BaseRepository,
+    EntityNotFoundError,
 };

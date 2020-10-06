@@ -1,8 +1,7 @@
 import Collection from './collection';
 import TypedCollection from './typed-collection';
 import {
-    Mixture, 
-    Interface,
+    Mixture,
 } from '../mixture';
 import {
     makeMutator,
@@ -100,27 +99,6 @@ const isEqual = (a, b) => {
     return a === b;
 }
 
-class DocumentInterface extends Interface
-{
-    static methods() {
-        return [
-            'toObject',
-            'getKey',
-            'setKey',
-            'hasKey',
-        ];
-    }
-}
-
-class ModelInterface extends DocumentInterface
-{
-    static methods() {
-        return [
-            'attributes',
-        ];
-    }
-}
-
 class Model extends Mixture
 {
     /**
@@ -135,12 +113,6 @@ class Model extends Mixture
         this._watchChanges = false;
         setupAttributes(this, this.attributes());
         this.assign(attributes, safe, change);
-    }
-    
-    mixins() {
-        return [
-            ModelInterface,
-        ];
     }
     
     assign(attributes, safe = true, change = true) {

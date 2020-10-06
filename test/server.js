@@ -1,10 +1,10 @@
 import assert from 'assert';
-import Request from '../src/lib/transport/request';
+import Request, {Method} from '../src/lib/transport/request';
 import Response from '../src/lib/transport/response';
-import {Method} from '../src/lib/transport/base';
-import {ServerInterface} from '../src/lib/server/base';
+import {ServerSymbol} from '../src/lib/server/base';
 import {ValidationError} from '../src/lib/validation/validator';
-import app, {boot} from '../src/lib/app';
+import App from '../src/lib/app';
+import boot from '../src/lib/boot';
 
 boot({
     transport: {
@@ -37,7 +37,7 @@ class TestRequest extends TestRequestClient
 class GetRequest extends Request
 {
     route() {
-        return '/item/:id';
+        return '/entity/:id';
     }
 }
 
@@ -48,7 +48,7 @@ class PostRequest extends Request
     }
 
     route() {
-        return '/item/:id';
+        return '/entity/:id';
     }
 }
 
@@ -63,7 +63,7 @@ let server = null;
 
 describe('Http server', function() {
     before(function (done) {
-        server = app.make(ServerInterface);
+        server = App.make(ServerSymbol);
         server
             .route(TestRequest, (request) => {
 

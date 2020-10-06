@@ -1,11 +1,12 @@
 import express from 'express';
-import {
-    BaseServer, 
-} from './base';
+import BaseServer from './base';
 import {
     is,
+    isString,
 } from '../helpers';
-import Response from '../transport/response';
+import Response, {
+    Status,
+} from '../transport/response';
 
 class HttpServer extends BaseServer
 {
@@ -49,40 +50,52 @@ class HttpServer extends BaseServer
             });
             request.validate().then(() => {
                 this.delegate(target, request).then((response) => {
-                    if (is(response, Response)) {
-                        let props = response.getProps();
-                        let body = response.getBody();
-                        res.status(response.getStatus());
-                        for (let prop in props) {
-                            res.append(prop, props[prop]);
-                        }
-                        if (body !== null) {
-                            res.send(body);
-                        } else {
-                            res.end();
-                        }
-                    } else {
-                        res.status(200);
-                        res.send(response);
-                    }
+                    this.respond(res, response);
                 }).catch((error) => {
-                    res.status(500).send('Server error');
+                    res.status(Status.INTERNAL_SERVER_ERROR).send('Server error');
                 });
             }).catch((error) => {
-                res.status(422).send(error.getErrors());
+                res.status(Status.UNPROCESSABLE_ENTITY).send(error.getErrors());
             });
         });
     }
 
     delegate(target, request) {
-        let response = target(request);
-        if (response instanceof Promise) {
-            return response;
+        try {
+            let response = target(request);
+            if (response instanceof Promise) {
+                return response;
+            }
+            if (response instanceof Error) {
+                return Promise.reject(response);
+            }
+            return Promise.resolve(response);
+        } catch (error) {
+            return Promise.reject(error);
         }
-        if (response instanceof Error) {
-            return Promise.reject(response);
+    }
+
+    respond(res, response) {
+        let status, body;
+        if (is(response, Response)) {
+            let props = response.getProps();
+            body = response.getBody();
+            status = response.getStatus();
+            for (let prop in props) {
+                res.append(prop, props[prop]);
+            }
+        } else {
+            body = response;
+            status = Status.OK;
         }
-        return Promise.resolve(response);
+        res.status(status);
+        if (body === null) {
+            res.end();
+        } else if (isString(body)) {
+            res.send(body);
+        } else {
+            res.json(body)
+        }
     }
 }
 

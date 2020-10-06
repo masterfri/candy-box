@@ -1,26 +1,51 @@
 import Box from './box';
-import Validator, {
-    ValidatorInterface,
-} from './validation/validator'; 
-import {
-    TransportInterface,
-} from './transport/base';
-import HttpTransport from './transport/http';
-import {
-    ServerInterface,
-} from './server/base';
-import HttpServer from './server/http';
 
-const app = new Box();
-
-const boot = (config = {}) => {
-    app.factory(ValidatorInterface, () => new Validator());
-    app.singleton(TransportInterface, () => new HttpTransport(config.transport || {}));
-    app.singleton(ServerInterface, () => new HttpServer(config.server || {}));
-}
-
-export default app;
-
-export {
-    boot,
+const AppData = {
+    props: {},
+    config: {},
+    box: new Box(),
 };
+
+const ENV = 'env';
+
+const App = {
+    use(b) {
+        AppData.box = b;
+    },
+
+    configure(cfg) {
+        AppData.config = {
+            ...AppData.config,
+            ...cfg,
+        };
+    },
+
+    setProp(key, value) {
+        AppData.props[key] = value;
+    },
+
+    getProp(key, fallback = null) {
+        if (key in AppData.props) {
+            return AppData.props[key];
+        }
+        return fallback;
+    },
+
+    setEnv(name) {
+        App.setProp(ENV, name);
+    },
+
+    getEnv() {
+        return App.getProp(ENV, undefined);
+    },
+
+    make(name, ...params) {
+        return AppData.box.make(name, ...params);
+    },
+
+    boot(invoker) {
+        invoker(AppData.config);
+    },
+};
+
+export default App;

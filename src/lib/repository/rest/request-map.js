@@ -1,10 +1,9 @@
 import {
-    PlainRequest,
     RequestMap,
     Method,
-} from '../transport/request';
+} from '../../transport/request';
 
-class RestRequestMap extends RequestMap
+class RestRepositoryRequestMap extends RequestMap
 {
     constructor(basePath, keyName = 'id') {
         super();
@@ -93,7 +92,7 @@ class RestRequestMap extends RequestMap
     }
     
     addParam(path, name) {
-        return name ? addComponent(path, ':' + name) : path;
+        return name ? this.addComponent(path, ':' + name) : path;
     }
     
     addComponent(path, component) {
@@ -104,4 +103,4 @@ class RestRequestMap extends RequestMap
     }
 }
 
-export default RestRequestMap;
+export default RestRepositoryRequestMap;

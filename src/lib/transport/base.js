@@ -1,57 +1,10 @@
 import {
     Mixture, 
-    Interface,
 } from '../mixture';
 import qs from 'qs';
 
-const GET = 'GET';
-const POST = 'POST';
-const PUT = 'PUT';
-const DELETE = 'DELETE';
-
-class TransportRequestInterface extends Interface
-{
-    static methods() {
-        return [
-            'cancel',
-            'then',
-            'catch', 
-        ];
-    }
-}
-
-class TransportInterface extends Interface
-{
-    static methods() {
-        return [
-            'send', 
-        ];
-    }
-}
-
-class RequestInterface extends Interface
-{
-    static methods() {
-        return [
-            'method',
-            'route',
-            'getQuery',
-            'getData',
-            'getErrors',
-            'validate',
-            'send',
-        ];
-    }
-}
-
 class BaseTransport extends Mixture
 {
-    mixins() {
-        return [
-            TransportInterface,
-        ];
-    }
-
     buildOptions(request) {
         return {
             method: request.method(),
@@ -91,17 +44,10 @@ class BaseTransport extends Mixture
     }
 }
 
-const Method = {
-    GET,
-    POST,
-    PUT,
-    DELETE, 
-};
+const TransportSymbol = Symbol('Transport');
+
+export default BaseTransport;
 
 export {
-    TransportRequestInterface,
-    TransportInterface,
-    RequestInterface,
-    BaseTransport,
-    Method,
+    TransportSymbol,
 };

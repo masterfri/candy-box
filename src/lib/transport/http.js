@@ -2,13 +2,14 @@ import axios from 'axios';
 import {
     safeCall,
 } from '../helpers';
-import {
-    BaseTransport,
-} from './base';
+import BaseTransport from './base';
 import {
     ValidationError,
 } from '../validation/validator';
-import Response from './response';
+import Response, {
+    Status,
+    isErrorCode,
+} from './response';
 
 class HttpRequest
 {
@@ -96,7 +97,7 @@ class HttpTransport extends BaseTransport
                     return true;
                 },
             }).then((result) => {
-                if (result.status === 422) {
+                if (result.status === Status.UNPROCESSABLE_ENTITY) {
                     reject(new ValidationError(result.data));
                 }
                 let response = new Response(
@@ -105,10 +106,11 @@ class HttpTransport extends BaseTransport
                     result.statusText,
                     result.headers
                 );
-                if (result.status >= 300) {
+                if (isErrorCode(result.status)) {
                     reject(response);
+                } else {
+                    resolve(response);
                 }
-                resolve(response);
             }).catch((error) => {
                 reject(error);
             });
