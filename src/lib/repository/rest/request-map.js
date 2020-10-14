@@ -3,7 +3,7 @@ import {
     Method,
 } from '../../transport/request';
 
-class RestRepositoryRequestMap extends RequestMap
+class RepositoryRequestMap extends RequestMap
 {
     constructor(basePath, keyName = 'id') {
         super();
@@ -103,4 +103,4 @@ class RestRepositoryRequestMap extends RequestMap
     }
 }
 
-export default RestRepositoryRequestMap;
+export default RepositoryRequestMap;

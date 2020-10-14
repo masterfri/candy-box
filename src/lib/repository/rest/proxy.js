@@ -12,7 +12,7 @@ import {
     isFunction,
 } from '../../helpers';
 
-class RestRepositoryProxy
+class RepositoryProxy
 {
     constructor(repository) {
         this._repository = repository;
@@ -171,4 +171,4 @@ class RestRepositoryProxy
     }
 }
 
-export default RestRepositoryProxy;
+export default RepositoryProxy;

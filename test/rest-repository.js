@@ -3,8 +3,8 @@ import {ServerSymbol} from '../src/lib/server/base';
 import Model from '../src/lib/structures/model';
 import ResidentRepository from '../src/lib/repository/resident';
 import RestRepository from '../src/lib/repository/rest';
-import RestRepositoryProxy from '../src/lib/repository/rest/proxy';
-import RestRepositoryRequestMap from '../src/lib/repository/rest/request-map';
+import RepositoryProxy from '../src/lib/repository/rest/proxy';
+import RepositoryRequestMap from '../src/lib/repository/rest/request-map';
 import Request, {Method} from '../src/lib/transport/request';
 import {ValidationError} from '../src/lib/validation/validator';
 import Query from '../src/lib/query/query';
@@ -55,9 +55,9 @@ class StoreModelRequest extends Request
 
 let server = null;
 let repository = new ResidentRepository(TestModel);
-let proxy = new RestRepositoryProxy(repository);
-let noValidationMapping = new RestRepositoryRequestMap('/item');
-let mapping = new RestRepositoryRequestMap('/item');
+let proxy = new RepositoryProxy(repository);
+let noValidationMapping = new RepositoryRequestMap('/item');
+let mapping = new RepositoryRequestMap('/item');
 mapping.map('store', StoreModelRequest);
 
 describe('Rest repository', function() {
