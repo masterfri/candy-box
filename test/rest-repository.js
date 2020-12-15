@@ -7,7 +7,7 @@ import RepositoryProxy from '../src/lib/repository/rest/proxy';
 import RepositoryRequestMap from '../src/lib/repository/rest/request-map';
 import Request, {Method} from '../src/lib/transport/request';
 import {ValidationError} from '../src/lib/validation/validator';
-import Query from '../src/lib/query/query';
+import Query from '../src/lib/repository/query';
 import App from '../src/lib/app';
 import boot from '../src/lib/boot';
 
@@ -310,6 +310,29 @@ describe('Rest repository', function() {
                 return repo.max('weight');
             }).then((result) => {
                 assert.equal(result, 300);
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
+    });
+    describe('#sort', function() {
+        it('Search results should go in proper order', function(done) {
+            let repo = new RestRepository(TestModel, mapping);
+            Promise.all([
+                repo.store(new TestModel({color: 'red', weight: 200})),
+                repo.store(new TestModel({color: 'red', weight: 80})),
+                repo.store(new TestModel({color: 'blue', weight: 150})),
+                repo.store(new TestModel({color: 'red', weight: 180})),
+            ]).then(() => {
+                let query = (new Query)
+                    .where('color', 'red')
+                    .ascendingBy('weight');
+                return repo.search(query);
+            }).then((result) => {
+                assert.equal(result.length, 3);
+                assert.ok(result.get(0).weight <= result.get(1).weight);
+                assert.ok(result.get(1).weight <= result.get(2).weight);
                 done();
             }).catch((err) => {
                 done(err);

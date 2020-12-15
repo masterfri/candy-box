@@ -34,7 +34,7 @@ describe('Transport', function() {
     describe('#HttpTransport', function() {
         it('GET / should return HTTP 200', function(done) {
             let transport = new HttpTransport();
-            transport.request({
+            transport._makeRequest({
                 url: 'http://127.0.0.1:8088/',
             }).then((response) => {
                 assert.equal(response.status, 200);
@@ -46,7 +46,7 @@ describe('Transport', function() {
         });
         it('POST / should return HTTP 200', function(done) {
             let transport = new HttpTransport();
-            transport.request({
+            transport._makeRequest({
                 method: 'POST',
                 url: 'http://127.0.0.1:8088/',
                 data: {

@@ -1,5 +1,7 @@
 import mysql from 'mysql2';
 
+
+
 class MysqlClient
 {
     constructor(config) {

@@ -16,7 +16,10 @@ module.exports = {
                     loader: 'babel-loader',
                     options: {
                         presets: ['@babel/preset-env'],
-                        plugins: ['@babel/plugin-transform-instanceof']
+                        plugins: [
+                            '@babel/plugin-transform-instanceof',
+                            '@babel/plugin-proposal-class-properties'
+                        ]
                     }
                 }
             }

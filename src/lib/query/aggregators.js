@@ -5,8 +5,10 @@ import {
 
 class Aggregator
 {
+    _result;
+
     constructor(initial = null) {
-        this.result = initial;
+        this._result = initial;
     }
     
     isValid(value) {
@@ -15,7 +17,7 @@ class Aggregator
     
     add(value) {
         if (this.isValid(value)) {
-            this.result = this.count(value);
+            this._result = this.count(value);
         }
     }
     
@@ -24,7 +26,7 @@ class Aggregator
     }
     
     getResult() {
-        return this.result;
+        return this._result;
     } 
 }
 
@@ -35,7 +37,7 @@ class CountAggregator extends Aggregator
     }
     
     count(value) {
-        return this.result + 1;
+        return this._result + 1;
     }
 }
 
@@ -53,24 +55,25 @@ class NumberAggregator extends Aggregator
 class SumAggregator extends NumberAggregator
 {
     count(value) {
-        return this.result + value;
+        return this._result + value;
     }
 }
 
 class AvgAggregator extends SumAggregator
 {
+    _num = 0;
+
     constructor() {
-        super()
-        this.num = 0;
+        super();
     }
     
     count(value) {
-        this.num++;
+        this._num++;
         return super.count(value);
     }
     
     getResult() {
-        return this.num === 0 ? 0 : this.result / this.num;
+        return this._num === 0 ? 0 : this._result / this._num;
     }
 }
 
@@ -81,21 +84,21 @@ class SelectionAggregator extends Aggregator
     }
     
     count(value) {
-        return this.isBest(value) ? value : this.result;
+        return this.isBest(value) ? value : this._result;
     }
 }
 
 class MinAggregator extends SelectionAggregator
 {
     isBest(value) {
-        return this.result === null || value < this.result;
+        return this._result === null || value < this._result;
     }
 }
 
 class MaxAggregator extends SelectionAggregator
 {
     isBest(value) {
-        return this.result === null || value > this.result;
+        return this._result === null || value > this._result;
     }
 }
 

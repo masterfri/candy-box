@@ -1,5 +1,5 @@
 import express from 'express';
-import BaseServer from './base';
+import AbstractServer from './base';
 import {
     is,
     isString,
@@ -8,21 +8,55 @@ import Response, {
     Status,
 } from '../transport/response';
 
-class HttpServer extends BaseServer
+/**
+ * HTTP server
+ * 
+ * @class
+ * @augments AbstractServer
+ */
+class HttpServer extends AbstractServer
 {
+    /**
+     * @protected
+     * @var {Express.Application}
+     */
+    _express = express();
+
+    /**
+     * @protected
+     * @var {Express.Router}
+     */
+    _router = express.Router();
+
+    /**
+     * @protected
+     * @var {http.Server}
+     */
+    _server = null;
+
+    /**
+     * @protected
+     * @var {Object}
+     */
+    _config;
+
+    /**
+     * @param {Object} [config={}] 
+     */
     constructor(config = {}) {
         super();
-        this._express = express();
-        this._router = express.Router();
         this._express.use(express.json());
         this._express.use(express.urlencoded({
             extended: true,
         }));
         this._express.use(this._router);
-        this._server = null;
         this._config = config;
     }
 
+    /**
+     * @inheritdoc
+     * @override
+     */
     start() {
         return new Promise((resolve) => {
             this._server = this._express.listen(this._config, (result) => {
@@ -31,6 +65,10 @@ class HttpServer extends BaseServer
         });
     }
 
+    /**
+     * @inheritdoc
+     * @override
+     */
     stop() {
         if (this._server === null) {
             return Promise.resolve();
@@ -42,6 +80,10 @@ class HttpServer extends BaseServer
         });
     }
 
+    /**
+     * @inheritdoc
+     * @override
+     */
     register(method, path, requestFactory, target) {
         this._router[method](path, (req, res) => {
             let request = requestFactory(req.body, {
@@ -49,10 +91,10 @@ class HttpServer extends BaseServer
                 ...req.query,
             });
             request.validate().then(() => {
-                this.delegate(target, request).then((response) => {
-                    this.respond(res, response);
+                this._delegate(target, request).then((response) => {
+                    this._respond(res, response);
                 }).catch((error) => {
-                    res.status(Status.INTERNAL_SERVER_ERROR).send('Server error');
+                    res.status(Status.INTERNAL_SERVER_ERROR).send('Server error: ' + error);
                 });
             }).catch((error) => {
                 res.status(Status.UNPROCESSABLE_ENTITY).send(error.getErrors());
@@ -60,7 +102,15 @@ class HttpServer extends BaseServer
         });
     }
 
-    delegate(target, request) {
+    /**
+     * Delegate request to the certain target
+     * 
+     * @protected
+     * @param {Function} target 
+     * @param {Request} request 
+     * @returns {Promise}
+     */
+    _delegate(target, request) {
         try {
             let response = target(request);
             if (response instanceof Promise) {
@@ -75,12 +125,19 @@ class HttpServer extends BaseServer
         }
     }
 
-    respond(res, response) {
+    /**
+     * Send a response to client
+     * 
+     * @protected
+     * @param {Express.Response} res 
+     * @param {Response|String|Object} response 
+     */
+    _respond(res, response) {
         let status, body;
         if (is(response, Response)) {
-            let props = response.getProps();
-            body = response.getBody();
-            status = response.getStatus();
+            let props = response.props;
+            body = response.body;
+            status = response.status;
             for (let prop in props) {
                 res.append(prop, props[prop]);
             }

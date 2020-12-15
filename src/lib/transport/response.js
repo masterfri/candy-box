@@ -1,3 +1,7 @@
+import {
+    Mixture, 
+} from '../mixture';
+
 const Status = {
     OK: 200,
     CREATED: 201,
@@ -17,8 +21,44 @@ const isErrorCode = (code) => {
     return code >= 400;
 }
 
-class Response
+/**
+ * Base class for response
+ * 
+ * @class
+ * @augments Mixture
+ */
+class Response extends Mixture
 {
+    /**
+     * @protected
+     * @var {Number}
+     */
+    _status;
+
+    /**
+     * @protected
+     * @var {String}
+     */
+    _message;
+
+    /**
+     * @protected
+     * @var {any}
+     */
+    _body;
+
+    /**
+     * @protected
+     * @var {Object}
+     */
+    _props;
+
+    /**
+     * @param {any} [body=null] 
+     * @param {Number} [status=Status.OK] 
+     * @param {String} [message='Ok'] 
+     * @param {Object} [props={}] 
+     */
     constructor(body = null, status = Status.OK, message = 'Ok', props = {}) {
         this._status = status;
         this._message = message;
@@ -26,19 +66,39 @@ class Response
         this._props = props;
     }
 
-    getStatus() {
+    /**
+     * Response status
+     * 
+     * @var {Number}
+     */
+    get status() {
         return this._status;
     }
 
-    getMessage() {
+    /**
+     * Response message
+     * 
+     * @var {String}
+     */
+    get message() {
         return this._message;
     }
 
-    getBody() {
+    /**
+     * Response body
+     * 
+     * @var {any}
+     */
+    get body() {
         return this._body;
     }
 
-    getProps() {
+    /**
+     * Response properties
+     * 
+     * @var {Object}
+     */
+    get props() {
         return this._props;
     }
 }

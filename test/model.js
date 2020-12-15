@@ -48,65 +48,25 @@ describe('Model', function() {
             assert.ok(model.collection.first() instanceof TestModel);
         });
     });
-    describe('#assign', function() {
-        it('Attribute changes should be tracked', function() {
+
+    describe('#states', function() {
+        it('Attribute states should be restored', function() {
             let model = new TestModel();
-            assert.ok(!model.isChanged('color'));
-            model.color = 'red';
-            assert.ok(model.isChanged('color'));
+            model.assign({weight: 10, color: 'red'});
+            assert.equal(model.color, 'red');
+            model.saveState();
+            model.assign({color: 'blue'});
+            assert.equal(model.color, 'blue');
+            model.revertState();
+            assert.equal(model.color, 'red');
         });
-        it('Attribute changes should not be tracked when not needed', function() {
+        it('Attributes diff should be calculated properly', function() {
             let model = new TestModel();
-            assert.ok(!model.isChanged('color'));
-            model.assign({color: 'red'}, true, false);
-            assert.ok(!model.isChanged('color'));
-        });
-        it('Only safe attributes can be changes via mass assignment', function() {
-            let model = new TestModel();
-            model.assign({unsafe: 'fail'});
-            assert.equal(model.unsafe, 'ok');
-        });
-        it('Safe attributes can be changes via mass assignment when needed', function() {
-            let model = new TestModel();
-            model.assign({unsafe: 'fail'}, false);
-            assert.notEqual(model.unsafe, 'ok');
-        });
-        it('Original value should be available', function() {
-            let model = new TestModel();
-            model.color = 'red';
-            model.color = 'green';
-            assert.equal(model.original('color'), 'orange');
-        });
-    });
-    describe('#revert', function() {
-        it('Attribute value should be reverted', function() {
-            let model = new TestModel();
-            model.color = 'red';
-            model.revert();
-            assert.equal(model.color, 'orange');
-        });
-        it('Only specified attributes should be reverted', function() {
-            let model = new TestModel();
-            model.color = 'red';
-            model.weight = 500;
-            model.revert('color');
-            assert.equal(model.color, 'orange');
-            assert.equal(model.weight, 500);
-        });
-    });
-    describe('#sync', function() {
-        it('Attribute should not treat as changed after sync', function() {
-            let model = new TestModel();
-            model.color = 'red';
-            model.sync();
-            assert.ok(!model.isChanged('color'));
-        });
-        it('Original attribute value should be updated', function() {
-            let model = new TestModel();
-            model.color = 'red';
-            model.sync();
-            model.color = 'green';
-            assert.equal(model.original('color'), 'red');
+            model.assign({weight: 10, color: 'red'});
+            assert.equal(model.color, 'red');
+            model.saveState();
+            model.assign({color: 'blue'});
+            assert.deepEqual(model.diffState(), {color: 'red'});
         });
     });
 });

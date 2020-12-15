@@ -2,7 +2,9 @@ import axios from 'axios';
 import {
     safeCall,
 } from '../helpers';
-import BaseTransport from './base';
+import AbstractTransport, {
+    AbstractTransportRequest,
+} from './base';
 import {
     ValidationError,
 } from '../validation/validator';
@@ -11,13 +13,55 @@ import Response, {
     isErrorCode,
 } from './response';
 
-class HttpRequest
+/**
+ * Request for HTTP transport
+ * 
+ * @class
+ * @augments AbstractTransportRequest
+ */
+class HttpRequest extends AbstractTransportRequest
 {
+    /**
+     * @protected
+     * @var {Number}
+     */
+    _uploadSize = 0;
+
+    /**
+     * @protected
+     * @var {Number}
+     */
+    _uploaded = 0;
+
+    /**
+     * @protected
+     * @var {Number}
+     */
+    _downloadSize = 0;
+
+    /**
+     * @protected
+     * @var {Number}
+     */
+    _downloaded = 0;
+
+    /**
+     * @protected
+     * @var {Object}
+     */
+    _source;
+
+    /**
+     * @protected
+     * @var {Promise}
+     */
+    _promise;
+
+    /**
+     * @param {Object} config 
+     */
     constructor(config = {}) {
-        this._uploadSize = 0;
-        this._uploaded = 0;
-        this._downloadSize = 0;
-        this._downloaded = 0;
+        super();
         this._source = axios.CancelToken.source();
         this._promise = axios.request({
             ...config,
@@ -35,85 +79,157 @@ class HttpRequest
         });
     }
     
+    /**
+     * @inheritdoc
+     * @override
+     */
+    isCancellable() {
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     * @override
+     */
     cancel(message) {
         this._source.cancel(message);
     }
     
+    /**
+     * @inheritdoc
+     * @override
+     */
     then(callback) {
-        this._promise.then(callback);
+        this._promise = this._promise.then(callback);
         return this;
     }
 
+    /**
+     * @inheritdoc
+     * @override
+     */
     catch(callback) {
-        this._promise.catch(callback);
+        this._promise = this._promise.catch(callback);
         return this;
     }
     
+    /**
+     * Size of request content
+     * 
+     * @var {Number}
+     */
     get uploadSize() {
         return this._uploadSize;
     }
     
+    /**
+     * Number of bytes that already uploaded
+     * 
+     * @var {Number}
+     */
     get uploaded() {
         return this._uploaded;
     }
     
+    /**
+     * Percent-wise amount of uploaded content
+     * 
+     * @var {Number}
+     */
     get uploadPercent() {
         return this._uploadSize > 0 ? (100 * this._uploaded / this._uploadSize) : 0;
     }
     
+    /**
+     * Size of response content
+     * 
+     * @var {Number}
+     */
     get downloadSize() {
         return this._downloadSize;
     }
     
+    /**
+     * Number of bytes that already downloaded
+     * 
+     * @var {Number}
+     */
     get downloaded() {
         return this._downloaded;
     }
     
+    /**
+     * Percent-wise amount of downloaded content
+     * 
+     * @var {Number}
+     */
     get downloadPercent() {
         return this._downloadSize > 0 ? (100 * this._downloaded / this._downloadSize) : 0;
     }
 }
 
-class HttpTransport extends BaseTransport
+/**
+ * HTTP transport
+ * 
+ * @class
+ * @augments AbstractTransport
+ */
+class HttpTransport extends AbstractTransport
 {
+    /**
+     * @protected
+     * @var {Object}
+     */
+    _defaults;
+
+    /**
+     * @param {Object} [config={}] 
+     */
     constructor(config = {}) {
         super();
         this._defaults = config;
     }
     
-    request(options) {
+    /**
+     * Make new HTTP request
+     * 
+     * @protected
+     * @param {Object} options 
+     * @returns {HttpRequest}
+     */
+    _makeRequest(options) {
         return new HttpRequest({
             ...this._defaults,
             ...options,
         });
     }
 
+    /**
+     * @override
+     * @inheritdoc
+     */
     send(request, options = {}) {
-        return new Promise((resolve, reject) => {
-            this.request({
-                ...this.buildOptions(request),
-                ...options,
-                validateStatus: (status) => {
-                    return true;
-                },
-            }).then((result) => {
-                if (result.status === Status.UNPROCESSABLE_ENTITY) {
-                    reject(new ValidationError(result.data));
-                }
-                let response = new Response(
-                    result.data,
-                    result.status, 
-                    result.statusText,
-                    result.headers
-                );
-                if (isErrorCode(result.status)) {
-                    reject(response);
-                } else {
-                    resolve(response);
-                }
-            }).catch((error) => {
-                reject(error);
-            });
+        return this._makeRequest({
+            ...this._buildOptions(request),
+            ...options,
+            validateStatus: () => true,
+        }).then((result) => {
+            if (result.status === Status.UNPROCESSABLE_ENTITY) {
+                throw new ValidationError(result.data);
+            }
+            let response = new Response(
+                result.data,
+                result.status, 
+                result.statusText,
+                result.headers
+            );
+            if (isErrorCode(result.status)) {
+                console.log('WAAAAAT!?')
+
+                throw response;
+            } else {
+                return response;
+            }
         });
     }
 }

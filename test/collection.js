@@ -44,7 +44,7 @@ describe('Collection', function() {
         it('Element should be replaced', function() {
             let col = new Collection([1, 2, 3]);
             col.splice(1, 1, 7);
-            assert.equal(col.at(1), 7);
+            assert.equal(col.get(1), 7);
         });
     });
     describe('#remove', function() {
@@ -76,8 +76,8 @@ describe('Collection', function() {
             let col = new Collection([1]);
             let concatenated = col.concat(new Collection([2]), [3]);
             assert.ok(concatenated instanceof Collection);
-            assert.equal(concatenated.at(1), 2);
-            assert.equal(concatenated.at(2), 3);
+            assert.equal(concatenated.get(1), 2);
+            assert.equal(concatenated.get(2), 3);
         });
     });
     describe('#forEach', function() {
@@ -155,6 +155,37 @@ describe('Collection', function() {
         it('Index of element should equal to 2', function() {
             let col = new Collection([2, 4, 6]);
             assert.equal(col.indexOf(6), 2);
+        });
+    });
+    describe('#intersect', function() {
+        it('Intersection of collections should be correct', function() {
+            let col = new Collection([2, 4, 6, 9, 11, 0]);
+            let intersection = col.intersect([2, 5, 6], [2, 9, 11, 6]);
+            assert.deepEqual(intersection.all(), [2, 6]);
+        });
+    });
+    describe('#difference', function() {
+        it('Difference of collections should be correct', function() {
+            let col = new Collection([2, 4, 6, 9, 11, 0]);
+            let difference = col.difference([2, 5, 6], [2, 9, 11, 6]);
+            assert.deepEqual(difference.all(), [4, 0]);
+        });
+    });
+    describe('#distinct', function() {
+        it('distinct should produce collection without duplicates', function() {
+            let col = new Collection([2, 4, 2, 6, 9, 6, 2]);
+            let distinct = col.distinct();
+            assert.deepEqual(distinct.all(), [2, 4, 6, 9]);
+        });
+    });
+    describe('#iteratot', function() {
+        it('Iterator should go over all elements of collection', function() {
+            let col = new Collection([2, 4, 6]);
+            let sum = 0;
+            for (let val of col) {
+                sum += val;
+            }
+            assert.equal(sum, 12);
         });
     });
 });

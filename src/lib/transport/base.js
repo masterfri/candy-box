@@ -1,19 +1,102 @@
 import {
     Mixture, 
 } from '../mixture';
+import {
+    abstractMethodError,
+} from '../helpers';
 import qs from 'qs';
 
-class BaseTransport extends Mixture
+/**
+ * Abstract class for transport requests
+ * 
+ * @abstract
+ * @class
+ */
+class AbstractTransportRequest
 {
-    buildOptions(request) {
+    /**
+     * Check if this request can be cancelled
+     * 
+     * @returns {Boolean}
+     */
+    isCancellable() {
+        return false;
+    }
+
+    /**
+     * Cancel this request 
+     * 
+     * @abstract
+     * @param {String} message 
+     */
+    cancel() {
+        abstractMethodError('cancel');
+    }
+    
+    /**
+     * Add post-request handler
+     * 
+     * @param {Function} callback 
+     * @returns {AbstractTransportRequest}
+     */
+    then() {
+        abstractMethodError('then');
+    }
+
+    /**
+     * Add error handler
+     * 
+     * @param {Function} callback 
+     * @returns {AbstractTransportRequest}
+     */
+    catch() {
+        abstractMethodError('catch');
+    }
+}
+
+/**
+ * Abstract class for transports
+ * 
+ * @abstract
+ * @class
+ * @augments Mixture
+ */
+class AbstractTransport extends Mixture
+{
+    /**
+     * Send request
+     * 
+     * @abstract
+     * @param {Request} request 
+     * @param {Object} [options={}] 
+     * @returns {AbstractTransportRequest}
+     */
+    send() {
+        abstractMethodError('send');
+    }
+
+    /**
+     * Build request options
+     * 
+     * @protected
+     * @param {Request} request 
+     * @returns {Object}
+     */
+    _buildOptions(request) {
         return {
             method: request.method(),
-            url: this.buildUrl(request),
+            url: this._buildUrl(request),
             data: request.getData(),
         };
     }
 
-    buildUrl(request) {
+    /**
+     * Build request URL
+     * 
+     * @param {Request} request 
+     * @returns {String}
+     */
+    _buildUrl(request) {
         let data = request.getData();
         let params = {...request.getQuery()};
         let url = request.route().split('/')
@@ -46,8 +129,9 @@ class BaseTransport extends Mixture
 
 const TransportSymbol = Symbol('Transport');
 
-export default BaseTransport;
+export default AbstractTransport;
 
 export {
+    AbstractTransportRequest,
     TransportSymbol,
 };

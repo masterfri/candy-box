@@ -1,24 +1,16 @@
 import Collection from '../structures/collection';
 import {
+    Assertion,
+    Logic,
+    Assert,
+} from './query';
+import {
+    is,
     isObject, 
     isBool,
     isString,
     isNumber,
 } from '../helpers';
-
-const EQ = '=';
-const NEQ = '!=';
-const LT = '<';
-const LTE = '<=';
-const GT = '>';
-const GTE = '>=';
-const IN = 'in';
-const NOT_IN = 'notIn';
-const CONTAINS = 'contains';
-const STARTS = 'starts';
-const ENDS = 'ends';
-const HAS = 'has';
-const NOT_HAS = 'notHas';
 
 const isNull = (a) => {
     return a === null || a === undefined;
@@ -118,88 +110,108 @@ const strEndsWith = (a, b) => {
 
 const objectHas = (object, condition) => {
     if (object instanceof Collection) {
-        return object.some((item) => condition.isValid(item));
+        return object.some((item) => testCondition(condition, item));
     }
     if (object instanceof Array) {
-        return object.some((item) => condition.isValid(item));
+        return object.some((item) => testCondition(condition, item));
     }
     if (isObject(object)) {
-        return condition.isValid(object);
+        return testCondition(condition, object);
     }
     return false;
 }
 
 const objectNotHas = (object, condition) => {
     if (object instanceof Collection) {
-        return object.every((item) => !condition.isValid(item));
+        return object.every((item) => !testCondition(condition, item));
     }
     if (object instanceof Array) {
-        return object.every((item) => !condition.isValid(item));
+        return object.every((item) => !testCondition(condition, item));
     }
     if (isObject(object)) {
-        return !condition.isValid(object);
+        return !testCondition(condition, object);
     }
     return false;
 }
 
-const assertTrue = (operator, left, right) => {
+const testAssertion = (operator, left, right) => {
     switch (operator) {
-        case EQ:  
+        case Assert.EQ:  
             return isEqual(left, right);
             
-        case NEQ:
+        case Assert.NEQ:
             return isNotEqual(left, right);
             
-        case LT:
+        case Assert.LT:
             return isLessThan(left, right);
             
-        case LTE:
+        case Assert.LTE:
             return isLessThanOrEqual(left, right);
             
-        case GT:
+        case Assert.GT:
             return isGreaterThan(left, right);
             
-        case GTE:
+        case Assert.GTE:
             return isGreaterThanOrEqual(left, right);
             
-        case IN:
+        case Assert.IN:
             return inArray(left, right);
         
-        case NOT_IN:
+        case Assert.NOT_IN:
             return notInArray(left, right);
             
-        case CONTAINS:
+        case Assert.CONTAINS:
             return strContains(left, right);
         
-        case STARTS:
+        case Assert.STARTS:
             return strStartsWith(left, right);
         
-        case ENDS:
-            return strEndsWith(left, right);
-        
-        case HAS:
+        case Assert.HAS:
             return objectHas(left, right);
         
-        case NOT_HAS:
+        case Assert.NOT_HAS:
             return objectNotHas(left, right);
     }
     return false;
 }
 
-const Assert = {
-    EQ,
-    NEQ,
-    LT,
-    LTE,
-    GT,
-    GTE,
-    IN,
-    NOT_IN,
-    CONTAINS,
-    STARTS,
-    ENDS,
-    HAS,
-    NOT_HAS,
+const testSubcondition = (thing, input) => {
+    if (is(thing, Assertion)) {
+        return testAssertion(thing.operator, input[thing.property], thing.argument);
+    } else {
+        return testCondition(thing, input);
+    }
+}
+
+const testCondition = (condition, input) => {
+    switch (condition.logic) {
+        case Logic.AND:
+            return condition.wheres.every((item) => testSubcondition(item, input));
+        case Logic.OR:
+            return condition.wheres.some((item) => testSubcondition(item, input));
+        case Logic.NOT:
+            return !condition.wheres.every((item) => testSubcondition(item, input));
+    }
+    return false;
+}
+
+const compare = (a, b, descOrder = false) => {
+    if (isNull(a) || isNull(b)) {
+        return 0;
+    }
+    if (isNull(a)) {
+        return descOrder ? 1 : -1;
+    }
+    if (isNull(b)) {
+        return descOrder ? -1 : 1;
+    }
+    if (isLessThan(a, b)) {
+        return descOrder ? 1 : -1;
+    }
+    if (isGreaterThan(a, b)) {
+        return descOrder ? -1 : 1;
+    }
+    return 0;
 }
 
 export {
@@ -216,6 +228,7 @@ export {
     strStartsWith,
     strEndsWith,
     objectHas,
-    assertTrue,
-    Assert,
+    testAssertion,
+    testCondition,
+    compare,
 };

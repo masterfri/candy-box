@@ -1,7 +1,7 @@
 import assert from 'assert';
 import Model from '../src/lib/structures/model';
 import ResidentRepository from '../src/lib/repository/resident';
-import Query from '../src/lib/query/query';
+import Query from '../src/lib/repository/query';
 
 class TestModel extends Model
 {
@@ -206,6 +206,29 @@ describe('Resident repository', function() {
                 return repository.max('weight');
             }).then((result) => {
                 assert.equal(result, 300);
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
+    });
+    describe('#sort', function() {
+        it('Search results should go in proper order', function(done) {
+            let repository = new ResidentRepository(TestModel);
+            Promise.all([
+                repository.store(new TestModel({color: 'red', weight: 200})),
+                repository.store(new TestModel({color: 'red', weight: 80})),
+                repository.store(new TestModel({color: 'blue', weight: 150})),
+                repository.store(new TestModel({color: 'red', weight: 180})),
+            ]).then(() => {
+                let query = (new Query)
+                    .where('color', 'red')
+                    .ascendingBy('weight');
+                return repository.search(query);
+            }).then((result) => {
+                assert.equal(result.length, 3);
+                assert.ok(result.get(0).weight <= result.get(1).weight);
+                assert.ok(result.get(1).weight <= result.get(2).weight);
                 done();
             }).catch((err) => {
                 done(err);

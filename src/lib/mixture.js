@@ -37,12 +37,27 @@ const collectTraitMethods = (trait) => {
     return result;
 }
 
+/**
+ * Base class for all traits
+ * 
+ * @class
+ */
 class Trait
 {
+    /**
+     * This constructor should never by called
+     */
     constructor() {
         forbidConstructor(this);
     }
 
+    /**
+     * Extend class behavior
+     * 
+     * @static
+     * @param {Object} object Object being booted
+     * @see Mixture
+     */
     static boot(object) {
         let methods = collectTraitMethods(this);
         Object.keys(methods).forEach(method => {
@@ -61,8 +76,38 @@ class Trait
     }
 }
 
+/**
+ * This class allows to attach traits to inherited subclasses
+ * 
+ * @class
+ */
 class Mixture
 {
+    /**
+     * @example
+     * class Productor extends Trait
+     * {
+     *     static methods() {
+     *         return {
+     *             product(a, b) {
+     *                 return a * b;
+     *             }
+     *         };
+     *     }
+     * }
+     *
+     * class Math extends Mixture
+     * {
+     *     mixins() {
+     *         return [
+     *             Productor,
+     *         ];
+     *     }
+     * }
+     * 
+     * let math = new Math();
+     * math.product(3, 5) => 15
+     */
     constructor() {
         this.mixins().forEach(mixin => {
             if (isTrait(mixin)) {
@@ -71,6 +116,11 @@ class Mixture
         });
     }
 
+    /**
+     * This method provides a list of mixins
+     * 
+     * @returns {Array}
+     */
     mixins() {
         return [];
     }

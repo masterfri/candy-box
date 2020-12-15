@@ -76,6 +76,40 @@ const objectsEqual = (a, b) => {
     });
 }
 
+const arraysEqual = (a, b) => {
+    if (!is(a, Array) || !is(b, Array)) {
+        return false;
+    }
+    
+    if (a.length !== b.length) {
+        return false;
+    }
+    
+    return a.every((val, index) => {
+        return val === b[index];
+    });
+}
+
+const objectDiff = (before, after) => {
+    let diff = {};
+    Object.keys(after).forEach((key) => {
+        if (is(after[key], Array)) {
+            if (!arraysEqual(before[key], after[key])) {
+                diff[key] = before[key];
+            }
+        } else if (isObject(after[key])) {
+            if (!objectsEqual(before[key], after[key])) {
+                diff[key] = before[key];
+            }
+        } else {
+            if (before[key] !== after[key]) {
+                diff[key] = before[key];
+            }
+        }
+    });
+    return diff;
+};
+
 const isObject = (o) => {
     return typeof(o) === 'object';
 }
@@ -128,6 +162,10 @@ const assertIsArray = (a) => {
     }
 }
 
+const abstractMethodError = (m) => {
+    throw new Error(`Method "${m}" must be implemented in subclass`);
+}
+
 export {
     argsToArray,
     makeMutator,
@@ -136,6 +174,7 @@ export {
     assign,
     isScalar,
     objectsEqual,
+    objectDiff,
     isObject,
     isFunction,
     isNumber,
@@ -147,4 +186,5 @@ export {
     assertType,
     assertIsObject,
     assertIsArray,
+    abstractMethodError,
 };

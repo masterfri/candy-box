@@ -5,9 +5,59 @@ import {
     PlainRequest,
     Method,
 } from '../transport/request';
+import {
+    abstractMethodError,
+} from '../helpers';
 
-class BaseServer extends Mixture
+/**
+ * Base server class
+ * 
+ * @abstract
+ * @class
+ * @augments Mixture
+ */
+class AbstractServer extends Mixture
 {
+    /**
+     * Start server
+     * 
+     * @abstract
+     * @returns {Promise}
+     */
+    start() {
+        abstractMethodError('start');
+    }
+
+    /**
+     * Stop server
+     * 
+     * @abstract
+     * @returns {Promise}
+     */
+    stop() {
+        abstractMethodError('stop');
+    }
+
+    /**
+     * Define a route
+     * 
+     * @abstract
+     * @param {String} method 
+     * @param {String} path 
+     * @param {Function} requestFactory 
+     * @param {Function} target 
+     */
+    register() {
+        abstractMethodError('register');
+    }
+
+    /**
+     * Define a route by request
+     * 
+     * @param {Request} request 
+     * @param {Function} target 
+     * @returns {AbstractServer}
+     */
     route(request, target) {
         this.register(
             request.prototype.method.call({}).toLowerCase(),
@@ -18,6 +68,13 @@ class BaseServer extends Mixture
         return this;
     }
 
+    /**
+     * Define routes by request mapping
+     * 
+     * @param {RequestMap} mapping 
+     * @param {Function} target 
+     * @returns {AbstractServer}
+     */
     map(mapping, target) {
         mapping.forEach((request, method) => {
             this.register(
@@ -28,6 +85,13 @@ class BaseServer extends Mixture
         return this;
     }
 
+    /**
+     * Define a route for GET request
+     * 
+     * @param {String} path 
+     * @param {Function} target
+     * @returns {AbstractServer}
+     */
     get(path, target) {
         this.register(
             'get', path, 
@@ -37,6 +101,13 @@ class BaseServer extends Mixture
         return this;
     }
 
+    /**
+     * Define a route for POST request
+     * 
+     * @param {String} path 
+     * @param {Function} target
+     * @returns {AbstractServer}
+     */
     post(path, target) {
         this.register(
             'post', path, 
@@ -46,6 +117,13 @@ class BaseServer extends Mixture
         return this;
     }
 
+    /**
+     * Define a route for PUT request
+     * 
+     * @param {String} path 
+     * @param {Function} target
+     * @returns {AbstractServer}
+     */
     put(path, target) {
         this.register(
             'put', path, 
@@ -55,7 +133,14 @@ class BaseServer extends Mixture
         return this;
     }
 
-    delete(path, to) {
+    /**
+     * Define a route for DELETE request
+     * 
+     * @param {String} path 
+     * @param {Function} target
+     * @returns {AbstractServer}
+     */
+    delete(path, target) {
         this.register(
             'delete', path, 
             (data, query) => new PlainRequest(path, Method.DELETE, data, query),
@@ -67,7 +152,7 @@ class BaseServer extends Mixture
 
 const ServerSymbol = Symbol('Server');
 
-export default BaseServer;
+export default AbstractServer;
 
 export {
     ServerSymbol,

@@ -92,17 +92,17 @@ describe('Http server', function() {
         it('Get request should return HTTP 200', function(done) {
             let request = new GetRequest({id: 123});
             request.send().then((response) => {
-                assert.ok(response.getBody().get);
-                assert.equal(response.getBody().id, 123);
+                assert.ok(response.body.get);
+                assert.equal(response.body.id, 123);
                 done();
             }).catch(done);
         });
         it('Post request should return HTTP 200', function(done) {
             let request = new PostRequest({id: 123, value: 345});
             request.send().then((response) => {
-                assert.ok(response.getBody().post);
-                assert.equal(response.getBody().id, 123);
-                assert.equal(response.getBody().value, 345);
+                assert.ok(response.body.post);
+                assert.equal(response.body.id, 123);
+                assert.equal(response.body.value, 345);
                 done();
             }).catch(done);
         });
@@ -112,7 +112,7 @@ describe('Http server', function() {
                 done('Should return 404 error');
             })
             .catch((response) => {
-                assert(response.getStatus(), 404);
+                assert(response.status, 404);
                 done();
             })
             .catch(done);
