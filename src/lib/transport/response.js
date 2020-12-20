@@ -60,6 +60,7 @@ class Response extends Mixture
      * @param {Object} [props={}] 
      */
     constructor(body = null, status = Status.OK, message = 'Ok', props = {}) {
+        super();
         this._status = status;
         this._message = message;
         this._body = body;

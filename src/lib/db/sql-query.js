@@ -3,6 +3,8 @@ import Query, {
     Assert,
     Logic,
     Assertion,
+    Sort,
+    SortOrder,
 } from '../query/query';
 import {
     is,
@@ -11,45 +13,111 @@ import {
     assertType,
 } from '../helpers';
 
+/**
+ * Raw sql fragment
+ * 
+ * @class
+ */
 class RawSql
 {
+    /**
+     * @protected
+     * @var {String}
+     */
+    _sql;
+
+    /**
+     * @protected
+     * @var {Array}
+     */
+    _bindings;
+
+    /**
+     * @param {String} sql 
+     * @param {Array} [bindings=[]] 
+     */
     constructor(sql, bindings = []) {
         this._sql = sql;
         this._bindings = bindings;
     }
 
+    /**
+     * SQL fragment text
+     * 
+     * @var {String}
+     */
     get sql() {
         return this._sql;
     }
 
+    /**
+     * Fragment value bindings
+     * 
+     * @var {Array}
+     */
     get bindings() {
         return this._bindings;
     }
 }
 
+/**
+ * Condition for "on" clause 
+ * 
+ * @class
+ */
 class On
 {
+    /**
+     * @param {String} left 
+     * @param {String} operator 
+     * @param {String} right 
+     */
     constructor(left, operator, right) {
         this._left = left;
         this._operator = operator;
         this._right = right;
     }
 
+    /**
+     * Left operand
+     * 
+     * @var {String}
+     */
     get left() {
         return this._left;
     }
 
+    /**
+     * Operator
+     * 
+     * @var {String}
+     */
     get operator() {
         return this._operator;
     }
 
+    /**
+     * Right operand
+     * 
+     * @var {String}
+     */
     get right() {
         return this._right;
     }
 }
 
+/**
+ * SQL condition clause
+ * 
+ * @class
+ * @augments Condition
+ */
 class SqlCondition extends Condition
 {
+    /**
+     * @override
+     * @inheritdoc
+     */
     where(...args) {
         if (args.length === 1 && is(args[0], RawSql)) {
             this._wheres.push(args[0]);
@@ -58,15 +126,43 @@ class SqlCondition extends Condition
         return super.where(...args);
     }
 
+    /**
+     * Add raw SQL fragment to condition
+     * 
+     * @param {String} sql 
+     * @param {Array} [bindings=[]]
+     * @returns {SqlCondition}
+     */
+    whereRaw(sql, bindings = []) {
+        return this.where(new RawSql(sql, bindings));
+    }
+
+    /**
+     * @override
+     * @param {String} table 
+     * @param {any} condition 
+     */
     has(table, condition) {
-        return this.where(table, Assert.HAS, this.makeSubquery(table, condition));
+        return this.where(table, Assert.HAS, this._makeSubquery(table, condition));
     }
 
+    /**
+     * @override
+     * @param {String} table 
+     * @param {any} condition 
+     */
     doesntHave(table, condition) {
-        return this.where(table, Assert.NOT_HAS, this.makeSubquery(table, condition));
+        return this.where(table, Assert.NOT_HAS, this._makeSubquery(table, condition));
     }
 
-    makeSubquery(table, condition) {
+    /**
+     * Make nested query
+     * 
+     * @protected
+     * @param {String} table 
+     * @param {any} condition 
+     */
+    _makeSubquery(table, condition) {
         let query = new SqlQuery();
         query.from(table);
         if (isFunction(condition)) {
@@ -78,8 +174,17 @@ class SqlCondition extends Condition
     }
 }
 
+/**
+ * Condition for "join" clause
+ * 
+ * @class
+ * @augments SqlCondition
+ */
 class JoinCondition extends SqlCondition
 {
+    /**
+     * @param  {...any} args 
+     */
     constructor(...args) {
         super();
         if (args.length !== 0) {
@@ -87,6 +192,12 @@ class JoinCondition extends SqlCondition
         }
     }
 
+    /**
+     * Add join condition
+     * 
+     * @param  {...any} args 
+     * @returns {JoinCondition}
+     */
     on(...args) {
         if (args.length === 3) {
             this._wheres.push(new On(args[0], args[1], args[2]));
@@ -150,6 +261,10 @@ class JoinCondition extends SqlCondition
     onGreaterThanOrEquals(prop, value) {
         return this.on(prop, Assert.GTE, value);
     }
+
+    onRaw(sql, bindings = []) {
+        return this.on(new RawSql(sql, bindings));
+    }
 }
 
 class Join
@@ -188,6 +303,10 @@ class SqlQuery extends Query
         return this;
     }
 
+    selectRaw(sql, bindings = []) {
+        return this.select(new RawSql(sql, bindings));
+    }
+
     from(table) {
         this._table = table;
         return this;
@@ -196,6 +315,14 @@ class SqlQuery extends Query
     join(table, ...on) {
         this._join.push(new Join(table, ...on));
         return this;
+    }
+
+    orderByRaw(sql, order = Sort.ASC, bindings = []) {
+        return this.orderBy(new RawSql(sql, bindings), order);
+    }
+
+    groupByRaw(sql, bindings = []) {
+        return this.groupBy(new RawSql(sql, bindings));
     }
 
     get columns() {

@@ -230,6 +230,18 @@ class Request extends Mixture
 class PlainRequest extends Request
 {
     /**
+     * @protected
+     * @var {String}
+     */
+    _method;
+
+    /**
+     * @protected
+     * @var {String}
+     */
+    _route;
+
+    /**
      * @param {String} route 
      * @param {String} method 
      * @param {Object} data 

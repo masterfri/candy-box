@@ -58,12 +58,13 @@ class HttpRequest extends AbstractTransportRequest
     _promise;
 
     /**
+     * @param {AxiosInstance} client
      * @param {Object} config 
      */
-    constructor(config = {}) {
+    constructor(client, config = {}) {
         super();
         this._source = axios.CancelToken.source();
-        this._promise = axios.request({
+        this._promise = client.request({
             ...config,
             onUploadProgress: (e) => {
                 this._uploaded = e.loaded;
@@ -178,18 +179,29 @@ class HttpTransport extends AbstractTransport
 {
     /**
      * @protected
-     * @var {Object}
+     * @var {AxiosInstance}
      */
-    _defaults;
+    _client;
 
     /**
      * @param {Object} [config={}] 
      */
     constructor(config = {}) {
         super();
-        this._defaults = config;
+        this._client = this._createClient(config);
     }
     
+    /**
+     * Create HTTP client
+     * 
+     * @protected
+     * @param {Object} config 
+     * @returns {AxiosInstance}
+     */
+    _createClient(config) {
+        return axios.create(config);
+    }
+
     /**
      * Make new HTTP request
      * 
@@ -198,10 +210,7 @@ class HttpTransport extends AbstractTransport
      * @returns {HttpRequest}
      */
     _makeRequest(options) {
-        return new HttpRequest({
-            ...this._defaults,
-            ...options,
-        });
+        return new HttpRequest(this._client, options);
     }
 
     /**
@@ -224,8 +233,6 @@ class HttpTransport extends AbstractTransport
                 result.headers
             );
             if (isErrorCode(result.status)) {
-                console.log('WAAAAAT!?')
-
                 throw response;
             } else {
                 return response;
