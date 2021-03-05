@@ -1,9 +1,9 @@
 import {
     Mixture, 
-} from '../mixture';
+} from '../mixture.js';
 import {
     abstractMethodError,
-} from '../helpers';
+} from '../helpers.js';
 import qs from 'qs';
 
 /**

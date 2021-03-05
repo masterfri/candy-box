@@ -1,16 +1,16 @@
 import RepositoryQuery, {
     SerializedRepositoryQuery,
-} from '../query';
+} from '../query.js';
 import Response, {
     Status,
-} from '../../transport/response';
+} from '../../transport/response.js';
 import {
     NotFoundError,
-} from '../base';
+} from '../base.js';
 import {
     is,
     isFunction,
-} from '../../helpers';
+} from '../../helpers.js';
 
 /**
  * Class that forwards REST API calls to repository methods

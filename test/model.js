@@ -1,6 +1,6 @@
 import assert from 'assert';
-import Model from '../src/lib/structures/model';
-import Collection from '../src/lib/structures/collection';
+import Model from '../src/lib/structures/model.js';
+import Collection from '../src/lib/structures/collection.js';
 
 class TestModel extends Model
 {

@@ -2,7 +2,7 @@ import {
     is,
     isObject, 
     isFunction,
-} from '../helpers';
+} from '../helpers.js';
 
 const AND = 'and';
 const OR = 'or';
@@ -197,7 +197,7 @@ class Condition
      * @param {any} value 
      * @returns {Condition}
      */
-    equals(prop, value) {
+    eq(prop, value) {
         return this.where(prop, value);
     }
     
@@ -208,7 +208,7 @@ class Condition
      * @param {any} value 
      * @returns {Condition}
      */
-    notEquals(prop, value) {
+    neq(prop, value) {
         return this.where(prop, NEQ, value);
     }
     
@@ -219,7 +219,7 @@ class Condition
      * @param {any} value 
      * @returns {Condition}
      */
-    lessThan(prop, value) {
+    lt(prop, value) {
         return this.where(prop, LT, value);
     }
     
@@ -230,7 +230,7 @@ class Condition
      * @param {any} value 
      * @returns {Condition}
      */
-    lessThanOrEquals(prop, value) {
+    lte(prop, value) {
         return this.where(prop, LTE, value);
     }
     
@@ -241,7 +241,7 @@ class Condition
      * @param {any} value 
      * @returns {Condition}
      */
-    greaterThan(prop, value) {
+    gt(prop, value) {
         return this.where(prop, GT, value);
     }
     
@@ -252,7 +252,7 @@ class Condition
      * @param {any} value 
      * @returns {Condition}
      */
-    greaterThanOrEquals(prop, value) {
+    gte(prop, value) {
         return this.where(prop, GTE, value);
     }
     
@@ -263,7 +263,7 @@ class Condition
      * @param {Array} value 
      * @returns {Condition}
      */
-    inArray(prop, value) {
+    in(prop, value) {
         return this.where(prop, IN, value);
     }
 
@@ -274,7 +274,7 @@ class Condition
      * @param {Array} value 
      * @returns {Condition}
      */
-    notInArray(prop, value) {
+    notIn(prop, value) {
         return this.where(prop, NOT_IN, value);
     }
     

@@ -1,16 +1,16 @@
-import Box from './box';
-import App from './app';
+import Box from './box.js';
+import App from './app.js';
 import Validator, {
     ValidatorSymbol,
-} from './validation/validator'; 
+} from './validation/validator.js'; 
 import {
     TransportSymbol,
-} from './transport/base';
-import HttpTransport from './transport/http';
+} from './transport/base.js';
+import HttpTransport from './transport/http.js';
 import {
     ServerSymbol,
-} from './server/base';
-import HttpServer from './server/http';
+} from './server/base.js';
+import HttpServer from './server/http.js';
 
 const boot = (config = {}) => {
     let box = new Box();

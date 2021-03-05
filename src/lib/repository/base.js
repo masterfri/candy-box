@@ -1,12 +1,12 @@
 import {
     Mixture, 
-} from '../mixture';
+} from '../mixture.js';
 import {
     is,
     isObject, 
     isFunction,
-} from '../helpers';
-import RepositoryQuery from './query';
+} from '../helpers.js';
+import RepositoryQuery from './query.js';
 
 /**
  * Base class for all repositories
@@ -84,12 +84,12 @@ class AbstractRepository extends Mixture
         
         if (is(query, Array)) {
             return (new RepositoryQuery).where((condition) => {
-                condition.inArray(this.getKeyName(), query);
+                condition.in(this.getKeyName(), query);
             });
         }
         
         return (new RepositoryQuery).where((condition) => {
-            condition.equals(this.getKeyName(), query);
+            condition.eq(this.getKeyName(), query);
         });
     }
 

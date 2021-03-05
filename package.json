@@ -1,17 +1,25 @@
 {
+  "type": "module",
   "name": "candy-box",
   "version": "1.0.0",
   "scripts": {
-    "dev": "/home/grisha/node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=webpack.config.js",
-    "test": "/home/grisha/node_modules/mocha/bin/mocha --require @babel/register --require babel-polyfill"
+    "dev": "./node_modules/webpack/bin/webpack.js --watch --progress --config=webpack.config.js",
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-transform-instanceof": "^7.10.1"
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/preset-env": "^7.13.5",
+    "babel-loader": "^8.2.2",
+    "mocha": "^8.3.0",
+    "webpack": "^5.24.2",
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "express": "^4.17.1",
+    "knex": "^0.21.17",
     "moment": "^2.27.0",
     "mysql2": "^2.2.5",
     "validate.js": "^0.13.1"

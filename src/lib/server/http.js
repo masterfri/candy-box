@@ -1,12 +1,12 @@
 import express from 'express';
-import AbstractServer from './base';
+import AbstractServer from './base.js';
 import {
     is,
     isString,
-} from '../helpers';
+} from '../helpers.js';
 import Response, {
     Status,
-} from '../transport/response';
+} from '../transport/response.js';
 
 /**
  * HTTP server

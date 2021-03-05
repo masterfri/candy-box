@@ -1,7 +1,7 @@
 import assert from 'assert';
-import Model from '../src/lib/structures/model';
-import ResidentRepository from '../src/lib/repository/resident';
-import Query from '../src/lib/repository/query';
+import Model from '../src/lib/structures/model.js';
+import ResidentRepository from '../src/lib/repository/resident.js';
+import Query from '../src/lib/repository/query.js';
 
 class TestModel extends Model
 {
@@ -57,7 +57,7 @@ describe('Resident repository', function() {
                 assert.equal(result.length, 1);
                 assert.equal(result.first().weight, 60);
                 let query = (new Query).where((cond) => {
-                    cond.lessThanOrEquals('weight', 100);
+                    cond.lte('weight', 100);
                 });
                 return repository.search(query);
             }).then((result) => {
@@ -121,7 +121,7 @@ describe('Resident repository', function() {
             }).then((result) => {
                 assert.equal(result, 1);
                 let query = (new Query).where((cond) => {
-                    cond.lessThanOrEquals('weight', 100);
+                    cond.lte('weight', 100);
                 });
                 return repository.count(query);
             }).then((result) => {

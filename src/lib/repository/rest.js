@@ -1,15 +1,15 @@
-import AbstractRepository from './base';
+import AbstractRepository from './base.js';
 import {
     SerializedRepositoryQuery,
-} from './query';
+} from './query.js';
 import { 
     assign,
     isObject,
     assertType,
     assertIsObject,
     assertIsArray,
-} from '../helpers';
-import Collection from '../structures/collection';
+} from '../helpers.js';
+import Collection from '../structures/collection.js';
 
 /**
  * Repository that communicates with storage via REST API

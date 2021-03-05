@@ -1,14 +1,14 @@
-import Collection from './collection';
-import TypedCollection from './typed-collection';
+import Collection from './collection.js';
+import TypedCollection from './typed-collection.js';
 import {
     Mixture,
-} from '../mixture';
+} from '../mixture.js';
 import {
     makeMutator,
     objectDiff,
     isFunction,
     isObject,
-} from '../helpers';
+} from '../helpers.js';
 
 const setupAttribute = (target, name, defs) => {
     let descriptor = {

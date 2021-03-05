@@ -1,5 +1,4 @@
-import assert from 'assert';
-import Validator from '../src/lib/validation/validator';
+import Validator from '../src/lib/validation/validator.js';
 
 describe('Validation', function() {
     describe('#between', function() {

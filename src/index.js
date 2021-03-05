@@ -1,7 +1,7 @@
-import Query from './lib/query/query';
+import Query from './lib/query/query.js';
 
 let query = new Query((cond) => {
-    cond.equals('a', null);
+    cond.eq('a', null);
 });
 
 console.log(query.getCondition());

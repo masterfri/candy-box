@@ -2,7 +2,7 @@ import validate from 'validate.js';
 import moment from 'moment';
 import {
     Mixture, 
-} from '../mixture';
+} from '../mixture.js';
 
 const DateHelper = {
     templates: {

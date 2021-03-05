@@ -1,13 +1,13 @@
 import {
     Mixture, 
-} from '../mixture';
+} from '../mixture.js';
 import {
     PlainRequest,
     Method,
-} from '../transport/request';
+} from '../transport/request.js';
 import {
     abstractMethodError,
-} from '../helpers';
+} from '../helpers.js';
 
 /**
  * Base server class

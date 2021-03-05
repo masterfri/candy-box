@@ -1,10 +1,10 @@
 import {
     isFunction,
     isSubclass,
-} from './helpers';
+} from './helpers.js';
 
-const isTrait = (target) => {
-    return isSubclass(target, Trait);
+const isComponent = (target) => {
+    return isSubclass(target, Component);
 }
 
 const forbidConstructor = (obj) => {
@@ -22,9 +22,9 @@ const getPrototypeChain = (begin) => {
     return chain;
 }
 
-const collectTraitMethods = (trait) => {
+const collectComponentMethods = (component) => {
     let result = {};
-    getPrototypeChain(trait).forEach(proto => {
+    getPrototypeChain(component).forEach(proto => {
         if (proto.hasOwnProperty('methods')) {
             let methods = proto.methods();
             for (let name in methods) {
@@ -38,11 +38,11 @@ const collectTraitMethods = (trait) => {
 }
 
 /**
- * Base class for all traits
+ * Base class for all components
  * 
  * @class
  */
-class Trait
+class Component
 {
     /**
      * This constructor should never by called
@@ -59,7 +59,7 @@ class Trait
      * @see Mixture
      */
     static boot(object) {
-        let methods = collectTraitMethods(this);
+        let methods = collectComponentMethods(this);
         Object.keys(methods).forEach(method => {
             let objectMethod = object[method];
             if (!isFunction(objectMethod)) {
@@ -77,7 +77,7 @@ class Trait
 }
 
 /**
- * This class allows to attach traits to inherited subclasses
+ * This class allows to attach components to inherited subclasses
  * 
  * @class
  */
@@ -85,7 +85,7 @@ class Mixture
 {
     /**
      * @example
-     * class Productor extends Trait
+     * class Productor extends Component
      * {
      *     static methods() {
      *         return {
@@ -98,7 +98,7 @@ class Mixture
      *
      * class Math extends Mixture
      * {
-     *     mixins() {
+     *     components() {
      *         return [
      *             Productor,
      *         ];
@@ -109,24 +109,24 @@ class Mixture
      * math.product(3, 5) => 15
      */
     constructor() {
-        this.mixins().forEach(mixin => {
-            if (isTrait(mixin)) {
-                mixin.boot(this);
+        this.components().forEach(component => {
+            if (isComponent(component)) {
+                component.boot(this);
             }
         });
     }
 
     /**
-     * This method provides a list of mixins
+     * This method provides a list of components
      * 
      * @returns {Array}
      */
-    mixins() {
+    components() {
         return [];
     }
 }
 
 export {
-    Trait,
+    Component,
     Mixture,
 }

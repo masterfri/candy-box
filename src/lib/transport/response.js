@@ -1,6 +1,6 @@
 import {
     Mixture, 
-} from '../mixture';
+} from '../mixture.js';
 
 const Status = {
     OK: 200,

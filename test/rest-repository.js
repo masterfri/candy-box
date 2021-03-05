@@ -1,15 +1,15 @@
 import assert from 'assert';
-import {ServerSymbol} from '../src/lib/server/base';
-import Model from '../src/lib/structures/model';
-import ResidentRepository from '../src/lib/repository/resident';
-import RestRepository from '../src/lib/repository/rest';
-import RepositoryProxy from '../src/lib/repository/rest/proxy';
-import RepositoryRequestMap from '../src/lib/repository/rest/request-map';
-import Request, {Method} from '../src/lib/transport/request';
-import {ValidationError} from '../src/lib/validation/validator';
-import Query from '../src/lib/repository/query';
-import App from '../src/lib/app';
-import boot from '../src/lib/boot';
+import {ServerSymbol} from '../src/lib/server/base.js';
+import Model from '../src/lib/structures/model.js';
+import ResidentRepository from '../src/lib/repository/resident.js';
+import RestRepository from '../src/lib/repository/rest.js';
+import RepositoryProxy from '../src/lib/repository/rest/proxy.js';
+import RepositoryRequestMap from '../src/lib/repository/rest/request-map.js';
+import Request, {Method} from '../src/lib/transport/request.js';
+import {ValidationError} from '../src/lib/validation/validator.js';
+import Query from '../src/lib/repository/query.js';
+import App from '../src/lib/app.js';
+import boot from '../src/lib/boot.js';
 
 boot({
     transport: {
@@ -157,7 +157,7 @@ describe('Rest repository', function() {
                 assert.equal(result.length, 1);
                 assert.equal(result.first().weight, 60);
                 let query = (new Query).where((cond) => {
-                    cond.lessThanOrEquals('weight', 100);
+                    cond.lte('weight', 100);
                 });
                 return repo.search(query);
             }).then((result) => {
@@ -225,7 +225,7 @@ describe('Rest repository', function() {
             }).then((result) => {
                 assert.equal(result, 1);
                 let query = (new Query).where((cond) => {
-                    cond.lessThanOrEquals('weight', 100);
+                    cond.lte('weight', 100);
                 });
                 return repo.count(query);
             }).then((result) => {

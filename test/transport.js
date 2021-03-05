@@ -1,6 +1,6 @@
 import assert from 'assert';
 import express from 'express';
-import HttpTransport from '../src/lib/transport/http';
+import HttpTransport from '../src/lib/transport/http.js';
 
 let server = null;
 

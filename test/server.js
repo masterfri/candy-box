@@ -1,10 +1,10 @@
 import assert from 'assert';
-import Request, {Method} from '../src/lib/transport/request';
-import Response from '../src/lib/transport/response';
-import {ServerSymbol} from '../src/lib/server/base';
-import {ValidationError} from '../src/lib/validation/validator';
-import App from '../src/lib/app';
-import boot from '../src/lib/boot';
+import Request, {Method} from '../src/lib/transport/request.js';
+import Response from '../src/lib/transport/response.js';
+import {ServerSymbol} from '../src/lib/server/base.js';
+import {ValidationError} from '../src/lib/validation/validator.js';
+import App from '../src/lib/app.js';
+import boot from '../src/lib/boot.js';
 
 boot({
     transport: {

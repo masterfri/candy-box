@@ -1,8 +1,8 @@
-import Collection from './collection';
+import Collection from './collection.js';
 import {
     makeMutator, 
     argsToArray,
-} from '../helpers';
+} from '../helpers.js';
 
 /**
  * Collection with strict type of elements

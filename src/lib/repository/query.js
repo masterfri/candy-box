@@ -2,11 +2,11 @@ import Query, {
     Assertion,
     Condition,
     Logic,
-} from '../query/query';
+} from '../query/query.js';
 import { 
     is,
     isNumber,
-} from '../helpers';
+} from '../helpers.js';
 
 /**
  * Query for repositories

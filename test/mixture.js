@@ -1,17 +1,17 @@
 import assert from 'assert';
 import {
-    Trait,
+    Component,
     Mixture,
-} from '../src/lib/mixture';
+} from '../src/lib/mixture.js';
 
-class TestTraitA extends Trait
+class TestComponentA extends Component
 {
     static methods() {
         return {
-            traitMethodA() {
+            componentMethodA() {
                 return 1;
             },
-            traitMethodB() {
+            componentMethodB() {
                 return 1;
             }
         };
@@ -20,30 +20,30 @@ class TestTraitA extends Trait
 
 class TestClass extends Mixture
 {
-    mixins() {
+    components() {
         return [
-            TestTraitA,
+            TestComponentA,
         ];
     }
 
-    traitMethodB() {
+    componentMethodB() {
         return 2;
     }
 }
 
 describe('Mixture', function() {
-    describe('#trait', function() {
-        it('TestClass should have method traitMethodA', function() {
+    describe('#component', function() {
+        it('TestClass should have method componentMethodA', function() {
             let obj = new TestClass();
-            assert.equal(typeof obj.traitMethodA, 'function');
+            assert.equal(typeof obj.componentMethodA, 'function');
         });
-        it('TestClass::traitMethodA should return proper value', function() {
+        it('TestClass::componentMethodA should return proper value', function() {
             let obj = new TestClass();
-            assert.equal(obj.traitMethodA(), 1);
+            assert.equal(obj.componentMethodA(), 1);
         });
-        it('TestClass::traitMethodB should return proper value', function() {
+        it('TestClass::componentMethodB should return proper value', function() {
             let obj = new TestClass();
-            assert.equal(obj.traitMethodB(), 2);
+            assert.equal(obj.componentMethodB(), 2);
         });
     });
 });

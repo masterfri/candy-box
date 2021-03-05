@@ -1,19 +1,19 @@
 import {
     TransportSymbol,
-} from './base';
+} from './base.js';
 import {
     Mixture, 
-} from '../mixture';
+} from '../mixture.js';
 import {
     isSubclass,
     isObject,
     isString,
-} from '../helpers';
+} from '../helpers.js';
 import {
     ValidationError,
     ValidatorSymbol,
-} from '../validation/validator';
-import App from '../app';
+} from '../validation/validator.js';
+import App from '../app.js';
 
 const GET = 'GET';
 const POST = 'POST';

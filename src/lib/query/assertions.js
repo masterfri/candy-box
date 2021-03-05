@@ -1,16 +1,16 @@
-import Collection from '../structures/collection';
+import Collection from '../structures/collection.js';
 import {
     Assertion,
     Logic,
     Assert,
-} from './query';
+} from './query.js';
 import {
     is,
     isObject, 
     isBool,
     isString,
     isNumber,
-} from '../helpers';
+} from '../helpers.js';
 
 const isNull = (a) => {
     return a === null || a === undefined;

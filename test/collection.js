@@ -1,6 +1,6 @@
 import assert from 'assert';
-import Collection from '../src/lib/structures/collection';
-import TypedCollection from '../src/lib/structures/typed-collection';
+import Collection from '../src/lib/structures/collection.js';
+import TypedCollection from '../src/lib/structures/typed-collection.js';
 
 describe('Collection', function() {
     describe('#push', function() {

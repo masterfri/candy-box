@@ -52,6 +52,16 @@ const getProps = (source, props) => {
     return result;
 }
 
+const getProp = (source, prop = null) => {
+    if (prop === null) {
+        for (let key in source) {
+            return source[key];
+        }
+        return undefined;
+    }
+    return source[prop];
+}
+
 const assign = (key, val, target = {}) => {
     target[key] = val;
     return target;
@@ -170,6 +180,7 @@ export {
     argsToArray,
     makeMutator,
     getProps,
+    getProp,
     onlyProps,
     assign,
     isScalar,

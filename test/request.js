@@ -1,8 +1,8 @@
 import assert from 'assert';
 import express from 'express';
-import Request, {Method} from '../src/lib/transport/request';
-import {ValidationError} from '../src/lib/validation/validator';
-import boot from '../src/lib/boot';
+import Request, {Method} from '../src/lib/transport/request.js';
+import {ValidationError} from '../src/lib/validation/validator.js';
+import boot from '../src/lib/boot.js';
 
 boot({
     transport: {

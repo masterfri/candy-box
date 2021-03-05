@@ -1,20 +1,20 @@
 import assert from 'assert';
 import RepositoryQuery, {
     SerializedRepositoryQuery,
-} from '../src/lib/repository/query';
+} from '../src/lib/repository/query.js';
 import {
     testCondition
-} from '../src/lib/query/assertions';
+} from '../src/lib/query/assertions.js';
 
 describe('Query', function() {
-    describe('#equals', function() {
+    describe('#eq', function() {
         it('Condition should be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where({a: 5, b: '10'});
             assert.ok(testCondition(query.condition, {a: 5, b: 10}));
             assert.ok(testCondition(query.condition, {a: '5', b: '10'}));
             query = (new RepositoryQuery).where((cond) => {
-                cond.equals('a', null);
-                cond.equals('b', true);
+                cond.eq('a', null);
+                cond.eq('b', true);
             });
             assert.ok(testCondition(query.condition, {b: true}));
             assert.ok(testCondition(query.condition, {a: null, b: 1}));
@@ -25,38 +25,38 @@ describe('Query', function() {
             assert.ok(!testCondition(query.condition, {a: null}));
         });
     });
-    describe('#notEquals', function() {
+    describe('#neq', function() {
         it('Condition should be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
-                cond.notEquals('a', null);
-                cond.notEquals('b', true);
+                cond.neq('a', null);
+                cond.neq('b', true);
             });
             assert.ok(testCondition(query.condition, {a: 5}));
             assert.ok(testCondition(query.condition, {a: true, b: 0}));
         });
     });
-    describe('#lessThan', function() {
+    describe('#lt', function() {
         it('Condition should be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
-                cond.lessThan('a', 5);
-                cond.lessThan('b', 'bb');
+                cond.lt('a', 5);
+                cond.lt('b', 'bb');
             });
             assert.ok(testCondition(query.condition, {a: 4, b: 'aaa'}));
         });
     });
-    describe('#greaterThan', function() {
+    describe('#gt', function() {
         it('Condition should be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
-                cond.greaterThan('a', 5);
-                cond.greaterThan('b', 'bb');
+                cond.gt('a', 5);
+                cond.gt('b', 'bb');
             });
             assert.ok(testCondition(query.condition, {a: 10, b: 'c'}));
         });
     });
-    describe('#inArray', function() {
+    describe('#in', function() {
         it('Condition should be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
-                cond.inArray('a', [5, '10', true]);
+                cond.in('a', [5, '10', true]);
             });
             assert.ok(testCondition(query.condition, {a: 5}));
             assert.ok(testCondition(query.condition, {a: 10}));
@@ -64,15 +64,15 @@ describe('Query', function() {
         });
         it('Condition should not be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
-                cond.inArray('a', [5, '10', true]);
+                cond.in('a', [5, '10', true]);
             });
             assert.ok(!testCondition(query.condition, {a: null}));
         });
     });
-    describe('#notInArray', function() {
+    describe('#notIn', function() {
         it('Condition should be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
-                cond.notInArray('a', [5, '10', true]);
+                cond.notIn('a', [5, '10', true]);
             });
             assert.ok(testCondition(query.condition, {a: 15}));
             assert.ok(testCondition(query.condition, {a: null}));
@@ -80,7 +80,7 @@ describe('Query', function() {
         });
         it('Condition should not be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
-                cond.notInArray('a', [5, '10', true]);
+                cond.notIn('a', [5, '10', true]);
             });
             assert.ok(!testCondition(query.condition, {a: 5}));
             assert.ok(!testCondition(query.condition, {a: 10}));
@@ -107,8 +107,8 @@ describe('Query', function() {
         it('Condition should be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
                 cond.and((subcond) => {
-                    subcond.equals('a', 5);
-                    subcond.equals('b', 10);
+                    subcond.eq('a', 5);
+                    subcond.eq('b', 10);
                 });
             });
             assert.ok(testCondition(query.condition, {a: 5, b: 10}));
@@ -116,8 +116,8 @@ describe('Query', function() {
         it('Condition should not be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
                 cond.and((subcond) => {
-                    subcond.equals('a', 5);
-                    subcond.equals('b', 10);
+                    subcond.eq('a', 5);
+                    subcond.eq('b', 10);
                 });
             });
             assert.ok(!testCondition(query.condition, {a: 5, b: 15}));
@@ -127,8 +127,8 @@ describe('Query', function() {
         it('Condition should be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
                 cond.or((subcond) => {
-                    subcond.equals('a', 5);
-                    subcond.equals('b', 10);
+                    subcond.eq('a', 5);
+                    subcond.eq('b', 10);
                 });
             });
             assert.ok(testCondition(query.condition, {a: 5, b: 5}));
@@ -137,8 +137,8 @@ describe('Query', function() {
         it('Condition should not be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
                 cond.or((subcond) => {
-                    subcond.equals('a', 5);
-                    subcond.equals('b', 10);
+                    subcond.eq('a', 5);
+                    subcond.eq('b', 10);
                 });
             });
             assert.ok(!testCondition(query.condition, {a: 15, b: 15}));
@@ -148,8 +148,8 @@ describe('Query', function() {
         it('Condition should be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
                 cond.not((subcond) => {
-                    subcond.equals('a', 5);
-                    subcond.equals('b', 10);
+                    subcond.eq('a', 5);
+                    subcond.eq('b', 10);
                 });
             });
             assert.ok(testCondition(query.condition, {a: 5, b: 5}));
@@ -159,8 +159,8 @@ describe('Query', function() {
         it('Condition should not be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
                 cond.not((subcond) => {
-                    subcond.equals('a', 5);
-                    subcond.equals('b', 10);
+                    subcond.eq('a', 5);
+                    subcond.eq('b', 10);
                 });
             });
             assert.ok(!testCondition(query.condition, {a: 5, b: 10}));
@@ -170,7 +170,7 @@ describe('Query', function() {
         it('Condition should be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
                 cond.has('a', (subcond) => {
-                    subcond.equals('b', 5);
+                    subcond.eq('b', 5);
                 });
             });
             assert.ok(testCondition(query.condition, {a: {b: 5}}));
@@ -181,7 +181,7 @@ describe('Query', function() {
         it('Condition should be satisfiable for the given data', function() {
             let query = (new RepositoryQuery).where((cond) => {
                 cond.doesntHave('a', (subcond) => {
-                    subcond.equals('b', 5);
+                    subcond.eq('b', 5);
                 });
             });
             assert.ok(testCondition(query.condition, {a: {b: 10}}));
@@ -192,8 +192,8 @@ describe('Query', function() {
         it('Serialized query should produce the same result as original one', function() {
             let query = (new RepositoryQuery).where((cond) => {
                 cond.or((subcond) => {
-                    subcond.equals('a', 5);
-                    subcond.equals('b', 10);
+                    subcond.eq('a', 5);
+                    subcond.eq('b', 10);
                 });
             });
             let serializedQuery = new SerializedRepositoryQuery(query);
@@ -202,7 +202,7 @@ describe('Query', function() {
             assert.ok(testCondition(condition, {a: 10, b: 10}));
             assert.ok(testCondition(condition, {a: 5}));
             query = (new RepositoryQuery).where((cond) => {
-                cond.inArray('a', [5, '10', true]);
+                cond.in('a', [5, '10', true]);
             });
             serializedQuery = new SerializedRepositoryQuery(query);
             condition = serializedQuery.toQuery().condition;
@@ -211,8 +211,8 @@ describe('Query', function() {
             assert.ok(testCondition(condition, {a: 1}));
             query = (new RepositoryQuery).where((cond) => {
                 cond.not((subcond) => {
-                    subcond.equals('a', 5);
-                    subcond.equals('b', 10);
+                    subcond.eq('a', 5);
+                    subcond.eq('b', 10);
                 });
             });
             serializedQuery = new SerializedRepositoryQuery(query);
