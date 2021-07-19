@@ -1,16 +1,17 @@
-import RepositoryQuery, {
-    SerializedRepositoryQuery,
-} from '../query.js';
+import Query, {
+    SerializedQuery,
+} from '../query/query.js';
 import Response, {
     Status,
-} from '../../transport/response.js';
+    HttpError,
+} from '../transport/response.js';
 import {
-    NotFoundError,
-} from '../base.js';
+    NotExistsError,
+} from './base.js';
 import {
     is,
     isFunction,
-} from '../../helpers.js';
+} from '../helpers.js';
 
 /**
  * Class that forwards REST API calls to repository methods
@@ -37,7 +38,7 @@ class RepositoryProxy
         return this._proxyMethod(
             'get', 
             [() => this._getKeyFromRequest(request)], 
-            (result) => result.toObject()
+            (result) => this._serializeObject(result)
         );
     }
 
@@ -52,7 +53,7 @@ class RepositoryProxy
         return this._proxyMethod(
             'search', 
             [() => this._getQueryFromRequest(request)], 
-            (results) => results.all().map(result => result.toObject())
+            (results) => this._serializeCollection(results)
         );
     }
     
@@ -64,12 +65,12 @@ class RepositoryProxy
      * @see AbstractRepository
      */
     store(request) {
-        let object = this._repository.newModel(request.getData());
+        let object = this._repository.newModel(request.body);
         let isUpdate = object.hasKey();
         return this._proxyMethod(
             'store', 
             [object], 
-            (stored) => stored.toObject(),
+            (stored) => this._serializeObject(stored),
             isUpdate ? Status.OK : Status.CREATED
         );
     }
@@ -193,9 +194,9 @@ class RepositoryProxy
      * @returns {Number}
      */
     _getKeyFromRequest(request) {
-        let key = request.getParam(this._repository.getKeyName());
+        let key = request.get(this._repository.keyName);
         if (key === null) {
-            throw new Response('Bad request', Status.BAD_REQUEST);
+            throw new HttpError(Status.BAD_REQUEST);
         }
         return key;
     }
@@ -208,9 +209,9 @@ class RepositoryProxy
      * @returns {String}
      */
     _getAttributeNameFromRequest(request) {
-        let attribute = request.getParam('attribute');
+        let attribute = request.get('attribute');
         if (attribute === null) {
-            throw new Response('Bad request', Status.BAD_REQUEST);
+            throw new HttpError(Status.BAD_REQUEST);
         }
         return attribute;
     }
@@ -220,14 +221,14 @@ class RepositoryProxy
      * 
      * @protected
      * @param {Request} request 
-     * @returns {RepositoryQuery}
+     * @returns {Query}
      */
     _getQueryFromRequest(request) {
-        let data = request.getParam('query');
+        let data = request.get('query');
         if (data === null) {
             return null;
         }
-        let query = (new SerializedRepositoryQuery(data)).toQuery();
+        let query = (new SerializedQuery(data)).toQuery();
         return query;
     }
 
@@ -261,7 +262,7 @@ class RepositoryProxy
                         resolve(result);
                     })
                     .catch((error) => {
-                        if (is(error, NotFoundError)) {
+                        if (is(error, NotExistsError)) {
                             resolve(
                                 new Response(error.message, Status.NOT_FOUND)
                             );
@@ -277,6 +278,26 @@ class RepositoryProxy
                 }
             }
         });
+    }
+
+    /**
+     * Serialize object
+     * 
+     * @param {Model} object 
+     * @returns {Object}
+     */
+    _serializeObject(object) {
+        return object.toObject();
+    }
+
+    /**
+     * Serialize object
+     * 
+     * @param {Collection} collection 
+     * @returns {Array}
+     */
+    _serializeCollection(collection) {
+        return collection.all().map((item) => this._serializeObject(item));
     }
 }
 

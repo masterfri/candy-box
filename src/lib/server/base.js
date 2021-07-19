@@ -62,7 +62,7 @@ class AbstractServer extends Mixture
         this.register(
             request.prototype.method.call({}).toLowerCase(),
             request.prototype.route.call({}),
-            (data, query) => new request(data, query),
+            (data, query, headers) => new request(data, query, headers),
             target
         );
         return this;
@@ -95,7 +95,7 @@ class AbstractServer extends Mixture
     get(path, target) {
         this.register(
             'get', path, 
-            (data, query) => new PlainRequest(path, Method.GET, data, query),
+            (data, query, headers) => new PlainRequest(path, Method.GET, data, query, headers),
             target
         );
         return this;
@@ -111,7 +111,7 @@ class AbstractServer extends Mixture
     post(path, target) {
         this.register(
             'post', path, 
-            (data, query) => new PlainRequest(path, Method.POST, data, query),
+            (data, query, headers) => new PlainRequest(path, Method.POST, data, query, headers),
             target
         );
         return this;
@@ -127,7 +127,7 @@ class AbstractServer extends Mixture
     put(path, target) {
         this.register(
             'put', path, 
-            (data, query) => new PlainRequest(path, Method.PUT, data, query),
+            (data, query, headers) => new PlainRequest(path, Method.PUT, data, query, headers),
             target
         );
         return this;
@@ -143,7 +143,7 @@ class AbstractServer extends Mixture
     delete(path, target) {
         this.register(
             'delete', path, 
-            (data, query) => new PlainRequest(path, Method.DELETE, data, query),
+            (data, query, headers) => new PlainRequest(path, Method.DELETE, data, query, headers),
             target
         );
         return this;

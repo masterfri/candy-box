@@ -1,20 +1,10 @@
 import assert from 'assert';
+import './_boot.js';
 import Request, {Method} from '../src/lib/transport/request.js';
 import Response from '../src/lib/transport/response.js';
 import {ServerSymbol} from '../src/lib/server/base.js';
 import {ValidationError} from '../src/lib/validation/validator.js';
 import App from '../src/lib/app.js';
-import boot from '../src/lib/boot.js';
-
-boot({
-    transport: {
-        baseURL: 'http://127.0.0.1:8088/',
-    },
-    server: {
-        host: '127.0.0.1',
-        port: 8088,
-    },
-});
 
 class TestRequestClient extends Request
 {
@@ -71,14 +61,14 @@ describe('Http server', function() {
             .route(GetRequest, (request) => {
                 return new Response({
                     get: true,
-                    id: request.getParam('id'),
+                    id: request.get('id'),
                 });
             })
             .route(PostRequest, (request) => {
                 return new Response({
                     post: true,
-                    id: request.getParam('id'),
-                    value: request.getParam('value'),
+                    id: request.get('id'),
+                    value: request.get('value'),
                 });
             })
             .start()

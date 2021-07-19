@@ -1,15 +1,11 @@
 import AbstractRepository from './base.js';
 import {
-    SerializedRepositoryQuery,
-} from './query.js';
+    SerializedQuery,
+} from '../query/query.js';
 import { 
     assign,
     isObject,
-    assertType,
-    assertIsObject,
-    assertIsArray,
 } from '../helpers.js';
-import Collection from '../structures/collection.js';
 
 /**
  * Repository that communicates with storage via REST API
@@ -41,8 +37,7 @@ class RestRepository extends AbstractRepository
     get(key) {
         let data = assign(this._keyName, key);
         return this._request('get', data).then((result) => {
-            assertIsObject(result);
-            return new this._type(result);
+            return this._hydrateModel(result);
         });
     }
     
@@ -53,12 +48,8 @@ class RestRepository extends AbstractRepository
     search(query) {
         return this._request('search', {
             query: this._serializeQuery(query),
-        }).then((result) => {
-            assertIsArray(result);
-            return new Collection(result.map((item) => {
-                assertIsObject(item);
-                return new this._type(item);
-            }));
+        }).then((results) => {
+            return this._hydrateCollection(results);
         });
     }
     
@@ -68,13 +59,12 @@ class RestRepository extends AbstractRepository
      */
     store(object) {
         return new Promise((resolve, reject) => {
-            assertType(object, this._type);
-            this._request('store', object.toObject()).then((result) => {
-                if (isObject(result)) {
-                    object.assign(result);
-                }
-                resolve(object);
-            }).catch(reject);
+            this._request('store', this._consumeModel(object))
+                .then((result) => {
+                    this._updateModel(object, result);
+                    resolve(object);
+                })
+                .catch(reject);
         });
     }
     
@@ -118,7 +108,7 @@ class RestRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    sum(attribute, query = {}) {
+    sum(attribute, query = null) {
         return this._request('sum', {
             attribute,
             query: this._serializeQuery(query),
@@ -131,7 +121,7 @@ class RestRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    avg(attribute, query = {}) {
+    avg(attribute, query = null) {
         return this._request('avg', {
             attribute,
             query: this._serializeQuery(query),
@@ -144,7 +134,7 @@ class RestRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    min(attribute, query = {}) {
+    min(attribute, query = null) {
         return this._request('min', {
             attribute,
             query: this._serializeQuery(query),
@@ -157,7 +147,7 @@ class RestRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    max(attribute, query = {}) {
+    max(attribute, query = null) {
         return this._request('max', {
             attribute,
             query: this._serializeQuery(query),
@@ -191,7 +181,7 @@ class RestRepository extends AbstractRepository
      */
     _serializeQuery(query) {
         return (
-            new SerializedRepositoryQuery(this.normalizeQuery(query))
+            new SerializedQuery(this.normalizeQuery(query))
         ).toObject();
     }
 }

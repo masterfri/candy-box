@@ -1,6 +1,7 @@
 import {
     isFunction,
     isSubclass,
+    forEach,
 } from './helpers.js';
 
 const isComponent = (target) => {
@@ -60,7 +61,7 @@ class Component
      */
     static boot(object) {
         let methods = collectComponentMethods(this);
-        Object.keys(methods).forEach(method => {
+        Object.keys(methods).forEach((method) => {
             let objectMethod = object[method];
             if (!isFunction(objectMethod)) {
                 if (objectMethod === undefined && !object.hasOwnProperty(method)) {

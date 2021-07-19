@@ -6,7 +6,8 @@ import {
     isObject, 
     isFunction,
 } from '../helpers.js';
-import RepositoryQuery from './query.js';
+import Query from '../query/query.js';
+import TypedCollection from '../structures/typed-collection.js';
 
 /**
  * Base class for all repositories
@@ -53,44 +54,37 @@ class AbstractRepository extends Mixture
     }
 
     /**
-     * Get model key name
+     * Create new collection of models
      * 
-     * @returns {String}
+     * @param {Array} [items=[]] 
+     * @returns {TypedCollection}
      */
-    getKeyName() {
-        return this._keyName;
+    newCollection(items = []) {
+        return new TypedCollection(this._type, items);
     }
 
     /**
      * Make query object from provided argument
      * 
      * @param {any} query 
-     * @returns {RepositoryQuery}
+     * @returns {Query}
      */
     normalizeQuery(query) {
-        if (is(query, RepositoryQuery)) {
+        if (query === null) {
+            return new Query();
+        }
+        if (is(query, Query)) {
             return query;
         }
-
-        if (isObject(query)) {
-            return (new RepositoryQuery).where(query);
+        if (isObject(query) || isFunction(query)) {
+            return (new Query).where(query);
         }
-
-        if (isFunction(query)) {
-            let normalized = new RepositoryQuery();
-            query(normalized);
-            return normalized;
-        }
-        
         if (is(query, Array)) {
-            return (new RepositoryQuery).where((condition) => {
-                condition.in(this.getKeyName(), query);
+            return (new Query).where((condition) => {
+                condition.in(this._keyName, query);
             });
         }
-        
-        return (new RepositoryQuery).where((condition) => {
-            condition.eq(this.getKeyName(), query);
-        });
+        return (new Query).where(this._keyName, query);
     }
 
     /**
@@ -207,6 +201,78 @@ class AbstractRepository extends Mixture
     max() {
         throw new Error('Method "max" must be implemented is subclass');
     }
+
+    /**
+     * Type of entities that this repository holds
+     * 
+     * @var {Function}
+     */
+    get type() {
+        return this._type;
+    }
+
+    /**
+     * Model key name
+     * 
+     * @var {String}
+     */
+    get keyName() {
+        return this._keyName;
+    }
+
+    /**
+     * Extract data from model
+     * 
+     * @param {Model} object 
+     * @returns {Object}
+     */
+    _consumeModel(object) {
+        return object.toObject();
+    }
+
+    /**
+     * Create model with data loaded from repository
+     * 
+     * @param {Object} object 
+     * @returns {Model}
+     */
+    _hydrateModel(object) {
+        return this.newModel(object);
+    }
+
+    /**
+     * Create collection with data loaded from repository
+     * 
+     * @param {Array|Collection} items
+     * @returns {TypedCollection}
+     */
+    _hydrateCollection(items) {
+        return this.newCollection(
+            items.map((item) => this._hydrateModel(item))
+        );
+    }
+
+    /**
+     * Update model data
+     * 
+     * @param {Model} object 
+     * @param {Object} data 
+     */
+    _updateModel(model, data) {
+        if (isObject(data)) {
+            model.assign(data);
+        }
+    }
+
+    /**
+     * Generate "element not exists" error
+     * 
+     * @param {any} key 
+     * @returns {NotExistsError}
+     */
+    _notExistsError(key) {
+        return new NotExistsError(`Element with key '${key}' does not exists`);
+    }
 }
 
 /**
@@ -215,12 +281,12 @@ class AbstractRepository extends Mixture
  * @class
  * @augments Error
  */
-class NotFoundError extends Error
+class NotExistsError extends Error
 {
     /**
-     * @param {String} [message='Not found'] 
+     * @param {String} [message='Element does not exists'] 
      */
-    constructor(message = 'Not found') {
+    constructor(message = 'Element does not exists') {
         super(message);
     }
 }
@@ -228,5 +294,5 @@ class NotFoundError extends Error
 export default AbstractRepository;
 
 export {
-    NotFoundError,
+    NotExistsError,
 };

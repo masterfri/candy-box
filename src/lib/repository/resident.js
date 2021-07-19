@@ -2,9 +2,7 @@ import Collection from '../structures/collection.js';
 import { 
     assertType,
 } from '../helpers.js';
-import AbstractRepository, {
-    NotFoundError,
- } from './base.js';
+import AbstractRepository from './base.js';
 import {
     CountAggregator,
     SumAggregator,
@@ -26,12 +24,6 @@ const makeSorter = (sort) => {
             }
         }
         return 0;
-    }
-}
-
-const assertKeyFound = (key) => {
-    if (key === -1) {
-        throw new NotFoundError(`Element with key '${key}' was not found in repository`);
     }
 }
 
@@ -114,7 +106,7 @@ class ResidentRepository extends AbstractRepository
      * @returns {Number} 
      */
     _findIndex(key) {
-        return this._items.findIndex((item) => item.getKey() == key);
+        return this._items.findIndex((item) => item[this._keyName] == key);
     }
     
     /**
@@ -140,10 +132,13 @@ class ResidentRepository extends AbstractRepository
      * @inheritdoc
      */
     get(key) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             let index = this._findIndex(key);
-            assertKeyFound(index);
-            resolve(this._getIndex(index));
+            if (index !== -1) {
+                resolve(this._hydrateModel(this._getIndex(index)));
+            } else {
+                reject(this._notExistsError(key));
+            }
         });
     }
     
@@ -156,23 +151,19 @@ class ResidentRepository extends AbstractRepository
             let normQuery = this.normalizeQuery(query);
             let condition = normQuery.condition;
             let results = this._items.filter((item) => testCondition(condition, item));
-
             if (normQuery.order.length !== 0) {
                 results = results.sort(makeSorter(normQuery.order));
             }
-            
             if (normQuery.group.length !== 0) {
                 let groups = results.group(normQuery.group);
                 results = new Collection(groups.map((g) => g.items[0]));
             }
-            
             if (normQuery.limit !== false) {
-                resolve(results.slice(normQuery.start, normQuery.start + normQuery.limit));
+                results = results.slice(normQuery.start, normQuery.start + normQuery.limit);
             } else if (normQuery.start !== 0) {
-                resolve(results.slice(normQuery.start));
-            } else {
-                resolve(results);
+                results = results.slice(normQuery.start);
             }
+            resolve(this._hydrateCollection(results));
         });
     }
     
@@ -182,21 +173,18 @@ class ResidentRepository extends AbstractRepository
      */
     store(object) {
         return new Promise((resolve) => {
-            assertType(object, this._type);
-
             if (!object.hasKey()) {
                 object.setKey(this._getNextKey());
-                this._items.push(object);
+                this._items.push(this._consumeModel(object));
             } else {
                 let index = this._findIndex(object.getKey());
                 if (index === -1) {
-                    this._items.push(object);
+                    this._items.push(this._consumeModel(object));
                 } else {
-                    this._items.set(index, object);
+                    this._items.set(index, this._consumeModel(object));
                 }
                 this._updateNextKey(object.getKey());
             }
-            
             resolve(object);
         });
     }
@@ -206,12 +194,14 @@ class ResidentRepository extends AbstractRepository
      * @inheritdoc
      */
     delete(key) {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             let index = this._findIndex(key);
-            assertKeyFound(index);
-            this._items.removeIndex(index);
-
-            resolve(true);
+            if (index !== -1) {
+                this._items.removeIndex(index);
+                resolve(true);
+            } else {
+                reject(this._notExistsError(key));
+            }
         });
     }
     
@@ -226,7 +216,6 @@ class ResidentRepository extends AbstractRepository
             let result = this._items.some((item) => {
                 return testCondition(condition, item);
             });
-
             resolve(result);
         });
     }
@@ -239,7 +228,6 @@ class ResidentRepository extends AbstractRepository
         if (query === null) {
             return Promise.resolve(this._items.length);
         }
-
         return this._aggregate(query, null, new CountAggregator());
     }
     
@@ -312,7 +300,7 @@ class ResidentRepository extends AbstractRepository
             this._forEach(query, (item) => {
                 aggregator.add(attribute === null ? item : item[attribute]);
             });
-            resolve(aggregator.getResult());
+            resolve(aggregator.result);
         });
     }
 }

@@ -3,10 +3,16 @@ import AbstractServer from './base.js';
 import {
     is,
     isString,
+    forEach,
 } from '../helpers.js';
 import Response, {
     Status,
+    HttpError,
 } from '../transport/response.js';
+import {
+    AuthorizationError,
+    DenyReason,
+} from '../auth/auth.js';
 
 /**
  * HTTP server
@@ -89,12 +95,22 @@ class HttpServer extends AbstractServer
             let request = requestFactory(req.body, {
                 ...(is(req.params, Array) ? {params: req.params} : req.params),
                 ...req.query,
-            });
+            }, req.headers);
             request.validate().then(() => {
                 this._delegate(target, request).then((response) => {
                     this._respond(res, response);
                 }).catch((error) => {
-                    res.status(Status.INTERNAL_SERVER_ERROR).send('Server error: ' + error);
+                    if (is(error, HttpError)) {
+                        res.status(error.code).send(error.message);
+                    } else if (is(error, AuthorizationError)) {
+                        if (error.reason === DenyReason.FORBIDDEN) {
+                            res.status(Status.FORBIDDEN).send('Forbidden');
+                        } else {
+                            res.status(Status.UNAUTHORIZED).send('Unauthorized');
+                        }
+                    } else {
+                        res.status(Status.INTERNAL_SERVER_ERROR).send('Server error: ' + error);
+                    }
                 });
             }).catch((error) => {
                 res.status(Status.UNPROCESSABLE_ENTITY).send(error.getErrors());
@@ -135,12 +151,11 @@ class HttpServer extends AbstractServer
     _respond(res, response) {
         let status, body;
         if (is(response, Response)) {
-            let props = response.props;
             body = response.body;
             status = response.status;
-            for (let prop in props) {
-                res.append(prop, props[prop]);
-            }
+            forEach(response.headers, (value, key) => {
+                res.append(key, value);
+            });
         } else {
             body = response;
             status = Status.OK;

@@ -2,53 +2,53 @@ const argsToArray = (...args) => {
     return Array.prototype.slice.call(...args);
 }
 
-const makeMutator = (type) => {
+const makeMutator = (type, nullable = false) => {
     if (type === Number) {
-        return (v) => isNaN(v) ? 0 : Number(v);
+        return (v) => (nullable && isNull(v)) ? null : (isNaN(v) ? 0 : Number(v));
     }
-    
     if (type === String) {
-        return (v) => String(v);
+        return (v) => (nullable && isNull(v)) ? null : String(v);
     }
-    
     if (type === Boolean) {
-        return (v) => Boolean(Number(v));
+        return (v) => (nullable && isNull(v)) ? null : Boolean(Number(v));
     }
-    
     if (type === Object) {
-        return (v) => isObject(v) ? v : {};
+        return (v) => (nullable && isNull(v)) ? null : (isObject(v) ? v : {});
     }
-    
     if (type === Array) {
-        return (v) => (v instanceof Array) ? v : [];
+        return (v) => (nullable && isNull(v)) ? null : (isArray(v) ? v : []);
     }
-    
     if (isFunction(type)) {
-        return (v) => (v instanceof type) ? v : new type(v);
+        return (nullable && isNull(v)) ? null : ((v) => (v instanceof type) ? v : new type(v));
     }
-    
-    return (v) => v;
+    return (v) => (nullable && isNull(v)) ? null : v;
 }
 
 const onlyProps = (source, props) => {
     let result = {};
-    
-    for (let prop in source) {
+    Object.keys(source).forEach((prop) => {
         if (props.indexOf(prop) !== -1) {
             result[prop] = source[prop];
         }
-    }
-    
+    });
+    return result;
+}
+
+const withoutProps = (source, props) => {
+    let result = {};
+    Object.keys(source).forEach((prop) => {
+        if (props.indexOf(prop) === -1) {
+            result[prop] = source[prop];
+        }
+    });
     return result;
 }
 
 const getProps = (source, props) => {
     let result = {};
-    
-    for (let prop of props) {
+    props.forEach((prop) => {
         result[prop] = source[prop];
-    }
-    
+    });
     return result;
 }
 
@@ -65,6 +65,45 @@ const getProp = (source, prop = null) => {
 const assign = (key, val, target = {}) => {
     target[key] = val;
     return target;
+}
+
+const get = (object, path, def = undefined) => {
+    if (isObject(object)) {
+        let dot = path.indexOf('.');
+        if (dot === -1) {
+            return (path in object) ? object[path] : def;
+        }
+        let root = path.substr(0, dot);
+        if (root in object) {
+            return get(object[root], path.substr(dot + 1), def);
+        }
+    }
+    return def;
+}
+
+const set = (object, path, value) => {
+    if (isObject(object)) {
+        let dot = path.indexOf('.');
+        if (dot === -1) {
+            object[path] = value;
+        } else {
+            let root = path.substr(0, dot);
+            if (!(root in object)) {
+                object[root] = {};
+            }
+            return set(object[root], path.substr(dot + 1), value);
+        }
+    }
+}
+
+const forEach = (object, callback) => {
+    if (isArray(object)) {
+        object.forEach(callback);
+    } else {
+        Object.keys(object).forEach((key) => {
+            callback(object[key], key, object);
+        });
+    }
 }
 
 const isScalar = (v) => {
@@ -140,6 +179,14 @@ const isString = (o) => {
     return typeof(o) === 'string';
 }
 
+const isArray = (o) => {
+    return o instanceof Array;
+}
+
+const isNull = (o) => {
+    return o === null || o === undefined;
+}
+
 const is = (o, t) => {
     return o instanceof t;
 }
@@ -176,13 +223,19 @@ const abstractMethodError = (m) => {
     throw new Error(`Method "${m}" must be implemented in subclass`);
 }
 
+const nop = () => {}
+
 export {
     argsToArray,
     makeMutator,
     getProps,
     getProp,
     onlyProps,
+    withoutProps,
     assign,
+    get,
+    set,
+    forEach,
     isScalar,
     objectsEqual,
     objectDiff,
@@ -191,6 +244,8 @@ export {
     isNumber,
     isBool,
     isString,
+    isArray,
+    isNull,
     is,
     isSubclass,
     safeCall,
@@ -198,4 +253,5 @@ export {
     assertIsObject,
     assertIsArray,
     abstractMethodError,
+    nop,
 };

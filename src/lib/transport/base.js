@@ -64,6 +64,75 @@ class AbstractTransportRequest
 class AbstractTransport extends Mixture
 {
     /**
+     * @protected
+     * @var {Object}
+     */
+    _stickyQuery = {};
+
+    /**
+     * @protected
+     * @var {Object}
+     */
+    _stickyHeaders = {};
+
+    /**
+     * Add sticky query parameter
+     * 
+     * @param {String} name 
+     * @param {any} value 
+     * @returns {AbstractTransport}
+     */
+    stickQueryParam(name, value) {
+        this._stickyQuery[name] = value;
+        return this;
+    }
+
+    /**
+     * Remove sticky query parameter
+     * 
+     * @param {String} name 
+     * @returns {AbstractTransport}
+     */
+    unstickQueryParam(name) {
+        delete this._stickyQuery[name];
+        return this;
+    }
+
+    /**
+     * Add sticky header
+     * 
+     * @param {String} name 
+     * @param {any} value 
+     * @returns {AbstractTransport}
+     */
+    stickHeader(name, value) {
+        this._stickyHeaders[name.toLowerCase()] = value;
+        return this;
+    }
+
+    /**
+     * Remove sticky header
+     * 
+     * @param {String} name 
+     * @param {any} value 
+     * @returns {AbstractTransport}
+     */
+    unstickHeader(name) {
+        delete this._stickyHeaders[name.toLowerCase()];
+        return this;
+    }
+
+    /**
+     * Setup authorization header
+     * 
+     * @param {String} type 
+     * @param {String} value 
+     */
+    setAuthorization(type, value) {
+        return this.stickHeader('authorization', `${type} ${value}`);
+    }
+
+    /**
      * Send request
      * 
      * @abstract
@@ -86,7 +155,11 @@ class AbstractTransport extends Mixture
         return {
             method: request.method(),
             url: this._buildUrl(request),
-            data: request.getData(),
+            data: request.body,
+            headers: {
+                ...this._stickyHeaders,
+                ...request.headers,
+            },
         };
     }
 
@@ -97,8 +170,11 @@ class AbstractTransport extends Mixture
      * @returns {String}
      */
     _buildUrl(request) {
-        let data = request.getData();
-        let params = {...request.getQuery()};
+        let data = request.body;
+        let params = {
+            ...this._stickyQuery,
+            ...request.query,
+        };
         let url = request.route().split('/')
             .map((part) => {
                 if (part.indexOf(':') !== -1) {

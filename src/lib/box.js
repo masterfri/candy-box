@@ -2,7 +2,13 @@ const constructorName = (constructor) => {
     if (typeof constructor === 'function') {
         return constructor.name;
     }
-    return constructor;
+    if (typeof constructor === 'symbol') {
+        return constructor.description;
+    }
+    if (typeof constructor === 'string') {
+        return constructor;
+    }
+    return 'unknown';
 }
 
 class Box 

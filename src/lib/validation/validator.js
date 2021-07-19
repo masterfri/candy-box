@@ -505,6 +505,15 @@ class ValidationError extends Error
         }
         return this._errors[key];
     }
+
+    /**
+     * All errors
+     * 
+     * @var {Object}
+     */
+    get errors() {
+        return this._errors;
+    }
 }
 
 const ValidatorSymbol = Symbol('Validator');

@@ -1,20 +1,19 @@
 import Collection from '../structures/collection.js';
 import {
     Assertion,
-    Logic,
+    Negation,
     Assert,
 } from './query.js';
 import {
+    get,
     is,
     isObject, 
+    isArray,
     isBool,
     isString,
     isNumber,
+    isNull,
 } from '../helpers.js';
-
-const isNull = (a) => {
-    return a === null || a === undefined;
-}
 
 const isEqual = (a, b) => {
     if (isNull(b)) {
@@ -74,14 +73,14 @@ const isGreaterThanOrEqual = (a, b) => {
 }
 
 const inArray = (a, b) => {
-    if (b instanceof Array) {
+    if (isArray(b)) {
         return b.some((item) => isEqual(item, a));
     }
     return false;
 }
 
 const notInArray = (a, b) => {
-    if (b instanceof Array) {
+    if (isArray(b)) {
         return b.every((item) => isNotEqual(item, a));
     }
     return false;
@@ -109,27 +108,27 @@ const strEndsWith = (a, b) => {
 }
 
 const objectHas = (object, condition) => {
-    if (object instanceof Collection) {
-        return object.some((item) => testCondition(condition, item));
+    if (is(object, Collection)) {
+        return object.some((item) => testSubcondition(condition, item));
     }
-    if (object instanceof Array) {
-        return object.some((item) => testCondition(condition, item));
+    if (isArray(object)) {
+        return object.some((item) => testSubcondition(condition, item));
     }
     if (isObject(object)) {
-        return testCondition(condition, object);
+        return testSubcondition(condition, object);
     }
     return false;
 }
 
 const objectNotHas = (object, condition) => {
-    if (object instanceof Collection) {
-        return object.every((item) => !testCondition(condition, item));
+    if (is(object, Collection)) {
+        return object.every((item) => !testSubcondition(condition, item));
     }
-    if (object instanceof Array) {
-        return object.every((item) => !testCondition(condition, item));
+    if (isArray(object)) {
+        return object.every((item) => !testSubcondition(condition, item));
     }
     if (isObject(object)) {
-        return !testCondition(condition, object);
+        return !testSubcondition(condition, object);
     }
     return false;
 }
@@ -165,34 +164,24 @@ const testAssertion = (operator, left, right) => {
         
         case Assert.STARTS:
             return strStartsWith(left, right);
-        
-        case Assert.HAS:
-            return objectHas(left, right);
-        
-        case Assert.NOT_HAS:
-            return objectNotHas(left, right);
     }
     return false;
 }
 
 const testSubcondition = (thing, input) => {
     if (is(thing, Assertion)) {
-        return testAssertion(thing.operator, input[thing.property], thing.argument);
-    } else {
-        return testCondition(thing, input);
+        return testAssertion(thing.operator, get(input, thing.property), thing.argument);
     }
+    if (is(thing, Negation)) {
+        return !testSubcondition(thing.subject, input);
+    }
+    return testCondition(thing, input);
 }
 
 const testCondition = (condition, input) => {
-    switch (condition.logic) {
-        case Logic.AND:
-            return condition.wheres.every((item) => testSubcondition(item, input));
-        case Logic.OR:
-            return condition.wheres.some((item) => testSubcondition(item, input));
-        case Logic.NOT:
-            return !condition.wheres.every((item) => testSubcondition(item, input));
-    }
-    return false;
+    return condition.isInverted ^ condition.wheres.some((or) => {
+        return or.every((and) => testSubcondition(and, input));
+    });
 }
 
 const compare = (a, b, descOrder = false) => {
@@ -228,6 +217,7 @@ export {
     strStartsWith,
     strEndsWith,
     objectHas,
+    objectNotHas,
     testAssertion,
     testCondition,
     compare,

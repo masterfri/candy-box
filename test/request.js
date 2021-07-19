@@ -1,14 +1,8 @@
 import assert from 'assert';
 import express from 'express';
+import './_boot.js';
 import Request, {Method} from '../src/lib/transport/request.js';
 import {ValidationError} from '../src/lib/validation/validator.js';
-import boot from '../src/lib/boot.js';
-
-boot({
-    transport: {
-        baseURL: 'http://127.0.0.1:8088/',
-    },
-});
 
 let server = null;
 

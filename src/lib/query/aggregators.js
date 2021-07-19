@@ -25,7 +25,7 @@ class Aggregator
         return value;
     }
     
-    getResult() {
+    get result() {
         return this._result;
     } 
 }
@@ -72,7 +72,7 @@ class AvgAggregator extends SumAggregator
         return super.count(value);
     }
     
-    getResult() {
+    get result() {
         return this._num === 0 ? 0 : this._result / this._num;
     }
 }

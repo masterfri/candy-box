@@ -1,27 +1,16 @@
 import assert from 'assert';
-import Model from '../src/lib/structures/model.js';
+import Model, {
+    Attribute,
+} from '../src/lib/structures/model.js';
 import Collection from '../src/lib/structures/collection.js';
 
 class TestModel extends Model
 {
-    constructor(attributes = {}, safe = true, change = true) {
-        super(attributes, safe, change);
-        this.unsafe = 'ok';
-    }
-    
     attributes() {
         return {
-            color: {
-                type: String,
-                default: 'orange',
-            },
-            weight: {
-                type: Number,
-            },
-            collection: {
-                type: Array,
-                elementsType: TestModel,
-            },
+            color: Attribute.string('orange'),
+            weight: Attribute.number(),
+            collection: Attribute.collection(TestModel),
         };
     }
 }

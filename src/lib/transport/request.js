@@ -1,13 +1,13 @@
 import {
     TransportSymbol,
 } from './base.js';
-import {
-    Mixture, 
-} from '../mixture.js';
+import Message from './message.js';
 import {
     isSubclass,
     isObject,
     isString,
+    get,
+    forEach,
 } from '../helpers.js';
 import {
     ValidationError,
@@ -31,16 +31,10 @@ const Method = {
  * Base class for requests
  * 
  * @class
- * @augments Mixture
+ * @augments Message
  */
-class Request extends Mixture
+class Request extends Message
 {
-    /**
-     * @protected
-     * @var {Object}
-     */
-    _data;
-
     /**
      * @protected
      * @var {Object}
@@ -60,13 +54,12 @@ class Request extends Mixture
     _errors = {};
 
     /**
-     * 
-     * @param {Object} data 
-     * @param {Object} query 
+     * @param {Object} [body={}]
+     * @param {Object} [query={}]
+     * @param {Object} [headers={}]
      */
-    constructor(data = {}, query = {}) {
-        super();
-        this._data = data;
+    constructor(body = {}, query = {}, headers = {}) {
+        super(body, headers);
         this._query = query;
     }
 
@@ -89,49 +82,24 @@ class Request extends Mixture
     }
 
     /**
-     * Get request query
-     * 
-     * @returns {Object}
-     */
-    getQuery() {
-        return this._query;
-    }
-
-    /**
-     * Get request body
-     * 
-     * @returns {Object}
-     */
-    getData() {
-        return this._data;
-    }
-
-    /**
      * Get parameter from request data or query
      * 
-     * @param {String} name 
-     * @param {any} fallback 
+     * @param {String} key 
+     * @param {any} [fallback=null] 
      * @returns {any}
      */
-    getParam(name, fallback = null) {
-        if (name in this._data) {
-            return this._data[name];
+    get(key, fallback = null) {
+        let value = super.get(key, undefined);
+        if (value !== undefined) {
+            return value;
         }
-        if (name in this._query) {
-            return this._query[name];
+        value = get(this._query, key, undefined);
+        if (value !== undefined) {
+            return value;
         }
         return fallback;
     }
 
-    /**
-     * Get request errors
-     * 
-     * @returns {Object}
-     */
-    getErrors() {
-        return this._errors;
-    }
-    
     /**
      * Make request transport instance
      * 
@@ -205,7 +173,7 @@ class Request extends Mixture
         }
         return Promise.all(
                 Object.keys(validation).map((attribute) => {
-                    return validation[attribute].validate(attribute, this._data)
+                    return validation[attribute].validate(attribute, this._body)
                         .catch((errors) => {
                             Object.keys(errors).map((attribute) => {
                                 this._errors[attribute] = errors[attribute];
@@ -218,6 +186,24 @@ class Request extends Mixture
                     throw new ValidationError(this._errors);
                 }
             });
+    }
+
+    /**
+     * Request query
+     * 
+     * @var {Object}
+     */
+    get query() {
+        return this._query;
+    }
+
+    /**
+     * Request errors
+     * 
+     * @var {Object}
+     */
+    get errors() {
+        return this._errors;
     }
 }
 
@@ -243,12 +229,13 @@ class PlainRequest extends Request
 
     /**
      * @param {String} route 
-     * @param {String} method 
-     * @param {Object} data 
-     * @param {Object} query 
+     * @param {String} [method=GET]
+     * @param {Object} [body={}]
+     * @param {Object} [query={}]
+     * @param {Object} [headers={}]
      */
-    constructor(route, method = GET, data = {}, query = {}) {
-        super(data, query);
+    constructor(route, method = GET, body = {}, query = {}, headers = {}) {
+        super(body, query, headers);
         this._method = method;
         this._route = route;
     }
@@ -294,12 +281,12 @@ class RequestMap
             this._map[method] = {
                 method: request.prototype.method.call({}),
                 route: request.prototype.route.call({}),
-                factory: (data, query) => new request(data, query),
+                factory: (data, query, headers) => new request(data, query, headers),
             };
         } else if (isObject(request)) {
             let route = request.route;
             let requestMethod = request.method || GET;
-            let factory = request.factory || ((data, query) => new PlainRequest(route, requestMethod, data, query));
+            let factory = request.factory || ((data, query, headers) => new PlainRequest(route, requestMethod, data, query, headers));
             this._map[method] = {
                 method: requestMethod,
                 route,
@@ -309,7 +296,7 @@ class RequestMap
             this._map[method] = {
                 method: GET,
                 route: request,
-                factory: (data, query) => new PlainRequest(request, GET, data, query),
+                factory: (data, query, headers) => new PlainRequest(request, GET, data, query, headers),
             };
         } else {
             throw new Error('Invalid request mapping');
@@ -320,15 +307,16 @@ class RequestMap
      * Create new request instance for certain method
      * 
      * @param {String} method 
-     * @param {Object} data 
-     * @param {Object} query 
+     * @param {Object} [data={}]
+     * @param {Object} [query={}]
+     * @param {Object} [headers={}]
      * @returns {Request}
      */
-    create(method, data = {}, query = {}) {
+    create(method, data = {}, query = {}, headers = {}) {
         if (this._map[method] === undefined) {
             throw new Error(`Nothing is mapped to ${method}`);
         }
-        return this._map[method].factory(data, query);
+        return this._map[method].factory(data, query, headers);
     }
 
     /**
@@ -337,8 +325,8 @@ class RequestMap
      * @param {Function} callback 
      */
     forEach(callback) {
-        Object.keys(this._map).forEach((method) => {
-            callback(this._map[method], method);
+        forEach(this._map, (factory, method) => {
+            callback(factory, method);
         });
     }
 }

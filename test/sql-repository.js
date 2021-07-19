@@ -1,7 +1,13 @@
 import assert from 'assert';
 import Model from '../src/lib/structures/model.js';
-import ResidentRepository from '../src/lib/repository/resident.js';
+import SqlRepository from '../src/lib/repository/sql.js';
 import Query from '../src/lib/query/query.js';
+import App from '../src/lib/app.js';
+import {
+    SqlClientSymbol,
+} from '../src/lib/sql/base-client.js';
+
+let db = null;
 
 class TestModel extends Model
 {
@@ -17,11 +23,33 @@ class TestModel extends Model
     }
 }
 
-describe('Resident repository', function() {
+describe('SQL repository', function() {
+    before(function (done) {
+        db = App.make(SqlClientSymbol);
+        db.execute(
+            `CREATE TABLE IF NOT EXISTS test (id INT(10) UNSIGNED AUTO_INCREMENT NOT NULL, color VARCHAR(100), weight DECIMAL(10, 2), PRIMARY KEY (id)) ENGINE = MEMORY;`
+        )
+            .then(() => done())
+            .catch(done);
+    });
+    beforeEach(function (done) {
+        db.execute(
+            `TRUNCATE TABLE test;`
+        )
+            .then(() => done())
+            .catch(done);
+    });
+    after(function (done) {
+        db.execute(
+            `DROP TABLE IF EXISTS test;`
+        )
+            .then(() => done())
+            .catch(done);
+    });
     describe('#store', function() {
         it('Model should be stored in repository', function(done) {
             let model = new TestModel();
-            let repository = new ResidentRepository(TestModel);
+            let repository = new SqlRepository(TestModel, 'test', db);
             repository.store(model).then(() => {
                 assert.ok(model.hasKey());
                 done();
@@ -33,7 +61,7 @@ describe('Resident repository', function() {
     describe('#get', function() {
         it('Model should be retrievable from repository', function(done) {
             let model = new TestModel();
-            let repository = new ResidentRepository(TestModel);
+            let repository = new SqlRepository(TestModel, 'test', db);
             repository.store(model).then(() => {
                 return repository.get(model.getKey());
             }).then(() => {
@@ -45,7 +73,7 @@ describe('Resident repository', function() {
     });
     describe('#search', function() {
         it('Model should be searchable in repository', function(done) {
-            let repository = new ResidentRepository(TestModel);
+            let repository = new SqlRepository(TestModel, 'test', db);
             Promise.all([
                 repository.store(new TestModel({color: 'red', weight: 100})),
                 repository.store(new TestModel({color: 'red', weight: 150})),
@@ -71,7 +99,7 @@ describe('Resident repository', function() {
     describe('#delete', function() {
         it('Model should be deleteable from repository', function(done) {
             let model = new TestModel();
-            let repository = new ResidentRepository(TestModel);
+            let repository = new SqlRepository(TestModel, 'test', db);
             repository.store(model).then(() => {
                 return repository.delete(model.getKey());
             }).then(() => {
@@ -86,7 +114,7 @@ describe('Resident repository', function() {
     describe('#exists', function() {
         it('exists() should return true when model exists in collection', function(done) {
             let model = new TestModel();
-            let repository = new ResidentRepository(TestModel);
+            let repository = new SqlRepository(TestModel, 'test', db);
             repository.store(model).then(() => {
                 return repository.exists(model.getKey());
             }).then((result) => {
@@ -98,7 +126,7 @@ describe('Resident repository', function() {
         });
         it('exists() should return false when model does not exist in collection', function(done) {
             let model = new TestModel();
-            let repository = new ResidentRepository(TestModel);
+            let repository = new SqlRepository(TestModel, 'test', db);
             repository.store(model).then(() => {
                 return repository.exists(999);
             }).then((result) => {
@@ -111,7 +139,7 @@ describe('Resident repository', function() {
     });
     describe('#count', function() {
         it('count() should return proper result', function(done) {
-            let repository = new ResidentRepository(TestModel);
+            let repository = new SqlRepository(TestModel, 'test', db);
             Promise.all([
                 repository.store(new TestModel({color: 'red', weight: 100})),
                 repository.store(new TestModel({color: 'red', weight: 150})),
@@ -134,7 +162,7 @@ describe('Resident repository', function() {
     });
     describe('#sum', function() {
         it('sum() should return proper result', function(done) {
-            let repository = new ResidentRepository(TestModel);
+            let repository = new SqlRepository(TestModel, 'test', db);
             Promise.all([
                 repository.store(new TestModel({color: 'red', weight: 100})),
                 repository.store(new TestModel({color: 'red', weight: 150})),
@@ -154,7 +182,7 @@ describe('Resident repository', function() {
     });
     describe('#avg', function() {
         it('avg() should return proper result', function(done) {
-            let repository = new ResidentRepository(TestModel);
+            let repository = new SqlRepository(TestModel, 'test', db);
             Promise.all([
                 repository.store(new TestModel({color: 'red', weight: 100})),
                 repository.store(new TestModel({color: 'red', weight: 200})),
@@ -174,7 +202,7 @@ describe('Resident repository', function() {
     });
     describe('#min', function() {
         it('min() should return proper result', function(done) {
-            let repository = new ResidentRepository(TestModel);
+            let repository = new SqlRepository(TestModel, 'test', db);
             Promise.all([
                 repository.store(new TestModel({color: 'red', weight: 100})),
                 repository.store(new TestModel({color: 'red', weight: 200})),
@@ -194,7 +222,7 @@ describe('Resident repository', function() {
     });
     describe('#max', function() {
         it('max() should return proper result', function(done) {
-            let repository = new ResidentRepository(TestModel);
+            let repository = new SqlRepository(TestModel, 'test', db);
             Promise.all([
                 repository.store(new TestModel({color: 'red', weight: 100})),
                 repository.store(new TestModel({color: 'red', weight: 200})),
@@ -214,7 +242,7 @@ describe('Resident repository', function() {
     });
     describe('#sort', function() {
         it('Search results should go in proper order', function(done) {
-            let repository = new ResidentRepository(TestModel);
+            let repository = new SqlRepository(TestModel, 'test', db);
             Promise.all([
                 repository.store(new TestModel({color: 'red', weight: 200})),
                 repository.store(new TestModel({color: 'red', weight: 80})),

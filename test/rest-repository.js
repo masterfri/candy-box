@@ -1,35 +1,22 @@
 import assert from 'assert';
+import './_boot.js';
 import {ServerSymbol} from '../src/lib/server/base.js';
-import Model from '../src/lib/structures/model.js';
+import Model, {Attribute} from '../src/lib/structures/model.js';
 import ResidentRepository from '../src/lib/repository/resident.js';
 import RestRepository from '../src/lib/repository/rest.js';
-import RepositoryProxy from '../src/lib/repository/rest/proxy.js';
-import RepositoryRequestMap from '../src/lib/repository/rest/request-map.js';
+import RepositoryProxy from '../src/lib/repository/proxy.js';
+import RepositoryRequestMap from '../src/lib/repository/request-map.js';
 import Request, {Method} from '../src/lib/transport/request.js';
 import {ValidationError} from '../src/lib/validation/validator.js';
-import Query from '../src/lib/repository/query.js';
+import Query from '../src/lib/query/query.js';
 import App from '../src/lib/app.js';
-import boot from '../src/lib/boot.js';
-
-boot({
-    transport: {
-        baseURL: 'http://127.0.0.1:8088/',
-    },
-    server: {
-        host: '127.0.0.1',
-        port: 8088,
-    },
-});
 
 class TestModel extends Model
 {
     attributes() {
         return {
             id: Number,
-            color: {
-                type: String,
-                default: 'orange',
-            },
+            color: Attribute.string('orange'),
             weight: Number,
         };
     }

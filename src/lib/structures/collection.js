@@ -4,6 +4,7 @@ import {
     argsToArray,
     isFunction,
     isObject,
+    is,
 } from '../helpers.js';
 
 /**
@@ -20,10 +21,10 @@ class Collection
     _items;
 
     /**
-     * @param {Array} [items=[]] Initial set of elements 
+     * @param {Array|Collection} [items=[]] Initial set of elements 
      */
     constructor(items = []) {
-        this._items = items;
+        this._items = is(items, Collection) ? items.all().slice(0) : items;
     }
 
     /**
@@ -373,6 +374,18 @@ class Collection
     findIndex(...args) {
         return this._items.findIndex(...args);
     }
+
+    /**
+     * Find element in collection
+     * 
+     * @param {Function} callback
+     * @param {any} [thisArg] 
+     * @returns {any}
+     * @see Array.find
+     */
+    find(...args) {
+        return this._items.find(...args);
+    }
     
     /**
      * Get the first element in collection
@@ -419,6 +432,13 @@ class Collection
      */
     all() {
         return this._items;
+    }
+
+    /**
+     * Make a copy of this collection
+     */
+    clone() {
+        return this.newCollection([...this._items]);
     }
     
     /**

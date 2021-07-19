@@ -2,11 +2,9 @@ import {
     is,
     isObject, 
     isFunction,
+    isArray,
+    isNumber,
 } from '../helpers.js';
-
-const AND = 'and';
-const OR = 'or';
-const NOT = 'not';
 
 const ASC = 'asc';
 const DESC = 'desc';
@@ -21,8 +19,9 @@ const IN = 'in';
 const NOT_IN = 'notIn';
 const CONTAINS = 'contains';
 const STARTS = 'starts';
-const HAS = 'has';
-const NOT_HAS = 'notHas';
+
+const IS = 'is';
+const IS_NOT = 'isNot';
 
 /**
  * Condition assertion
@@ -61,6 +60,15 @@ class Assertion
     }
 
     /**
+     * Make a copy of this assertion
+     * 
+     * @return Assertion
+     */
+    clone() {
+        return new this.constructor(this._prop, this._operator, this._argument);
+    }
+
+    /**
      * Get object property name
      * 
      * @var {String}
@@ -88,6 +96,40 @@ class Assertion
     }
 }
 
+class Negation
+{
+    /**
+     * @protected
+     * @var {Assertion|Condition|Negation}
+     */
+    _subject;
+
+    /**
+     * @param {Assertion|Condition|Negation} subject
+     */
+    constructor(subject) {
+        this._subject = subject;
+    }
+
+    /**
+     * Make a copy of this negation
+     * 
+     * @return Negation
+     */
+    clone() {
+        return new this.constructor(this._subject.clone());
+    }
+
+    /**
+     * Get assertion 
+     * 
+     * @var {Assertion|Condition|Negation}
+     */
+    get subject() {
+        return this._subject;
+    }
+}
+
 /**
  * Query condition
  * 
@@ -99,13 +141,7 @@ class Condition
      * @protected
      * @var {Array}
      */
-    _wheres = [];
-
-    /**
-     * @protected
-     * @var {String}
-     */
-    _logic = AND;
+    _wheres = [[]];
 
     /**
      * @param  {...any} args 
@@ -140,53 +176,7 @@ class Condition
      * condition.where('foo2', Assert.EQ, 'bar2');
      */
     where(...args) {
-        if (args.length === 3) {
-            this._wheres.push(new Assertion(args[0], args[1], args[2]));
-            return this;
-        }
-        
-        if (args.length === 2) {
-            this.where(args[0], EQ, args[1]);
-            return this;
-        }
-        
-        if (is(args[0], Condition)) {
-            this._wheres.push(args[0]);
-            return this;
-        }
-        
-        if (is(args[0], Array)) {
-            for (let arg of args[0]) {
-                this.where(...arg);
-            }
-            return this;
-        }
-         
-        if (isFunction(args[0])) {
-            args[0](this);
-            return this;
-        }
-        
-        if (isObject(args[0])) {
-            for (let prop in args[0]) {
-                this.where(prop, EQ, args[0][prop]);
-            }
-            return this;
-        }
-        
-        this.where(args[0], NEQ, null);
-
-        return this;
-    }
-
-    /**
-     * Set boolean logic for this condition
-     * 
-     * @param {String} logic 
-     * @returns {Condition}
-     */
-    use(logic) {
-        this._logic = logic;
+        this._pushAssertion(this._makeAssertion(...args));
         return this;
     }
     
@@ -198,7 +188,7 @@ class Condition
      * @returns {Condition}
      */
     eq(prop, value) {
-        return this.where(prop, value);
+        return this.where(prop, EQ, value);
     }
     
     /**
@@ -301,112 +291,131 @@ class Condition
     }
     
     /**
-     * Make nested condition with boolean logic "AND"
+     * Add assertion to condition using boolean AND. Alias for where
      * 
-     * @param {any} condition
+     * @param {...any} args 
      * @returns {Condition}
      */
-    and(condition) {
-        return this.where(this.makeSubcondition(condition));
+    and(...args) {
+        this._pushAssertion(this._makeAssertion(...args));
+        return this;
     }
     
     /**
-     * Make nested condition with boolean logic "OR"
+     * Add assertion to condition using boolean OR
      * 
-     * @param {any} condition
+     * @param {...any} args
      * @returns {Condition}
      */
-    or(condition) {
-        return this.where(this.makeSubcondition(condition, OR));
+    or(...args) {
+        this._addOrCase();
+        if (args.length !== 0) {
+            this._pushAssertion(this._makeAssertion(...args));
+        }
+        return this;
     }
     
     /**
-     * Make nested condition with boolean logic "NOT"
+     * Add assertion to condition using boolean NOT
      * 
-     * @param {any} condition
+     * @param {...any} args
      * @returns {Condition}
      */
-    not(condition) {
-        return this.where(this.makeSubcondition(condition, NOT));
+    not(...args) {
+        let assertion = this._makeAssertion(...args);
+        this._pushAssertion(new Negation(assertion));
+        return this;
     }
     
-    /**
-     * Add "has" assertion
-     * 
-     * @param {String} prop 
-     * @param {any} condition 
-     * @returns {Condition}
-     */
-    has(prop, condition) {
-        return this.where(prop, HAS, this.makeSubcondition(condition));
-    }
-
-    /**
-     * Add "does not have" assertion
-     * 
-     * @param {String} prop 
-     * @param {any} condition 
-     * @returns {Condition}
-     */
-    doesntHave(prop, condition) {
-        return this.where(prop, NOT_HAS, this.makeSubcondition(condition));
-    }
-    
-    /**
-     * Check whether condition is empty
-     * 
-     * @returns {Boolean}
-     */
-    isEmpty() {
-        return this._wheres.length === 0;
-    }
-
     /**
      * Make a copy of this condition
      * 
      * @returns {Condition}
      */
-    copy() {
+    clone() {
         let copy = new this.constructor();
-        copy._logic = this._logic;
-        copy._wheres = this._wheres.map((where) => {
-            if (is(where, Condition)) {
-                return where.copy();
-            }
-            return where;
+        this._wheres.forEach((or) => {
+            copy.or();
+            or.forEach((assertion) => {
+                copy.and(assertion.clone());
+            });
         });
         return copy;
     }
 
     /**
-     * Create subcondition with the given parameters
+     * Make an assertion based on the given arguments
      * 
-     * @param {any} condition 
-     * @param {String} logic
-     * @returns {Condition}
+     * @protected
+     * @param {any} prop
+     * @param {String} op
+     * @param {any} expr
+     * @returns {Assertion|Condition|Negation}
      */
-    makeSubcondition(condition, logic = AND) {
-        if (is(condition, Condition)) {
-            condition.use(logic);
-            return condition;
+    _makeAssertion(prop, op, expr) {
+        if (is(prop, Condition) || is(prop, Assertion) || is(prop, Negation)) {
+            return prop;
         }
-        let subcondition = new this.constructor();
-        subcondition.use(logic);
-        if (isFunction(condition)) {
-            condition(subcondition);
-        } else {
-            subcondition.where(condition);
+        
+        if (isArray(prop)) {
+            let nested = new this.constructor();
+            for (let args of prop) {
+                nested.where(...args);
+            }
+            return nested;
         }
-        return subcondition;
+         
+        if (isFunction(prop)) {
+            let nested = new this.constructor();
+            prop(nested);
+            return nested;
+        }
+        
+        if (isObject(prop)) {
+            let nested = new this.constructor();
+            for (let key in prop) {
+                nested.where(key, EQ, prop[key]);
+            }
+            return nested;
+        }
+
+        if (expr !== undefined) {
+            return new Assertion(prop, op, expr);
+        }
+        
+        if (op !== undefined) {
+            return new Assertion(prop, EQ, op);
+        }
+        
+        return new Assertion(prop, NEQ, null);
     }
 
     /**
-     * Boolean logic
+     * Push assertion to the last OR case
      * 
-     * @var {String}
+     * @protected
+     * @param {Assertion|Condition|Negation} assertion 
      */
-    get logic() {
-        return this._logic;
+    _pushAssertion(assertion) {
+        this._lastOr().push(assertion);
+    }
+
+    /**
+     * Append OR case if necessary
+     * 
+     * @protected
+     */
+    _addOrCase() {
+        if (this._lastOr().length !== 0) {
+            this._wheres.push([]);
+        }
+    }
+
+    /**
+     * Get last OR case
+     */
+    _lastOr() {
+        return this._wheres[this._wheres.length - 1];
     }
 
     /**
@@ -416,6 +425,15 @@ class Condition
      */
     get wheres() {
         return this._wheres;
+    }
+
+    /**
+     * Determines whether condition is empty
+     * 
+     * @var {Boolean}
+     */
+    get isEmpty() {
+        return this._wheres[0].length === 0;
     }
 }
 
@@ -531,15 +549,43 @@ class Query
     /**
      * Add where clause to query
      * 
-     * @param  {...any} condition 
+     * @param  {...any} args 
      * @returns {Query}
      * @see Condition
      */
-    where(...condition) {
-        this._condition.where(...condition);
+    where(...args) {
+        if (args.length === 1) {
+            let [expr] = args;
+
+            if (is(expr, Condition) || is(expr, Assertion)) {
+                this._condition.where(expr);
+                return this;
+            }
+            
+            if (isArray(expr)) {
+                for (let args of expr) {
+                    this._condition.where(...args);
+                }
+                return this;
+            }
+             
+            if (isFunction(expr)) {
+                expr(this._condition);
+                return this;
+            }
+            
+            if (isObject(expr)) {
+                for (let key in expr) {
+                    this._condition.where(key, EQ, expr[key]);
+                }
+                return this;
+            }
+        }
+
+        this._condition.where(...args);
         return this;
     }
-    
+
     /**
      * Add sort order to query
      * 
@@ -604,6 +650,28 @@ class Query
         this._limit = limit;
         return this;
     }
+
+    /**
+     * Make a copy of this query
+     * 
+     * @returns {Query}
+     */
+    clone() {
+        let copy = new this.constructor();
+        this._condition.wheres.forEach((or) => {
+            copy.condition.or();
+            or.forEach((and) => {
+                copy.condition.where(and.clone());
+            });
+        });
+        this._order.forEach((order) => {
+            copy.orderBy(order.prop, order.direction);
+        });
+        copy.groupBy(...this._group);
+        copy.limitTo(this._limit);
+        copy.startFrom(this._start);
+        return copy;
+    }
     
     /**
      * Query condition
@@ -617,6 +685,7 @@ class Query
     /**
      * Query sort order
      * 
+     * @readonly
      * @var {Array}
      */
     get order() {
@@ -626,6 +695,7 @@ class Query
     /**
      * Query group clause
      * 
+     * @readonly
      * @var {Array}
      */
     get group() {
@@ -635,6 +705,7 @@ class Query
     /**
      * Results offset
      * 
+     * @readonly
      * @var {Number}
      */
     get start() {
@@ -644,6 +715,7 @@ class Query
     /**
      * Results limit
      * 
+     * @readonly
      * @var {Number|false}
      */
     get limit() {
@@ -651,10 +723,174 @@ class Query
     }
 }
 
-const Logic = {
-    AND,
-    OR,
-    NOT,
+/**
+ * Class that perform (de-)serialization of queries
+ * 
+ * @class
+ */
+class SerializedQuery
+{
+    /**
+     * @param {Object|Query} query 
+     */
+    constructor(query) {
+        if (is(query, Query)) {
+            this._data = {};
+            if (!query.condition.isEmpty) {
+                this._data.where = this._serializeCondition(query.condition);
+            }
+            if (query.order.length !== 0) {
+                this._data.sort = this._serializeOrder(query.order);
+            }
+            if (query.group.length !== 0) {
+                this._data.group = this._serializeGroup(query.group);
+            }
+            if (query.start !== 0) {
+                this._data.start = query.start;
+            }
+            if (query.limit !== false) {
+                this._data.limit = query.limit;
+            }
+        } else {
+            this._data = query;
+        }
+    }
+
+    /**
+     * Get serialized query data
+     * 
+     * @returns {Object}
+     */
+    toObject() {
+        return this._data;
+    }
+
+    /**
+     * Restore query from serialized data
+     * 
+     * @returns {Query}
+     */
+    toQuery() {
+        let query = new Query();
+        if (this._data.where !== undefined) {
+            this._data.where[1].forEach((or) => {
+                query.condition.or();
+                or.forEach((and) => {
+                    query.condition.where(this._unserializeCondition(and));
+                });
+            });
+        }
+        if (this._data.sort !== undefined) {
+            this._unserializeOrder(query, this._data.sort);
+        }
+        if (this._data.group !== undefined) {
+            this._unserializeGroup(query, this._data.group);
+        }
+        if (isNumber(this._data.start)) {
+            query.startFrom(this._data.start);
+        }
+        if (isNumber(this._data.limit)) {
+            query.limitTo(this._data.limit);
+        }
+        return query;
+    }
+
+    /**
+     * Serialize condition
+     * 
+     * @protected
+     * @param {Assertion|Condition|Negation} assertion
+     * @returns {Array}
+     */
+    _serializeCondition(assertion) {
+        if (is(assertion, Assertion)) {
+            return [
+                assertion.operator,
+                assertion.property,
+                assertion.argument,
+            ];
+        }
+        if (is(assertion, Negation)) {
+            return [IS_NOT, this._serializeCondition(assertion.subject)];
+        }
+        if (is(assertion, Condition)) {
+            return [IS, assertion.wheres.map((or) => {
+                return or.map((and) => this._serializeCondition(and));
+            })];
+        }
+        throw new TypeError('Illegal assertion type');
+    }
+    
+    /**
+     * Serialize sort order
+     * 
+     * @protected
+     * @param {Array} order
+     * @returns {Array}
+     */
+    _serializeOrder(order) {
+        return order.map((sort) => [sort.prop, sort.direction]);
+    }
+    
+    /**
+     * Serialize group clause
+     * 
+     * @protected
+     * @param {Array} group
+     * @returns {Array}
+     */
+    _serializeGroup(group) {
+        return [...group];
+    }
+
+    /**
+     * Unserialize condition
+     * 
+     * @protected
+     * @param {Array} params 
+     * @returns {Assertion|Condition|Negation}
+     */
+    _unserializeCondition(params) {
+        switch (params[0]) {
+            case IS:
+                let nested = new Condition();
+                params[1].forEach((or) => {
+                    nested.or();
+                    or.forEach((and) => {
+                        nested.where(this._unserializeCondition(and));
+                    });
+                });
+                return nested;
+            case IS_NOT:
+                return new Negation(this._unserializeCondition(params[1]));
+            default:
+                return new Assertion(params[1], params[0], params[2]);
+        }
+    }
+
+    /**
+     * Unserialize sort order
+     * 
+     * @protected
+     * @param {Query} query 
+     * @param {Array} order 
+     */
+    _unserializeOrder(query, order) {
+        order.forEach((sort) => {
+            query.orderBy(sort[0], sort[1]);
+        });
+    }
+
+    /**
+     * Unserialize group clause
+     * 
+     * @protected
+     * @param {Query} query 
+     * @param {Array} group 
+     */
+    _unserializeGroup(query, group) {
+        query.groupBy(...group);
+    }
 }
 
 const Sort = {
@@ -673,8 +909,6 @@ const Assert = {
     NOT_IN,
     CONTAINS,
     STARTS,
-    HAS,
-    NOT_HAS,
 }
 
 export default Query;
@@ -682,8 +916,9 @@ export default Query;
 export {
     Condition,
     Assertion,
+    Negation,
     SortOrder,
-    Logic,
     Assert,
     Sort,
+    SerializedQuery,
 };

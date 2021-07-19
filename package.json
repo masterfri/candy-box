@@ -18,8 +18,9 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "crypto": "^1.0.1",
     "express": "^4.17.1",
-    "knex": "^0.21.17",
+    "jsonwebtoken": "^8.5.1",
     "moment": "^2.27.0",
     "mysql2": "^2.2.5",
     "validate.js": "^0.13.1"

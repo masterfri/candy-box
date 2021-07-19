@@ -1,6 +1,4 @@
-import {
-    Mixture, 
-} from '../mixture.js';
+import Message from './message.js';
 
 const Status = {
     OK: 200,
@@ -21,13 +19,31 @@ const isErrorCode = (code) => {
     return code >= 400;
 }
 
+const getCodeDescription = (code) => {
+    switch (code) {
+        case Status.OK: return 'Ok';
+        case Status.CREATED: return 'Created';
+        case Status.ACCEPTED: return 'Accepted';
+        case Status.BAD_REQUEST: return 'Bad request';
+        case Status.UNAUTHORIZED: return 'Unauthorized';
+        case Status.FORBIDDEN: return 'Forbidden';
+        case Status.NOT_FOUND: return 'Not found';
+        case Status.METHOD_NOT_ALLOWED: return 'Method not allowed';
+        case Status.UNPROCESSABLE_ENTITY: return 'Unprocessable entity';
+        case Status.TOO_MANY_REQUESTS: return 'Too many requests';
+        case Status.INTERNAL_SERVER_ERROR: return 'Internal server error';
+        case Status.SERVICE_UNAVAILABLE: return 'Service unavailable';
+    }
+    return 'Unknown error';
+}
+
 /**
  * Base class for response
  * 
  * @class
- * @augments Mixture
+ * @augments Message
  */
-class Response extends Mixture
+class Response extends Message
 {
     /**
      * @protected
@@ -42,29 +58,15 @@ class Response extends Mixture
     _message;
 
     /**
-     * @protected
-     * @var {any}
-     */
-    _body;
-
-    /**
-     * @protected
-     * @var {Object}
-     */
-    _props;
-
-    /**
      * @param {any} [body=null] 
      * @param {Number} [status=Status.OK] 
      * @param {String} [message='Ok'] 
-     * @param {Object} [props={}] 
+     * @param {Object} [headers={}] 
      */
-    constructor(body = null, status = Status.OK, message = 'Ok', props = {}) {
-        super();
+    constructor(body = null, status = Status.OK, message = 'Ok', headers = {}) {
+        super(body, headers);
         this._status = status;
         this._message = message;
-        this._body = body;
-        this._props = props;
     }
 
     /**
@@ -84,29 +86,45 @@ class Response extends Mixture
     get message() {
         return this._message;
     }
-
-    /**
-     * Response body
-     * 
-     * @var {any}
-     */
-    get body() {
-        return this._body;
-    }
-
-    /**
-     * Response properties
-     * 
-     * @var {Object}
-     */
-    get props() {
-        return this._props;
-    }
 }
+
+/**
+ * This error is raised when http request fails
+ * 
+ * @class
+ * @augments Error
+ */
+ class HttpError extends Error
+ {
+     /**
+      * @protected
+      * @var {Number}
+      */
+     _code;
+ 
+     /**
+      * @param {Number} code
+      * @param {String} [message=undefined]
+      */
+     constructor(code, message = undefined) {
+        super(message === undefined ? getCodeDescription(code) : message);
+        this._code = code;
+     }
+ 
+     /**
+      * Http code
+      * 
+      * @var {Number}
+      */
+     get code() {
+         return this._code;
+     }
+ }
 
 export default Response;
 
 export {
     Status,
+    HttpError,
     isErrorCode,
 };
