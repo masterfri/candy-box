@@ -1,9 +1,7 @@
 import mysql from 'mysql2';
 import AbstractSqlClient from './base-client.js';
 import MysqlQueryBuilder from './mysql-query-builder.js';
-import {
-    isFunction,
-} from '../helpers.js';
+import { isFunction } from '../helpers.js';
 
 class MysqlClient extends AbstractSqlClient
 {

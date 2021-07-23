@@ -1,8 +1,6 @@
 import {
     isFunction,
-    isSubclass,
-    forEach,
-} from './helpers.js';
+    isSubclass } from './helpers.js';
 
 const isComponent = (target) => {
     return isSubclass(target, Component);

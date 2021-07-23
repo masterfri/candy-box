@@ -2,11 +2,9 @@ import {
     isObject,
     get,
     isNull,
-    isArray,
-} from '../helpers.js';
+    isArray } from '../helpers.js';
 import {
-    AbstractIdentityResolver,
-} from './identity.js';
+    AbstractIdentityResolver } from './identity.js';
 
 class CredentialsResolver extends AbstractIdentityResolver
 {

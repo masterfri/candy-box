@@ -1,14 +1,9 @@
 import {
     isFunction,
     withoutProps,
-    abstractMethodError,
-} from '../helpers.js';
-import {
-    Mixture
-} from '../mixture.js';
-import {
-    CryptoSymbol,
-} from '../security/crypto.js';
+    abstractMethodError } from '../helpers.js';
+import { Mixture } from '../mixture.js';
+import { CryptoSymbol } from '../security/crypto.js';
 import App from '../app.js';
 
 const hashPassword = (password) => {

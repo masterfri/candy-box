@@ -1,10 +1,7 @@
-import {
-    Mixture, 
-} from '../mixture.js';
-import {
-    abstractMethodError,
-} from '../helpers.js';
+import { Mixture } from '../mixture.js';
+import { abstractMethodError } from '../helpers.js';
 import qs from 'qs';
+import App from '../app.js';
 
 /**
  * Abstract class for transport requests
@@ -205,9 +202,12 @@ class AbstractTransport extends Mixture
 
 const TransportSymbol = Symbol('Transport');
 
+const transport = () => App.make(TransportSymbol);
+
 export default AbstractTransport;
 
 export {
     AbstractTransportRequest,
     TransportSymbol,
+    transport,
 };

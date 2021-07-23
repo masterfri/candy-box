@@ -3,16 +3,13 @@ import AbstractServer from './base.js';
 import {
     is,
     isString,
-    forEach,
-} from '../helpers.js';
+    forEach } from '../helpers.js';
 import Response, {
     Status,
-    HttpError,
-} from '../transport/response.js';
+    HttpError } from '../transport/response.js';
 import {
     AuthorizationError,
-    DenyReason,
-} from '../auth/auth.js';
+    DenyReason } from '../auth/auth.js';
 
 /**
  * HTTP server

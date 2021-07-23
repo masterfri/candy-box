@@ -2,10 +2,7 @@ import assert from 'assert';
 import Model from '../src/lib/structures/model.js';
 import SqlRepository from '../src/lib/repository/sql.js';
 import Query from '../src/lib/query/query.js';
-import App from '../src/lib/app.js';
-import {
-    SqlClientSymbol,
-} from '../src/lib/sql/base-client.js';
+import { sqlClient } from '../src/lib/sql/base-client.js';
 
 let db = null;
 
@@ -25,7 +22,7 @@ class TestModel extends Model
 
 describe('SQL repository', function() {
     before(function (done) {
-        db = App.make(SqlClientSymbol);
+        db = sqlClient();
         db.execute(
             `CREATE TABLE IF NOT EXISTS test (id INT(10) UNSIGNED AUTO_INCREMENT NOT NULL, color VARCHAR(100), weight DECIMAL(10, 2), PRIMARY KEY (id)) ENGINE = MEMORY;`
         )

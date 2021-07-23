@@ -1,18 +1,14 @@
 import AbstractRepository from './base.js';
 import App from '../app.js';
-import {
-    SqlClientSymbol,
-} from '../sql/base-client.js';
+import { SqlClientSymbol } from '../sql/base-client.js';
 import { 
     Assertion,
     Negation,
     Condition,
-    Assert,
-} from '../query/query.js';
+    Assert } from '../query/query.js';
 import { 
     is,
-    isFunction,
-} from '../helpers.js';
+    isFunction } from '../helpers.js';
 
 class SqlRepository extends AbstractRepository
 {

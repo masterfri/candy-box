@@ -1,7 +1,6 @@
 import {
     RequestMap,
-    Method,
-} from '../transport/request.js';
+    Method } from '../transport/request.js';
 
 /**
  * Request mapping for repositories

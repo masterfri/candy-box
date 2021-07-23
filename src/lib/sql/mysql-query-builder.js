@@ -1,7 +1,6 @@
 import QueryBuilder, {
     Condition,
-    Join,
-} from './base-query-builder.js';
+    Join } from './base-query-builder.js';
 
 class MysqlCondition extends Condition
 {

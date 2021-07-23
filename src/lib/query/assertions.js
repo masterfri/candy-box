@@ -2,8 +2,7 @@ import Collection from '../structures/collection.js';
 import {
     Assertion,
     Negation,
-    Assert,
-} from './query.js';
+    Assert } from './query.js';
 import {
     get,
     is,
@@ -12,8 +11,7 @@ import {
     isBool,
     isString,
     isNumber,
-    isNull,
-} from '../helpers.js';
+    isNull } from '../helpers.js';
 
 const isEqual = (a, b) => {
     if (isNull(b)) {

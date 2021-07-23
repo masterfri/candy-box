@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
-import {
-    readFile,
-} from 'fs';
+import { readFile } from 'fs';
+import App from '../app.js';
 
 class Webtoken
 {
@@ -147,8 +146,11 @@ class Webtoken
 
 const WebtokenSymbol = Symbol('Webtoken');
 
+const webtoken = () => App.make(WebtokenSymbol);
+
 export default Webtoken;
 
 export {
     WebtokenSymbol,
+    webtoken,
 }

@@ -1,11 +1,8 @@
-import {
-    Mixture, 
-} from '../mixture.js';
+import { Mixture } from '../mixture.js';
 import {
     isObject,
     get,
-    forEach,
-} from '../helpers.js';
+    forEach } from '../helpers.js';
 
 class Message extends Mixture
 {

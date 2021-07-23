@@ -1,11 +1,8 @@
-import {
-    Mixture, 
-} from '../mixture.js';
+import { Mixture } from '../mixture.js';
 import {
     is,
     isObject, 
-    isFunction,
-} from '../helpers.js';
+    isFunction } from '../helpers.js';
 import Query from '../query/query.js';
 import TypedCollection from '../structures/typed-collection.js';
 

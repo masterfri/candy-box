@@ -1,18 +1,14 @@
-import {
-    TransportSymbol,
-} from './base.js';
+import { TransportSymbol } from './base.js';
 import Message from './message.js';
 import {
     isSubclass,
     isObject,
     isString,
     get,
-    forEach,
-} from '../helpers.js';
+    forEach } from '../helpers.js';
 import {
     ValidationError,
-    ValidatorSymbol,
-} from '../validation/validator.js';
+    ValidatorSymbol } from '../validation/validator.js';
 import App from '../app.js';
 
 const GET = 'GET';

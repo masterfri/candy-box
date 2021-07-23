@@ -1,15 +1,19 @@
 import assert from 'assert';
 import './_boot.js';
-import Request, {Method} from '../src/lib/transport/request.js';
+import Request, { 
+    Method } from '../src/lib/transport/request.js';
 import Response from '../src/lib/transport/response.js';
-import {ServerSymbol} from '../src/lib/server/base.js';
+import { server } from '../src/lib/server/base.js';
 import App from '../src/lib/app.js';
 import Model from '../src/lib/structures/model.js';
 import ResidentRepository from '../src/lib/repository/resident.js';
-import {Authenticator, Gate} from '../src/lib/auth/auth.js';
-import {hashPassword} from '../src/lib/auth/identity.js';
-import {CredentialsResolver} from '../src/lib/auth/credentials.js';
-import {WebtokenResolver, WebtokenTrace} from '../src/lib/auth/webtoken.js';
+import {
+    Authenticator, 
+    Gate} from '../src/lib/auth/auth.js';
+import { hashPassword } from '../src/lib/auth/identity.js';
+import { CredentialsResolver } from '../src/lib/auth/credentials.js';
+import { WebtokenResolver, 
+    WebtokenTrace } from '../src/lib/auth/webtoken.js';
 import IdentityRepository from '../src/lib/auth/repository.js';
 
 class LoginRequest extends Request
@@ -56,7 +60,6 @@ class User extends Model
     }
 }
 
-let server = null;
 let repository = new ResidentRepository(User);
 let source = new IdentityRepository(repository);
 let auth = new Authenticator(source, [
@@ -77,8 +80,7 @@ describe('Http server', function() {
         gate.define('argument', (_, request, foo) => {
             return Promise.resolve(request.get('foo') === foo);
         });
-        server = App.make(ServerSymbol);
-        server
+        server()
             .route(LoginRequest, (request) => {
                 return auth.resolveWith(request, resolver)
                     .then((identity) => {
@@ -129,7 +131,7 @@ describe('Http server', function() {
             });
     });
     after(function (done) {
-        server.stop().then(done);
+        server().stop().then(done);
     });
     describe('#login', function() {
         it('Login request should pass with valid data', function(done) {

@@ -1,8 +1,6 @@
 import Collection from './collection.js';
 import TypedCollection from './typed-collection.js';
-import {
-    Mixture,
-} from '../mixture.js';
+import { Mixture } from '../mixture.js';
 import {
     makeMutator,
     objectDiff,
@@ -10,8 +8,7 @@ import {
     isFunction,
     isObject,
     isArray,
-    forEach,
-} from '../helpers.js';
+    forEach } from '../helpers.js';
 
 const toNative = (thing) => {
     if (is(thing, Model)) {

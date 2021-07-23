@@ -1,17 +1,11 @@
 import axios from 'axios';
-import {
-    safeCall,
-} from '../helpers.js';
+import { safeCall } from '../helpers.js';
 import AbstractTransport, {
-    AbstractTransportRequest,
-} from './base.js';
-import {
-    ValidationError,
-} from '../validation/validator.js';
+    AbstractTransportRequest } from './base.js';
+import { ValidationError } from '../validation/validator.js';
 import Response, {
     Status,
-    isErrorCode,
-} from './response.js';
+    isErrorCode } from './response.js';
 
 /**
  * Request for HTTP transport

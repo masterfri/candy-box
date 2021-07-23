@@ -1,15 +1,16 @@
 import assert from 'assert';
 import './_boot.js';
-import {ServerSymbol} from '../src/lib/server/base.js';
-import Model, {Attribute} from '../src/lib/structures/model.js';
+import { server } from '../src/lib/server/base.js';
+import Model, {
+    Attribute } from '../src/lib/structures/model.js';
 import ResidentRepository from '../src/lib/repository/resident.js';
 import RestRepository from '../src/lib/repository/rest.js';
 import RepositoryProxy from '../src/lib/repository/proxy.js';
 import RepositoryRequestMap from '../src/lib/repository/request-map.js';
-import Request, {Method} from '../src/lib/transport/request.js';
-import {ValidationError} from '../src/lib/validation/validator.js';
+import Request, {
+    Method } from '../src/lib/transport/request.js';
+import { ValidationError } from '../src/lib/validation/validator.js';
 import Query from '../src/lib/query/query.js';
-import App from '../src/lib/app.js';
 
 class TestModel extends Model
 {
@@ -40,7 +41,6 @@ class StoreModelRequest extends Request
     }
 }
 
-let server = null;
 let repository = new ResidentRepository(TestModel);
 let proxy = new RepositoryProxy(repository);
 let noValidationMapping = new RepositoryRequestMap('/item');
@@ -49,8 +49,7 @@ mapping.map('store', StoreModelRequest);
 
 describe('Rest repository', function() {
     before(function (done) {
-        server = App.make(ServerSymbol);
-        server
+        server()
             .map(mapping, proxy)
             .start()
             .then(done);
@@ -59,7 +58,7 @@ describe('Rest repository', function() {
         repository.purge();
     });
     after(function (done) {
-        server.stop().then(done);
+        server().stop().then(done);
     });
     describe('#store', function() {
         it('Model should be stored in repository', function(done) {

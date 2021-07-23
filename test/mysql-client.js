@@ -1,14 +1,12 @@
 import assert from 'assert';
 import App from '../src/lib/app.js';
-import {
-    SqlClientSymbol,
-} from '../src/lib/sql/base-client.js';
+import { sqlClient } from '../src/lib/sql/base-client.js';
 
 let db = null;
 
 describe('MySQL client', function() {
     before(function (done) {
-        db = App.make(SqlClientSymbol);
+        db = sqlClient();
         db.execute(
             `CREATE TABLE IF NOT EXISTS test (id INT(10) UNSIGNED AUTO_INCREMENT NOT NULL, color VARCHAR(100), weight DECIMAL(10, 2), PRIMARY KEY (id)) ENGINE = MEMORY;`
         )

@@ -1,6 +1,4 @@
-import {
-    AbstractIdentitySource,
-} from './identity.js';
+import { AbstractIdentitySource } from './identity.js';
 import Query from '../query/query.js';
 
 class IdentityRepository extends AbstractIdentitySource

@@ -3,16 +3,13 @@ import {
     isArray,
     isObject,
     isFunction,
-    isNull,
-} from '../helpers.js';
+    isNull } from '../helpers.js';
 import Query, {
     Assert,
-    Sort,
-} from '../query/query.js';
+    Sort } from '../query/query.js';
 import Collection from '../structures/collection.js';
 import Model, {
-    Attribute,
-} from '../structures/model.js';
+    Attribute } from '../structures/model.js';
 
 class Relation
 {

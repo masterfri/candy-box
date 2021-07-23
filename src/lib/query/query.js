@@ -3,8 +3,7 @@ import {
     isObject, 
     isFunction,
     isArray,
-    isNumber,
-} from '../helpers.js';
+    isNumber } from '../helpers.js';
 
 const ASC = 'asc';
 const DESC = 'desc';

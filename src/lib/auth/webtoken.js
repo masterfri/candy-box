@@ -1,10 +1,7 @@
 import Identity, {
     AbstractIdentityResolver,
-    AbstractIdentityTrace,
-} from './identity.js';
-import {
-    WebtokenSymbol,
-} from '../security/webtoken.js';
+    AbstractIdentityTrace } from './identity.js';
+import { WebtokenSymbol } from '../security/webtoken.js';
 import App from '../app.js';
 
 class WebtokenResolver extends AbstractIdentityResolver

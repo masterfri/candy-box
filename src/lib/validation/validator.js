@@ -1,8 +1,7 @@
 import validate from 'validate.js';
 import moment from 'moment';
-import {
-    Mixture, 
-} from '../mixture.js';
+import { Mixture } from '../mixture.js';
+import App from '../app.js';
 
 const DateHelper = {
     templates: {
@@ -518,10 +517,13 @@ class ValidationError extends Error
 
 const ValidatorSymbol = Symbol('Validator');
 
+const validator = () => App.make(ValidatorSymbol);
+
 export default Validator;
 
 export {
     ValidationError,
     DateHelper,
     ValidatorSymbol,
+    validator,
 };

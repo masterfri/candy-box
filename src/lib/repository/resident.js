@@ -1,19 +1,15 @@
 import Collection from '../structures/collection.js';
-import { 
-    assertType,
-} from '../helpers.js';
+import { assertType } from '../helpers.js';
 import AbstractRepository from './base.js';
 import {
     CountAggregator,
     SumAggregator,
     AvgAggregator,
     MinAggregator,
-    MaxAggregator,
-} from '../query/aggregators.js';
+    MaxAggregator } from '../query/aggregators.js';
 import {
     testCondition,
-    compare,
-} from '../query/assertions.js';
+    compare } from '../query/assertions.js';
 
 const makeSorter = (sort) => {
     return (a, b) => {

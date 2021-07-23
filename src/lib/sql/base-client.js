@@ -1,16 +1,10 @@
-import {
-    Mixture, 
-} from '../mixture.js';
+import { Mixture } from '../mixture.js';
 import {
     is,
-    getProp,
-} from '../helpers.js';
-import {
-    abstractMethodError,
-} from '../helpers.js';
-import {
-    SqlFragment,
-} from './base-query-builder.js';
+    getProp } from '../helpers.js';
+import { abstractMethodError } from '../helpers.js';
+import { SqlFragment } from './base-query-builder.js';
+import App from '../app.js';
 
 /**
  * Base sql client class
@@ -199,8 +193,11 @@ class AbstractSqlClient extends Mixture
 
 const SqlClientSymbol = Symbol('SqlClient');
 
+const sqlClient = () => App.make(SqlClientSymbol);
+
 export default AbstractSqlClient;
 
 export {
     SqlClientSymbol,
+    sqlClient,
 };

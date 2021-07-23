@@ -3,8 +3,8 @@ import {
     createCipheriv,
     createDecipheriv,
     createHash,
-    createHmac,
-} from 'crypto';
+    createHmac } from 'crypto';
+import App from '../app.js';
 
 class Crypto
 {
@@ -170,8 +170,11 @@ class Crypto
 
 const CryptoSymbol = Symbol('Crypto');
 
+const crypto = () => App.make(CryptoSymbol);
+
 export default Crypto;
 
 export {
     CryptoSymbol,
+    crypto,
 };

@@ -1,7 +1,6 @@
 import {
     isNumber,
-    isString,
-} from '../helpers.js';
+    isString } from '../helpers.js';
 
 class Aggregator
 {

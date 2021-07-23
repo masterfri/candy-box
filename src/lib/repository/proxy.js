@@ -1,17 +1,12 @@
 import Query, {
-    SerializedQuery,
-} from '../query/query.js';
+    SerializedQuery } from '../query/query.js';
 import Response, {
     Status,
-    HttpError,
-} from '../transport/response.js';
-import {
-    NotExistsError,
-} from './base.js';
+    HttpError } from '../transport/response.js';
+import { NotExistsError } from './base.js';
 import {
     is,
-    isFunction,
-} from '../helpers.js';
+    isFunction } from '../helpers.js';
 
 /**
  * Class that forwards REST API calls to repository methods

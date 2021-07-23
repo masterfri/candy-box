@@ -1,13 +1,9 @@
-import {
-    Mixture, 
-} from '../mixture.js';
+import { Mixture } from '../mixture.js';
 import {
     PlainRequest,
-    Method,
-} from '../transport/request.js';
-import {
-    abstractMethodError,
-} from '../helpers.js';
+    Method } from '../transport/request.js';
+import { abstractMethodError } from '../helpers.js';
+import App from '../app.js';
 
 /**
  * Base server class
@@ -152,8 +148,11 @@ class AbstractServer extends Mixture
 
 const ServerSymbol = Symbol('Server');
 
+const server = () => App.make(ServerSymbol);
+
 export default AbstractServer;
 
 export {
     ServerSymbol,
+    server,
 };

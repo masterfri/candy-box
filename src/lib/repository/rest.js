@@ -1,11 +1,6 @@
 import AbstractRepository from './base.js';
-import {
-    SerializedQuery,
-} from '../query/query.js';
-import { 
-    assign,
-    isObject,
-} from '../helpers.js';
+import { SerializedQuery } from '../query/query.js';
+import { assign } from '../helpers.js';
 
 /**
  * Repository that communicates with storage via REST API

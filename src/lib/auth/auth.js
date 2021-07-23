@@ -1,10 +1,8 @@
-import {
-    is,
-} from '../helpers.js';
+import { is } from '../helpers.js';
 import Identity, {
     AbstractIdentityResolver,
-    UnknownIdentityError,
-} from './identity.js';
+    UnknownIdentityError } from './identity.js';
+import App from '../app.js';
 
 const DenyReason = {
     UNAUTHENTICATED: 401,
@@ -207,6 +205,9 @@ class AuthorizationError extends Error
 const AuthenticatorSymbol = Symbol('Authenticator');
 const GateSymbol = Symbol('Gate');
 
+const auth = () => App.make(AuthenticatorSymbol);
+const gate = () => App.make(GateSymbol);
+
 export {
     Authenticator,
     Gate,
@@ -214,4 +215,6 @@ export {
     DenyReason,
     AuthenticatorSymbol,
     GateSymbol,
+    auth,
+    gate,
 }

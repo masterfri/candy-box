@@ -1,9 +1,10 @@
 import assert from 'assert';
 import './_boot.js';
-import Request, {Method} from '../src/lib/transport/request.js';
+import Request, {
+    Method } from '../src/lib/transport/request.js';
 import Response from '../src/lib/transport/response.js';
-import {ServerSymbol} from '../src/lib/server/base.js';
-import {ValidationError} from '../src/lib/validation/validator.js';
+import { server } from '../src/lib/server/base.js';
+import { ValidationError } from '../src/lib/validation/validator.js';
 import App from '../src/lib/app.js';
 
 class TestRequestClient extends Request
@@ -49,12 +50,9 @@ class Err404Request extends Request
     }
 }
 
-let server = null;
-
 describe('Http server', function() {
     before(function (done) {
-        server = App.make(ServerSymbol);
-        server
+        server()
             .route(TestRequest, (request) => {
 
             })
@@ -76,7 +74,7 @@ describe('Http server', function() {
        
     });
     after(function (done) {
-        server.stop().then(done);
+        server().stop().then(done);
     });
     describe('#send', function() {
         it('Get request should return HTTP 200', function(done) {

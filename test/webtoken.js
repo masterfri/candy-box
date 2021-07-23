@@ -1,14 +1,13 @@
 import assert from 'assert';
 import './_boot.js';
 import Webtoken, {
-    WebtokenSymbol,
-} from '../src/lib/security/webtoken.js';
+    webtoken } from '../src/lib/security/webtoken.js';
 import App from '../src/lib/app.js';
 
 describe('Webtoken', function() {
     describe('#sign', function() {
         it('Data should be signed then verified using RSA keys', function(done) {
-            let jwt = App.make(WebtokenSymbol);
+            let jwt = webtoken();
             let data = {
                 secretKey: 'secretValue',
                 otherKey: 'otherValue',

@@ -4,8 +4,7 @@ import {
     argsToArray,
     isFunction,
     isObject,
-    is,
-} from '../helpers.js';
+    is } from '../helpers.js';
 
 /**
  * Extention class for native Array

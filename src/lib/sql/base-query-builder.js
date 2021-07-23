@@ -6,8 +6,7 @@ import {
     isString,
     isFunction,
     forEach,
-    abstractMethodError,
-} from '../helpers.js';
+    abstractMethodError } from '../helpers.js';
 
 const FRAG_COLS = 'col';
 const FRAG_TABLE = 'table';
