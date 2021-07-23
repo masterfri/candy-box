@@ -16,15 +16,34 @@ class Box
     constructor() {
         this._candies = new Map();
     }
-    
+ 
+    /**
+     * Register component factory
+     * 
+     * @param {String|Function|Symbol} name 
+     * @param {Function} factory 
+     */
     factory(name, factory) {
         this._candies.set(name, new Candy(factory));
     }
     
+    /**
+     * Register signleton component factory
+     * 
+     * @param {String|Function|Symbol} name 
+     * @param {Function} factory 
+     */
     singleton(name, factory) {
         this._candies.set(name, new CandySingleton(factory));
     }
     
+    /**
+     * Make the component
+     * 
+     * @param {String|Function|Symbol} name 
+     * @param  {...any} params 
+     * @returns 
+     */
     make(name, ...params) {
         if (!this._candies.has(name)) {
             throw Error(`Can not resolve implementation for "${constructorName(name)}"`);
@@ -35,10 +54,19 @@ class Box
 
 class Candy
 {
+    /**
+     * @param {Function} factory 
+     */
     constructor(factory) {
         this._factory = factory;
     }
     
+    /**
+     * Make an instance of the component
+     * 
+     * @param  {...any} params 
+     * @returns {any}
+     */
     instance(...params) {
         return this._factory(...params);
     }
@@ -46,11 +74,19 @@ class Candy
 
 class CandySingleton extends Candy
 {
+    /**
+     * @inheritdoc
+     */
     constructor(factory) {
         super(factory);
         this._instance = null;
     }
     
+    /**
+     * Make a singleton component
+     * 
+     * @returns {any}
+     */
     instance() {
         if (this._instance === null) {
             this._instance = this._factory();

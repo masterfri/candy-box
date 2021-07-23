@@ -2,6 +2,9 @@
   "type": "module",
   "name": "candy-box",
   "version": "1.0.0",
+  "exports": {
+    "./": "./src/lib/"
+  },
   "scripts": {
     "dev": "./node_modules/webpack/bin/webpack.js --watch --progress --config=webpack.config.js",
     "test": "./node_modules/mocha/bin/mocha"
