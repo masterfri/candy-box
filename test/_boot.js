@@ -57,4 +57,4 @@ App.register(({box, config}) => {
     box.singleton(SqlClientSymbol, () => new MysqlClient(config.db || {}));
 });
 
-App.boot();
+App.run();

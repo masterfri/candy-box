@@ -4,7 +4,8 @@ const AppData = {
     props: {},
     config: {},
     box: new Box(),
-    modules: [],
+    registerStages: [],
+    bootStages: [],
     exposed: {},
 };
 
@@ -89,12 +90,12 @@ const App = {
     },
 
     /**
-     * Register application module
+     * Add registration stage
      * 
      * @param {Function} invoker 
      */
     register(invoker) {
-        AppData.modules.push(invoker);
+        AppData.registerStages.push(invoker);
     },
 
     /**
@@ -108,20 +109,32 @@ const App = {
     },
 
     /**
-     * Boot application
+     * Add boot stage
+     * 
+     * @param {Function} invoker 
      */
-    boot() {
-        let data = {
-            ...AppData.exposed,
-            box: AppData.box, 
-            config: AppData.config, 
-            props: AppData.props,
-        };
-        
-        AppData.modules.forEach((invoker) => {
-            invoker(data);
-        });
+    boot(invoker) {
+        AppData.bootStages.push(invoker);
     },
+
+    /**
+     * Run application
+     */
+    run() {
+        let allStages = [
+            ...AppData.registerStages,
+            ...AppData.bootStages,
+        ];
+        
+        allStages.forEach((invoker) => {
+            invoker({
+                ...AppData.exposed,
+                box: AppData.box, 
+                config: AppData.config, 
+                props: AppData.props,
+            });
+        });
+    }
 };
 
 export default App;
