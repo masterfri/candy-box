@@ -4,6 +4,8 @@ const AppData = {
     props: {},
     config: {},
     box: new Box(),
+    modules: [],
+    exposed: {},
 };
 
 const ENV = 'env';
@@ -87,12 +89,38 @@ const App = {
     },
 
     /**
-     * Boot application
+     * Register application module
      * 
      * @param {Function} invoker 
      */
-    boot(invoker) {
-        invoker(AppData.box, AppData.config, AppData.props);
+    register(invoker) {
+        AppData.modules.push(invoker);
+    },
+
+    /**
+     * Expose stuff to be available during boot
+     * 
+     * @param {String} name 
+     * @param {any} stuff 
+     */
+    expose(name, stuff) {
+        AppData.exposed[name] = stuff;
+    },
+
+    /**
+     * Boot application
+     */
+    boot() {
+        let data = {
+            ...AppData.exposed,
+            box: AppData.box, 
+            config: AppData.config, 
+            props: AppData.props,
+        };
+        
+        AppData.modules.forEach((invoker) => {
+            invoker(data);
+        });
     },
 };
 

@@ -48,7 +48,7 @@ App.configure({
     },
 });
 
-App.boot((box, config) => {
+App.register(({box, config}) => {
     box.factory(ValidatorSymbol, () => new Validator());
     box.singleton(CryptoSymbol, () => new Crypto(config.crypto));
     box.singleton(WebtokenSymbol, () => new Webtoken(config.webtoken));
@@ -56,3 +56,5 @@ App.boot((box, config) => {
     box.singleton(ServerSymbol, () => new HttpServer(config.server || {}));
     box.singleton(SqlClientSymbol, () => new MysqlClient(config.db || {}));
 });
+
+App.boot();
