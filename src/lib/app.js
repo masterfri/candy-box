@@ -11,6 +11,15 @@ const AppData = {
 
 const ENV = 'env';
 
+const pushWithPriority = (array, element, priority) => {
+    let index = array.findIndex((el) => el.p > priority);
+    if (index === -1) {
+        array.push({p: priority, e: element});
+    } else {
+        array.splice(index, 0, {p: priority, e: element});
+    }
+}
+
 const App = {
     /**
      * Set box to use
@@ -93,9 +102,20 @@ const App = {
      * Add registration stage
      * 
      * @param {Function} invoker 
+     * @param {Number} priority
      */
-    register(invoker) {
-        AppData.registerStages.push(invoker);
+    register(invoker, priority = 0) {
+        pushWithPriority(AppData.registerStages, invoker, priority);
+    },
+
+    /**
+     * Add boot stage
+     * 
+     * @param {Function} invoker 
+     * @param {Number} priority
+     */
+    boot(invoker, priority = 0) {
+        pushWithPriority(AppData.bootStages, invoker, priority);
     },
 
     /**
@@ -109,15 +129,6 @@ const App = {
     },
 
     /**
-     * Add boot stage
-     * 
-     * @param {Function} invoker 
-     */
-    boot(invoker) {
-        AppData.bootStages.push(invoker);
-    },
-
-    /**
      * Run application
      */
     run() {
@@ -127,7 +138,7 @@ const App = {
         ];
         
         allStages.forEach((invoker) => {
-            invoker({
+            invoker.e({
                 ...AppData.exposed,
                 box: AppData.box, 
                 config: AppData.config, 
