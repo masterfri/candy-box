@@ -78,7 +78,7 @@ class MysqlClient extends AbstractSqlClient
     /**
      * @inheritdoc
      */
-    _updateInternal() {
+    _updateInternal(sql, bindings = []) {
         return this._executeInternal(sql, bindings)
             .then((result) => result.changedRows);
     }
@@ -86,7 +86,7 @@ class MysqlClient extends AbstractSqlClient
     /**
      * @inheritdoc
      */
-    _deleteInternal() {
+    _deleteInternal(sql, bindings = []) {
         return this._executeInternal(sql, bindings)
             .then((result) => result.affectedRows);
     }

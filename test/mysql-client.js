@@ -33,7 +33,7 @@ describe('MySQL client', function() {
                 .select();
             db.fetch(sql)
                 .then((result) => {
-                    assert.equal(result.length, 4);
+                    assert.strictEqual(result.length, 4);
                     done();
                 })
                 .catch(done);
@@ -45,7 +45,7 @@ describe('MySQL client', function() {
                 .select(1);
             db.fetchRow(sql.sql, sql.bindings)
                 .then((result) => {
-                    assert.equal(result.weight, 10);
+                    assert.strictEqual(Number(result.weight), 10);
                     done();
                 })
                 .catch(done);
@@ -59,7 +59,7 @@ describe('MySQL client', function() {
                 .select();
             db.fetchColumn(sql.sql, sql.bindings)
                 .then((result) => {
-                    assert.deepEqual(result, ['yellow', 'red', 'green']);
+                    assert.deepStrictEqual(result, ['yellow', 'red', 'green']);
                     done();
                 })
                 .catch(done);
@@ -72,7 +72,48 @@ describe('MySQL client', function() {
                 .select(1);
             db.fetchValue(sql.sql, sql.bindings)
                 .then((result) => {
-                    assert.equal(result, 'blue');
+                    assert.strictEqual(result, 'blue');
+                    done();
+                })
+                .catch(done);
+        });
+        it('update() should change record', function(done) {
+            let sql = db.newQuery()
+                .table('test')
+                .where('color', '=', 'red')
+                .update({
+                    weight: 80,
+                });
+            db.update(sql)
+                .then((result) => {
+                    assert.strictEqual(result, 1);
+                    let sql = db.newQuery()
+                        .table('test')
+                        .column('color')
+                        .where('weight', '>=', 50)
+                        .select(1);
+                    return db.fetchValue(sql);
+                }).then((result) => {
+                    assert.strictEqual(result, 'red');
+                    done();
+                })
+                .catch(done);
+        });
+        it('delete() should remove record', function(done) {
+            let sql = db.newQuery()
+                .table('test')
+                .where('color', '=', 'red')
+                .delete();
+            db.delete(sql)
+                .then((result) => {
+                    assert.strictEqual(result, 1);
+                    let sql = db.newQuery()
+                        .table('test')
+                        .where('weight', '>=', 50)
+                        .select();
+                    return db.fetch(sql);
+                }).then((result) => {
+                    assert.strictEqual(result.length, 0);
                     done();
                 })
                 .catch(done);
