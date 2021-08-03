@@ -9,12 +9,16 @@ import Model from '../src/lib/structures/model.js';
 import ResidentRepository from '../src/lib/repository/resident.js';
 import {
     Authenticator, 
-    Gate} from '../src/lib/auth/auth.js';
+    Gate,
+    GateSymbol } from '../src/lib/auth/auth.js';
 import { hashPassword } from '../src/lib/auth/identity.js';
 import { CredentialsResolver } from '../src/lib/auth/credentials.js';
 import { WebtokenResolver, 
     WebtokenTrace } from '../src/lib/auth/webtoken.js';
 import IdentityRepository from '../src/lib/auth/repository.js';
+import RestRepository from '../src/lib/repository/rest.js';
+import RepositoryProxy from '../src/lib/repository/proxy.js';
+import RepositoryRequestMap from '../src/lib/repository/request-map.js';
 
 class LoginRequest extends Request
 {
@@ -66,6 +70,12 @@ let auth = new Authenticator(source, [
     new WebtokenResolver()
 ], new WebtokenTrace());
 let gate = new Gate(auth);
+let proxy = new RepositoryProxy(repository);
+let mapping = new RepositoryRequestMap('/users');
+proxy
+    .protectWrite('admin')
+    .protectRead('manager');
+App.box().singleton(GateSymbol, () => gate);
 
 describe('Http server', function() {
     before(function (done) {
@@ -112,6 +122,7 @@ describe('Http server', function() {
                     return new Response();
                 });
             })
+            .map(mapping, proxy)
             .start()
             .then(() => {
                 return Promise.all([
@@ -179,6 +190,34 @@ describe('Http server', function() {
                 });
             }).catch(done);
         });
+        it('Proxy gate should allow authorized requests', function(done) {
+            let request = new LoginRequest({
+                login: 'admin',
+                password: 'admin',
+            });
+            let transport = request.transport();
+            request.send().then((response) => {
+                let authorization = response.getHeader('authorization');
+                transport.stickHeader('authorization', authorization);
+                let repo = new RestRepository(User, mapping);
+                return repo.store(new User({login: 'candy'}))
+                    .then(() => {
+                        let request = new LoginRequest({
+                            login: 'manager',
+                            password: 'manager',
+                        });
+                        return request.send().then((response) => {
+                            let authorization = response.getHeader('authorization');
+                            transport.stickHeader('authorization', authorization);
+                            return repo.search({login: 'candy'});
+                        }).then((results) => {
+                            assert.strictEqual(results.length, 1);
+                        });
+                    }).then(() => {
+                        done();
+                    });
+            }).catch(done);
+        });
         it('Gate should deny unauthorized requests', function(done) {
             let managerReq = new ManagerRequest();
             let transport = managerReq.transport();
@@ -209,6 +248,31 @@ describe('Http server', function() {
                     });
                 }).catch(done);
             });
+        });
+        it('Proxy gate should deny unauthorized requests', function(done) {
+            let repo = new RestRepository(User, mapping);
+            let request = new LoginRequest({
+                login: 'manager',
+                password: 'manager',
+            });
+            let transport = request.transport();
+            transport.unstickHeader('authorization');
+            repo.search({login: 'candy'})
+                .then(() => {
+                    done('Unaunthenticated request should be denied');
+                }).catch((error) => {
+                    assert.strictEqual(error.status, 401);
+                    return request.send().then((response) => {
+                        let authorization = response.getHeader('authorization');
+                        transport.stickHeader('authorization', authorization);
+                        return repo.store(new User({login: 'box'}));
+                    }).then(() => {
+                        done('Write protected method should be unavailable');
+                    }).catch((error) => {
+                        assert.strictEqual(error.status, 403);
+                        done();
+                    });
+                }).catch(done);
         });
     });
 });

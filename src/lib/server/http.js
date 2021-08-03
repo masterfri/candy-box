@@ -10,6 +10,8 @@ import Response, {
 import {
     AuthorizationError,
     DenyReason } from '../auth/auth.js';
+import {
+    ValidationError } from '../validation/validator.js';
 
 /**
  * HTTP server
@@ -94,23 +96,23 @@ class HttpServer extends AbstractServer
                 ...req.query,
             }, req.headers);
             request.validate().then(() => {
-                this._delegate(target, request).then((response) => {
-                    this._respond(res, response);
-                }).catch((error) => {
-                    if (is(error, HttpError)) {
-                        res.status(error.code).send(error.message);
-                    } else if (is(error, AuthorizationError)) {
-                        if (error.reason === DenyReason.FORBIDDEN) {
-                            res.status(Status.FORBIDDEN).send('Forbidden');
-                        } else {
-                            res.status(Status.UNAUTHORIZED).send('Unauthorized');
-                        }
-                    } else {
-                        res.status(Status.INTERNAL_SERVER_ERROR).send('Server error: ' + error);
-                    }
-                });
+                return this._delegate(target, request);
+            }).then((response) => {
+                this._respond(res, response);
             }).catch((error) => {
-                res.status(Status.UNPROCESSABLE_ENTITY).send(error.getErrors());
+                if (is(error, ValidationError)) {
+                    res.status(Status.UNPROCESSABLE_ENTITY).send(error.getErrors());
+                } else if (is(error, AuthorizationError)) {
+                    if (error.reason === DenyReason.FORBIDDEN) {
+                        res.status(Status.FORBIDDEN).send('Forbidden');
+                    } else {
+                        res.status(Status.UNAUTHORIZED).send('Unauthorized');
+                    }
+                } else if (is(error, HttpError)) {
+                    res.status(error.code).send(error.message);
+                } else {
+                    res.status(Status.INTERNAL_SERVER_ERROR).send('Server error: ' + error);
+                }
             });
         });
     }

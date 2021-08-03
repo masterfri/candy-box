@@ -4,9 +4,10 @@ import Response, {
     Status,
     HttpError } from '../transport/response.js';
 import { NotExistsError } from './base.js';
-import {
+import { 
     is,
     isFunction } from '../helpers.js';
+import { gate } from '../auth/auth.js';
 
 /**
  * Class that forwards REST API calls to repository methods
@@ -15,6 +16,18 @@ import {
  */
 class RepositoryProxy
 {
+    /**
+     * @protected
+     * @var {AbstractRepository}
+     */
+    _repository;
+
+    /**
+     * @protected
+     * @var {Object}
+     */
+    _gatekeepers = {};
+
     /**
      * @param {AbstractRepository} repository 
      */
@@ -31,8 +44,11 @@ class RepositoryProxy
      */
     get(request) {
         return this._proxyMethod(
+            request,
             'get', 
-            [() => this._getKeyFromRequest(request)], 
+            [
+                () => this._getKeyFromRequest(request),
+            ], 
             (result) => this._serializeObject(result)
         );
     }
@@ -46,8 +62,11 @@ class RepositoryProxy
      */
     search(request) {
         return this._proxyMethod(
+            request,
             'search', 
-            [() => this._getQueryFromRequest(request)], 
+            [
+                () => this._getQueryFromRequest(request),
+            ], 
             (results) => this._serializeCollection(results)
         );
     }
@@ -63,6 +82,7 @@ class RepositoryProxy
         let object = this._repository.newModel(request.body);
         let isUpdate = object.hasKey();
         return this._proxyMethod(
+            request,
             'store', 
             [object], 
             (stored) => this._serializeObject(stored),
@@ -79,8 +99,11 @@ class RepositoryProxy
      */
     delete(request) {
         return this._proxyMethod(
+            request,
             'delete', 
-            [() => this._getKeyFromRequest(request)], 
+            [
+                () => this._getKeyFromRequest(request),
+            ], 
             () => new Response()
         );
     }
@@ -94,8 +117,11 @@ class RepositoryProxy
      */
     exists(request) {
         return this._proxyMethod(
+            request,
             'exists', 
-            [() => this._getQueryFromRequest(request)]
+            [
+                () => this._getQueryFromRequest(request),
+            ]
         );
     }
     
@@ -108,8 +134,11 @@ class RepositoryProxy
      */
     count(request) {
         return this._proxyMethod(
+            request,
             'count', 
-            [() => this._getQueryFromRequest(request)]
+            [
+                () => this._getQueryFromRequest(request),
+            ]
         );
     }
 
@@ -122,6 +151,7 @@ class RepositoryProxy
      */
     sum(request) {
         return this._proxyMethod(
+            request,
             'sum', 
             [
                 () => this._getAttributeNameFromRequest(request),
@@ -139,6 +169,7 @@ class RepositoryProxy
      */
     avg(request) {
         return this._proxyMethod(
+            request,
             'avg', 
             [
                 () => this._getAttributeNameFromRequest(request),
@@ -156,6 +187,7 @@ class RepositoryProxy
      */
     min(request) {
         return this._proxyMethod(
+            request,
             'min', 
             [
                 () => this._getAttributeNameFromRequest(request),
@@ -173,12 +205,77 @@ class RepositoryProxy
      */
     max(request) {
         return this._proxyMethod(
+            request,
             'max', 
             [
                 () => this._getAttributeNameFromRequest(request),
                 () => this._getQueryFromRequest(request),
             ]
         );
+    }
+
+    /**
+     * Put gatekeeper on certain method
+     * 
+     * @param {String} method 
+     * @param {String} gatekeeper 
+     * @returns {RepositoryProxy}
+     */
+    protect(method, gatekeeper) {
+        this._gatekeepers[method] = gatekeeper;
+        return this;
+    }
+
+    /**
+     * Put gatekeeper on all "read" methods
+     * 
+     * @param {String} gatekeeper 
+     * @returns {RepositoryProxy}
+     */
+    protectRead(gatekeeper) {
+        let readMethods = [
+            'get', 
+            'search',
+            'exists', 
+            'count',
+            'sum', 
+            'avg', 
+            'min', 
+            'max',
+        ];
+        readMethods.forEach((method) => {
+            this.protect(method, gatekeeper);
+        });
+        return this;
+    }
+
+    /**
+     * Put gatekeeper on all "write" methods
+     * 
+     * @param {String} gatekeeper 
+     * @returns {RepositoryProxy}
+     */
+    protectWrite(gatekeeper) {
+        let writeMethods = [
+            'store', 
+            'delete', 
+        ];
+        writeMethods.forEach((method) => {
+            this.protect(method, gatekeeper);
+        });
+        return this;
+    }
+
+    /**
+     * Put gatekeeper on all methods
+     * 
+     * @param {String} gatekeeper 
+     * @returns {RepositoryProxy}
+     */
+    protectAll(gatekeeper) {
+        this.protectRead(gatekeeper);
+        this.protectWrite(gatekeeper);
+        return this;
     }
 
     /**
@@ -231,22 +328,19 @@ class RepositoryProxy
      * Forward request to a certain method
      * 
      * @protected
+     * @param {Request} request
      * @param {String} method 
      * @param {Object} params
      * @param {Function} [transformer=null]
      * @param {Number} [code=Status.OK]
      * @returns {Promise}
      */
-    _proxyMethod(method, params, transformer = null, code = Status.OK) {
+    _proxyMethod(request, method, params, transformer = null, code = Status.OK) {
         return new Promise((resolve, reject) => {
             try {
-                params = params.map((param) => {
-                    if (isFunction(param)) {
-                        return param();
-                    }
-                    return param;
-                });
-                this._repository[method](...params)
+                let args = params.map((param) => isFunction(param) ? param() : param);
+                this._passGate(request, method, args)
+                    .then(() => this._repository[method](...args))
                     .then((result) => {
                         if (transformer !== null) {
                             result = transformer(result);
@@ -273,6 +367,22 @@ class RepositoryProxy
                 }
             }
         });
+    }
+
+    /**
+     * Check if request is allowed
+     * 
+     * @param {Request} request 
+     * @param {String} method 
+     * @param {Array} args 
+     * @returns {Promise}
+     */
+    _passGate(request, method, args) {
+        let gatekeeper = this._gatekeepers[method];
+        if (gatekeeper === undefined) {
+            return Promise.resolve();
+        }
+        return gate().pass(gatekeeper, request, ...args);
     }
 
     /**
