@@ -1,9 +1,9 @@
 import assert from 'assert';
-import Model from '../src/lib/structures/model.js';
+import Document from '../src/lib/structures/document.js';
 import ResidentRepository from '../src/lib/repository/resident.js';
 import Query from '../src/lib/query/query.js';
 
-class TestModel extends Model
+class TestDocument extends Document
 {
     attributes() {
         return {
@@ -19,11 +19,11 @@ class TestModel extends Model
 
 describe('Resident repository', function() {
     describe('#store', function() {
-        it('Model should be stored in repository', function(done) {
-            let model = new TestModel();
-            let repository = new ResidentRepository(TestModel);
-            repository.store(model).then(() => {
-                assert.ok(model.hasKey());
+        it('Document should be stored in repository', function(done) {
+            let document = new TestDocument();
+            let repository = new ResidentRepository(TestDocument);
+            repository.store(document).then(() => {
+                assert.ok(document.hasKey());
                 done();
             }).catch((err) => {
                 done(err);
@@ -31,11 +31,11 @@ describe('Resident repository', function() {
         });
     });
     describe('#get', function() {
-        it('Model should be retrievable from repository', function(done) {
-            let model = new TestModel();
-            let repository = new ResidentRepository(TestModel);
-            repository.store(model).then(() => {
-                return repository.get(model.getKey());
+        it('Document should be retrievable from repository', function(done) {
+            let document = new TestDocument();
+            let repository = new ResidentRepository(TestDocument);
+            repository.store(document).then(() => {
+                return repository.get(document.getKey());
             }).then(() => {
                 done();
             }).catch((err) => {
@@ -44,12 +44,12 @@ describe('Resident repository', function() {
         });
     });
     describe('#search', function() {
-        it('Model should be searchable in repository', function(done) {
-            let repository = new ResidentRepository(TestModel);
+        it('Document should be searchable in repository', function(done) {
+            let repository = new ResidentRepository(TestDocument);
             Promise.all([
-                repository.store(new TestModel({color: 'red', weight: 100})),
-                repository.store(new TestModel({color: 'red', weight: 150})),
-                repository.store(new TestModel({color: 'blue', weight: 60})),
+                repository.store(new TestDocument({color: 'red', weight: 100})),
+                repository.store(new TestDocument({color: 'red', weight: 150})),
+                repository.store(new TestDocument({color: 'blue', weight: 60})),
             ]).then(() => {
                 let query = (new Query).where('color', 'blue');
                 return repository.search(query);
@@ -69,26 +69,26 @@ describe('Resident repository', function() {
         });
     });
     describe('#delete', function() {
-        it('Model should be deleteable from repository', function(done) {
-            let model = new TestModel();
-            let repository = new ResidentRepository(TestModel);
-            repository.store(model).then(() => {
-                return repository.delete(model.getKey());
+        it('Document should be deleteable from repository', function(done) {
+            let document = new TestDocument();
+            let repository = new ResidentRepository(TestDocument);
+            repository.store(document).then(() => {
+                return repository.delete(document.getKey());
             }).then(() => {
-                return repository.get(model.getKey());
+                return repository.get(document.getKey());
             }).then(() => {
-                done('Model not deleted');
+                done('Document not deleted');
             }).catch((err) => {
                 done();
             });
         });
     });
     describe('#exists', function() {
-        it('exists() should return true when model exists in collection', function(done) {
-            let model = new TestModel();
-            let repository = new ResidentRepository(TestModel);
-            repository.store(model).then(() => {
-                return repository.exists(model.getKey());
+        it('exists() should return true when document exists in collection', function(done) {
+            let document = new TestDocument();
+            let repository = new ResidentRepository(TestDocument);
+            repository.store(document).then(() => {
+                return repository.exists(document.getKey());
             }).then((result) => {
                 assert.ok(result);
                 done();
@@ -96,10 +96,10 @@ describe('Resident repository', function() {
                 done(err);
             });
         });
-        it('exists() should return false when model does not exist in collection', function(done) {
-            let model = new TestModel();
-            let repository = new ResidentRepository(TestModel);
-            repository.store(model).then(() => {
+        it('exists() should return false when document does not exist in collection', function(done) {
+            let document = new TestDocument();
+            let repository = new ResidentRepository(TestDocument);
+            repository.store(document).then(() => {
                 return repository.exists(999);
             }).then((result) => {
                 assert.ok(!result);
@@ -111,11 +111,11 @@ describe('Resident repository', function() {
     });
     describe('#count', function() {
         it('count() should return proper result', function(done) {
-            let repository = new ResidentRepository(TestModel);
+            let repository = new ResidentRepository(TestDocument);
             Promise.all([
-                repository.store(new TestModel({color: 'red', weight: 100})),
-                repository.store(new TestModel({color: 'red', weight: 150})),
-                repository.store(new TestModel({color: 'blue', weight: 60})),
+                repository.store(new TestDocument({color: 'red', weight: 100})),
+                repository.store(new TestDocument({color: 'red', weight: 150})),
+                repository.store(new TestDocument({color: 'blue', weight: 60})),
             ]).then(() => {
                 return repository.count({color: 'blue'});
             }).then((result) => {
@@ -134,11 +134,11 @@ describe('Resident repository', function() {
     });
     describe('#sum', function() {
         it('sum() should return proper result', function(done) {
-            let repository = new ResidentRepository(TestModel);
+            let repository = new ResidentRepository(TestDocument);
             Promise.all([
-                repository.store(new TestModel({color: 'red', weight: 100})),
-                repository.store(new TestModel({color: 'red', weight: 150})),
-                repository.store(new TestModel({color: 'blue', weight: 60})),
+                repository.store(new TestDocument({color: 'red', weight: 100})),
+                repository.store(new TestDocument({color: 'red', weight: 150})),
+                repository.store(new TestDocument({color: 'blue', weight: 60})),
             ]).then(() => {
                 return repository.sum('weight', {color: 'red'});
             }).then((result) => {
@@ -154,11 +154,11 @@ describe('Resident repository', function() {
     });
     describe('#avg', function() {
         it('avg() should return proper result', function(done) {
-            let repository = new ResidentRepository(TestModel);
+            let repository = new ResidentRepository(TestDocument);
             Promise.all([
-                repository.store(new TestModel({color: 'red', weight: 100})),
-                repository.store(new TestModel({color: 'red', weight: 200})),
-                repository.store(new TestModel({color: 'blue', weight: 300})),
+                repository.store(new TestDocument({color: 'red', weight: 100})),
+                repository.store(new TestDocument({color: 'red', weight: 200})),
+                repository.store(new TestDocument({color: 'blue', weight: 300})),
             ]).then(() => {
                 return repository.avg('weight', {color: 'red'});
             }).then((result) => {
@@ -174,11 +174,11 @@ describe('Resident repository', function() {
     });
     describe('#min', function() {
         it('min() should return proper result', function(done) {
-            let repository = new ResidentRepository(TestModel);
+            let repository = new ResidentRepository(TestDocument);
             Promise.all([
-                repository.store(new TestModel({color: 'red', weight: 100})),
-                repository.store(new TestModel({color: 'red', weight: 200})),
-                repository.store(new TestModel({color: 'blue', weight: 300})),
+                repository.store(new TestDocument({color: 'red', weight: 100})),
+                repository.store(new TestDocument({color: 'red', weight: 200})),
+                repository.store(new TestDocument({color: 'blue', weight: 300})),
             ]).then(() => {
                 return repository.min('weight', {color: 'blue'});
             }).then((result) => {
@@ -194,11 +194,11 @@ describe('Resident repository', function() {
     });
     describe('#max', function() {
         it('max() should return proper result', function(done) {
-            let repository = new ResidentRepository(TestModel);
+            let repository = new ResidentRepository(TestDocument);
             Promise.all([
-                repository.store(new TestModel({color: 'red', weight: 100})),
-                repository.store(new TestModel({color: 'red', weight: 200})),
-                repository.store(new TestModel({color: 'blue', weight: 300})),
+                repository.store(new TestDocument({color: 'red', weight: 100})),
+                repository.store(new TestDocument({color: 'red', weight: 200})),
+                repository.store(new TestDocument({color: 'blue', weight: 300})),
             ]).then(() => {
                 return repository.max('weight', {color: 'red'});
             }).then((result) => {
@@ -214,12 +214,12 @@ describe('Resident repository', function() {
     });
     describe('#sort', function() {
         it('Search results should go in proper order', function(done) {
-            let repository = new ResidentRepository(TestModel);
+            let repository = new ResidentRepository(TestDocument);
             Promise.all([
-                repository.store(new TestModel({color: 'red', weight: 200})),
-                repository.store(new TestModel({color: 'red', weight: 80})),
-                repository.store(new TestModel({color: 'blue', weight: 150})),
-                repository.store(new TestModel({color: 'red', weight: 180})),
+                repository.store(new TestDocument({color: 'red', weight: 200})),
+                repository.store(new TestDocument({color: 'red', weight: 80})),
+                repository.store(new TestDocument({color: 'blue', weight: 150})),
+                repository.store(new TestDocument({color: 'red', weight: 180})),
             ]).then(() => {
                 let query = (new Query)
                     .where('color', 'red')

@@ -11,7 +11,7 @@ import {
     forEach } from '../helpers.js';
 
 const toNative = (thing) => {
-    if (is(thing, Model)) {
+    if (is(thing, Document)) {
         return thing.toObject();
     }
     if (is(thing, Collection)) {
@@ -49,7 +49,7 @@ class Attribute extends Mixture
     /**
      * Initialize attribute
      * 
-     * @param {Model} target 
+     * @param {Document} target 
      * @param {String} name 
      */
     init(target, name) {
@@ -75,7 +75,7 @@ class Attribute extends Mixture
     /**
      * Get value from target
      * 
-     * @param {Model} target 
+     * @param {Document} target 
      * @param {String} attribute 
      * @returns {any}
      */
@@ -86,7 +86,7 @@ class Attribute extends Mixture
     /**
      * Set value on target
      * 
-     * @param {Model} target 
+     * @param {Document} target 
      * @param {String} name 
      * @param {any} val 
      */
@@ -171,7 +171,7 @@ class TypedAttribute extends Attribute
     /**
      * Set value on target
      * 
-     * @param {Model} target 
+     * @param {Document} target 
      * @param {String} name 
      * @param {any} val 
      */
@@ -214,15 +214,15 @@ class CollectionAttribute extends TypedAttribute
 }
 
 /**
- * Base class for all models
+ * Base class for all documents
  * 
  * @class
  * @augments Mixture
  */
-class Model extends Mixture
+class Document extends Mixture
 {
     /**
-     * Model attributes values
+     * Document attributes values
      * 
      * @protected
      * @var {Object}
@@ -238,7 +238,7 @@ class Model extends Mixture
     _state = {};
 
     /**
-     * @param {Object} [attributes={}] Data to fill model attributes
+     * @param {Object} [attributes={}] Data to fill document attributes
      * @param {Boolean} [saveState=false] Save state after attributes has been assigned
      */ 
     constructor(attributes = {}, saveState = false) {
@@ -251,11 +251,11 @@ class Model extends Mixture
     }
 
     /**
-     * This method provides list of model attributes
+     * This method provides list of document attributes
      * 
      * @returns {Object}
      * @example
-     * class Package extends Model
+     * class Package extends Document
      * {
      *     attributes() {
      *         return {
@@ -271,7 +271,7 @@ class Model extends Mixture
     }
     
     /**
-     * Assign model attributes
+     * Assign document attributes
      * 
      * @param {Object} attributes 
      */
@@ -280,7 +280,7 @@ class Model extends Mixture
     }
     
     /**
-     * Get model attribute value
+     * Get document attribute value
      * 
      * @param {String} name Attribute name
      * @returns {any}
@@ -292,7 +292,7 @@ class Model extends Mixture
     }
     
     /**
-     * Get model attribute value
+     * Get document attribute value
      * 
      * @param {String} name Attribute name
      * @param {any} value Value to assign
@@ -302,7 +302,7 @@ class Model extends Mixture
     }
     
     /**
-     * Convert model to plain object
+     * Convert document to plain object
      * 
      * @returns {Object}
      */
@@ -311,7 +311,7 @@ class Model extends Mixture
     }
     
     /**
-     * Get model key name
+     * Get document key name
      * 
      * @returns {String}
      */
@@ -320,7 +320,7 @@ class Model extends Mixture
     }
     
     /**
-     * Get model key value
+     * Get document key value
      * 
      * @returns {any}
      */
@@ -329,7 +329,7 @@ class Model extends Mixture
     }
     
     /**
-     * Assign model key value
+     * Assign document key value
      * 
      * @param {any} value 
      */
@@ -338,7 +338,7 @@ class Model extends Mixture
     }
     
     /**
-     * Check if model key was assigned
+     * Check if document key was assigned
      * 
      * @returns {Boolean}
      */
@@ -347,7 +347,7 @@ class Model extends Mixture
     }
     
     /**
-     * Get values of model attributes
+     * Get values of document attributes
      * 
      * @returns {Object}
      */
@@ -356,9 +356,9 @@ class Model extends Mixture
     }
 
     /**
-     * Make a copy of the model
+     * Make a copy of the document
      * 
-     * @returns {Model}
+     * @returns {Document}
      */
     clone() {
         return new this.constructor(this.getAttributeValues());
@@ -395,7 +395,7 @@ class Model extends Mixture
     }
 
     /**
-     * Setup model attributes
+     * Setup document attributes
      * 
      * @protected
      */
@@ -411,7 +411,7 @@ class Model extends Mixture
     }
 }
 
-export default Model;
+export default Document;
 
 export {
     Attribute,

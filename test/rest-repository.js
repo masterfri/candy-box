@@ -1,8 +1,8 @@
 import assert from 'assert';
 import './_boot.js';
 import { server } from '../src/lib/server/base.js';
-import Model, {
-    Attribute } from '../src/lib/structures/model.js';
+import Document, {
+    Attribute } from '../src/lib/structures/document.js';
 import ResidentRepository from '../src/lib/repository/resident.js';
 import RestRepository from '../src/lib/repository/rest.js';
 import RepositoryProxy from '../src/lib/repository/proxy.js';
@@ -12,7 +12,7 @@ import Request, {
 import { ValidationError } from '../src/lib/validation/validator.js';
 import Query from '../src/lib/query/query.js';
 
-class TestModel extends Model
+class TestDocument extends Document
 {
     attributes() {
         return {
@@ -23,7 +23,7 @@ class TestModel extends Model
     }
 }
 
-class StoreModelRequest extends Request
+class StoreDocumentRequest extends Request
 {
     method() {
         return Method.PUT;
@@ -41,11 +41,11 @@ class StoreModelRequest extends Request
     }
 }
 
-let repository = new ResidentRepository(TestModel);
+let repository = new ResidentRepository(TestDocument);
 let proxy = new RepositoryProxy(repository);
 let noValidationMapping = new RepositoryRequestMap('/item');
 let mapping = new RepositoryRequestMap('/item');
-mapping.map('store', StoreModelRequest);
+mapping.map('store', StoreDocumentRequest);
 
 describe('Rest repository', function() {
     before(function (done) {
@@ -61,49 +61,49 @@ describe('Rest repository', function() {
         server().stop().then(done);
     });
     describe('#store', function() {
-        it('Model should be stored in repository', function(done) {
-            let repo = new RestRepository(TestModel, mapping);
-            let model = new TestModel({
+        it('Document should be stored in repository', function(done) {
+            let repo = new RestRepository(TestDocument, mapping);
+            let document = new TestDocument({
                 weight: 5,
             });
-            repo.store(model).then(() => {
-                assert.ok(model.hasKey());
+            repo.store(document).then(() => {
+                assert.ok(document.hasKey());
                 done();
             }).catch(done);
         });
-        it('Model should not be stored due to validation errors', function(done) {
-            let repo = new RestRepository(TestModel, mapping);
-            let model = new TestModel({
+        it('Document should not be stored due to validation errors', function(done) {
+            let repo = new RestRepository(TestDocument, mapping);
+            let document = new TestDocument({
                 weight: 1500,
             });
-            repo.store(model).then(() => {
+            repo.store(document).then(() => {
                 done('Validation should fail');
             }).catch((response) => {
                 assert.ok(response instanceof ValidationError);
                 done();
             }).catch(done);
         });
-        it('Model should not be stored due to validation errors (server side)', function(done) {
-            let repo = new RestRepository(TestModel, noValidationMapping);
-            let model = new TestModel({
+        it('Document should not be stored due to validation errors (server side)', function(done) {
+            let repo = new RestRepository(TestDocument, noValidationMapping);
+            let document = new TestDocument({
                 weight: 1500,
             });
-            repo.store(model).then(() => {
+            repo.store(document).then(() => {
                 done('Validation should fail');
             }).catch((response) => {
                 assert.ok(response instanceof ValidationError);
                 done();
             }).catch(done);
         });
-        it('Model should be updated but not created again if exists', function(done) {
-            let repo = new RestRepository(TestModel, mapping);
-            let model = new TestModel({
+        it('Document should be updated but not created again if exists', function(done) {
+            let repo = new RestRepository(TestDocument, mapping);
+            let document = new TestDocument({
                 color: 'white',
                 weight: 5,
             });
-            repo.store(model).then((stored) => {
+            repo.store(document).then((stored) => {
                 stored.weight = 10;
-                return repo.store(model);
+                return repo.store(document);
             }).then(() => {
                 let query = (new Query).where('color', 'white');
                 return repo.search(query);
@@ -115,13 +115,13 @@ describe('Rest repository', function() {
         });
     });
     describe('#get', function() {
-        it('Model should be retrievable from repository', function(done) {
-            let model = new TestModel({
+        it('Document should be retrievable from repository', function(done) {
+            let document = new TestDocument({
                 weight: 5,
             });
-            let repo = new RestRepository(TestModel, mapping);
-            repo.store(model).then(() => {
-                return repo.get(model.getKey());
+            let repo = new RestRepository(TestDocument, mapping);
+            repo.store(document).then(() => {
+                return repo.get(document.getKey());
             }).then(() => {
                 done();
             }).catch((err) => {
@@ -130,12 +130,12 @@ describe('Rest repository', function() {
         });
     });
     describe('#search', function() {
-        it('Model should be searchable in repository', function(done) {
-            let repo = new RestRepository(TestModel, mapping);
+        it('Document should be searchable in repository', function(done) {
+            let repo = new RestRepository(TestDocument, mapping);
             Promise.all([
-                repo.store(new TestModel({color: 'red', weight: 100})),
-                repo.store(new TestModel({color: 'red', weight: 150})),
-                repo.store(new TestModel({color: 'blue', weight: 60})),
+                repo.store(new TestDocument({color: 'red', weight: 100})),
+                repo.store(new TestDocument({color: 'red', weight: 150})),
+                repo.store(new TestDocument({color: 'blue', weight: 60})),
             ]).then(() => {
                 let query = (new Query).where('color', 'blue');
                 return repo.search(query);
@@ -155,28 +155,28 @@ describe('Rest repository', function() {
         });
     });
     describe('#delete', function() {
-        it('Model should be deleteable from repository', function(done) {
-            let model = new TestModel();
-            let repo = new RestRepository(TestModel, mapping);
-            repo.store(model).then(() => {
-                return repo.delete(model.getKey());
+        it('Document should be deleteable from repository', function(done) {
+            let document = new TestDocument();
+            let repo = new RestRepository(TestDocument, mapping);
+            repo.store(document).then(() => {
+                return repo.delete(document.getKey());
             }).then(() => {
-                return repo.get(model.getKey());
+                return repo.get(document.getKey());
             }).then(() => {
-                done('Model not deleted');
+                done('Document not deleted');
             }).catch((err) => {
                 done();
             });
         });
     });
     describe('#exists', function() {
-        it('exists() should return true when model exists in collection', function(done) {
-            let model = new TestModel({
+        it('exists() should return true when document exists in collection', function(done) {
+            let document = new TestDocument({
                 weight: 5,
             });
-            let repo = new RestRepository(TestModel, mapping);
-            repo.store(model).then(() => {
-                return repo.exists(model.getKey());
+            let repo = new RestRepository(TestDocument, mapping);
+            repo.store(document).then(() => {
+                return repo.exists(document.getKey());
             }).then((result) => {
                 assert.ok(result);
                 done();
@@ -184,12 +184,12 @@ describe('Rest repository', function() {
                 done(err);
             });
         });
-        it('exists() should return false when model does not exist in collection', function(done) {
-            let model = new TestModel({
+        it('exists() should return false when document does not exist in collection', function(done) {
+            let document = new TestDocument({
                 weight: 5,
             });
-            let repo = new RestRepository(TestModel, mapping);
-            repo.store(model).then(() => {
+            let repo = new RestRepository(TestDocument, mapping);
+            repo.store(document).then(() => {
                 return repo.exists(999);
             }).then((result) => {
                 assert.ok(!result);
@@ -201,11 +201,11 @@ describe('Rest repository', function() {
     });
     describe('#count', function() {
         it('count() should return proper result', function(done) {
-            let repo = new RestRepository(TestModel, mapping);
+            let repo = new RestRepository(TestDocument, mapping);
             Promise.all([
-                repo.store(new TestModel({color: 'red', weight: 100})),
-                repo.store(new TestModel({color: 'red', weight: 150})),
-                repo.store(new TestModel({color: 'blue', weight: 60})),
+                repo.store(new TestDocument({color: 'red', weight: 100})),
+                repo.store(new TestDocument({color: 'red', weight: 150})),
+                repo.store(new TestDocument({color: 'blue', weight: 60})),
             ]).then(() => {
                 return repo.count({color: 'blue'});
             }).then((result) => {
@@ -224,11 +224,11 @@ describe('Rest repository', function() {
     });
     describe('#sum', function() {
         it('sum() should return proper result', function(done) {
-            let repo = new RestRepository(TestModel, mapping);
+            let repo = new RestRepository(TestDocument, mapping);
             Promise.all([
-                repo.store(new TestModel({color: 'red', weight: 100})),
-                repo.store(new TestModel({color: 'red', weight: 150})),
-                repo.store(new TestModel({color: 'blue', weight: 60})),
+                repo.store(new TestDocument({color: 'red', weight: 100})),
+                repo.store(new TestDocument({color: 'red', weight: 150})),
+                repo.store(new TestDocument({color: 'blue', weight: 60})),
             ]).then(() => {
                 return repo.sum('weight', {color: 'red'});
             }).then((result) => {
@@ -244,11 +244,11 @@ describe('Rest repository', function() {
     });
     describe('#avg', function() {
         it('avg() should return proper result', function(done) {
-            let repo = new RestRepository(TestModel, mapping);
+            let repo = new RestRepository(TestDocument, mapping);
             Promise.all([
-                repo.store(new TestModel({color: 'red', weight: 100})),
-                repo.store(new TestModel({color: 'red', weight: 200})),
-                repo.store(new TestModel({color: 'blue', weight: 300})),
+                repo.store(new TestDocument({color: 'red', weight: 100})),
+                repo.store(new TestDocument({color: 'red', weight: 200})),
+                repo.store(new TestDocument({color: 'blue', weight: 300})),
             ]).then(() => {
                 return repo.avg('weight', {color: 'red'});
             }).then((result) => {
@@ -264,11 +264,11 @@ describe('Rest repository', function() {
     });
     describe('#min', function() {
         it('min() should return proper result', function(done) {
-            let repo = new RestRepository(TestModel, mapping);
+            let repo = new RestRepository(TestDocument, mapping);
             Promise.all([
-                repo.store(new TestModel({color: 'red', weight: 100})),
-                repo.store(new TestModel({color: 'red', weight: 200})),
-                repo.store(new TestModel({color: 'blue', weight: 300})),
+                repo.store(new TestDocument({color: 'red', weight: 100})),
+                repo.store(new TestDocument({color: 'red', weight: 200})),
+                repo.store(new TestDocument({color: 'blue', weight: 300})),
             ]).then(() => {
                 return repo.min('weight', {color: 'blue'});
             }).then((result) => {
@@ -284,11 +284,11 @@ describe('Rest repository', function() {
     });
     describe('#max', function() {
         it('max() should return proper result', function(done) {
-            let repo = new RestRepository(TestModel, mapping);
+            let repo = new RestRepository(TestDocument, mapping);
             Promise.all([
-                repo.store(new TestModel({color: 'red', weight: 100})),
-                repo.store(new TestModel({color: 'red', weight: 200})),
-                repo.store(new TestModel({color: 'blue', weight: 300})),
+                repo.store(new TestDocument({color: 'red', weight: 100})),
+                repo.store(new TestDocument({color: 'red', weight: 200})),
+                repo.store(new TestDocument({color: 'blue', weight: 300})),
             ]).then(() => {
                 return repo.max('weight', {color: 'red'});
             }).then((result) => {
@@ -304,12 +304,12 @@ describe('Rest repository', function() {
     });
     describe('#sort', function() {
         it('Search results should go in proper order', function(done) {
-            let repo = new RestRepository(TestModel, mapping);
+            let repo = new RestRepository(TestDocument, mapping);
             Promise.all([
-                repo.store(new TestModel({color: 'red', weight: 200})),
-                repo.store(new TestModel({color: 'red', weight: 80})),
-                repo.store(new TestModel({color: 'blue', weight: 150})),
-                repo.store(new TestModel({color: 'red', weight: 180})),
+                repo.store(new TestDocument({color: 'red', weight: 200})),
+                repo.store(new TestDocument({color: 'red', weight: 80})),
+                repo.store(new TestDocument({color: 'blue', weight: 150})),
+                repo.store(new TestDocument({color: 'red', weight: 180})),
             ]).then(() => {
                 let query = (new Query)
                     .where('color', 'red')

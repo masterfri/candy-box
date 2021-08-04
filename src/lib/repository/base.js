@@ -16,7 +16,7 @@ import TypedCollection from '../structures/typed-collection.js';
 class AbstractRepository extends Mixture
 {
     /**
-     * Model class
+     * Document class
      * 
      * @protected
      * @var {any}
@@ -24,7 +24,7 @@ class AbstractRepository extends Mixture
     _type;
 
     /**
-     * Model key name
+     * Document key name
      * 
      * @protected
      * @var {String}
@@ -41,17 +41,17 @@ class AbstractRepository extends Mixture
     }
 
     /**
-     * Create new model instance
+     * Create new document instance
      * 
      * @param {Object} [data={}]
-     * @returns {Model} 
+     * @returns {Document} 
      */
-    newModel(data = {}) {
+    newDocument(data = {}) {
         return new this._type(data);
     }
 
     /**
-     * Create new collection of models
+     * Create new collection of documents
      * 
      * @param {Array} [items=[]] 
      * @returns {TypedCollection}
@@ -85,10 +85,10 @@ class AbstractRepository extends Mixture
     }
 
     /**
-     * Find model by its key in repository
+     * Find document by its key in repository
      * 
      * @abstract
-     * @param {Number} key Model key value
+     * @param {Number} key Document key value
      * @returns {Promise}
      */
     get() {
@@ -96,7 +96,7 @@ class AbstractRepository extends Mixture
     }
     
     /**
-     * Search models that match the given query
+     * Search documents that match the given query
      * 
      * @abstract
      * @param {any} query 
@@ -107,11 +107,11 @@ class AbstractRepository extends Mixture
     }
     
     /**
-     * Put model in repository. If repository already has model 
-     * with the same key value that model is being replaced
+     * Put document in repository. If repository already has document 
+     * with the same key value that document is being replaced
      * 
      * @abstract
-     * @param {Model} object 
+     * @param {Document} document 
      * @returns {Promise}
      */
     store() {
@@ -119,7 +119,7 @@ class AbstractRepository extends Mixture
     }
     
     /**
-     * Remove model from repository
+     * Remove document from repository
      * 
      * @abstract
      * @param {Number} key 
@@ -130,7 +130,7 @@ class AbstractRepository extends Mixture
     }
     
     /**
-     * Check if repository has models that match the given query
+     * Check if repository has documents that match the given query
      * 
      * @abstract
      * @param {any} query 
@@ -141,7 +141,7 @@ class AbstractRepository extends Mixture
     }
     
     /**
-     * Count models that match the given query
+     * Count documents that match the given query
      * 
      * @abstract
      * @param {any} [query=null] 
@@ -152,7 +152,7 @@ class AbstractRepository extends Mixture
     }
     
     /**
-     * Get total value of attribute of models that match the given query
+     * Get total value of attribute of documents that match the given query
      * 
      * @abstract
      * @param {String} attribute 
@@ -164,7 +164,7 @@ class AbstractRepository extends Mixture
     }
     
     /**
-     * Get average value of attribute of models that match the given query
+     * Get average value of attribute of documents that match the given query
      * 
      * @abstract
      * @param {String} attribute 
@@ -176,7 +176,7 @@ class AbstractRepository extends Mixture
     }
     
     /**
-     * Get minimal value of attribute of models that match the given query
+     * Get minimal value of attribute of documents that match the given query
      * 
      * @abstract
      * @param {String} attribute 
@@ -188,7 +188,7 @@ class AbstractRepository extends Mixture
     }
     
     /**
-     * Get maximal value of attribute of models that match the given query
+     * Get maximal value of attribute of documents that match the given query
      * 
      * @abstract
      * @param {String} attribute 
@@ -209,7 +209,7 @@ class AbstractRepository extends Mixture
     }
 
     /**
-     * Model key name
+     * Document key name
      * 
      * @var {String}
      */
@@ -218,23 +218,23 @@ class AbstractRepository extends Mixture
     }
 
     /**
-     * Extract data from model
+     * Extract data from document
      * 
-     * @param {Model} object 
+     * @param {Document} document 
      * @returns {Object}
      */
-    _consumeModel(object) {
-        return object.toObject();
+    _consumeDocument(document) {
+        return document.toObject();
     }
 
     /**
-     * Create model with data loaded from repository
+     * Create document with data loaded from repository
      * 
-     * @param {Object} object 
-     * @returns {Model}
+     * @param {Object} document 
+     * @returns {Document}
      */
-    _hydrateModel(object) {
-        return this.newModel(object);
+    _hydrateDocument(document) {
+        return this.newDocument(document);
     }
 
     /**
@@ -245,19 +245,19 @@ class AbstractRepository extends Mixture
      */
     _hydrateCollection(items) {
         return this.newCollection(
-            items.map((item) => this._hydrateModel(item))
+            items.map((item) => this._hydrateDocument(item))
         );
     }
 
     /**
-     * Update model data
+     * Update document data
      * 
-     * @param {Model} object 
+     * @param {Document} document 
      * @param {Object} data 
      */
-    _updateModel(model, data) {
+    _updateDocument(document, data) {
         if (isObject(data)) {
-            model.assign(data);
+            document.assign(data);
         }
     }
 
@@ -273,7 +273,7 @@ class AbstractRepository extends Mixture
 }
 
 /**
- * This error is raised when requested model was not found in repository
+ * This error is raised when requested document was not found in repository
  * 
  * @class
  * @augments Error

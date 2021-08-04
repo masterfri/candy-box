@@ -35,7 +35,7 @@ class SqlRepository extends AbstractRepository
         return this._client.fetchRow(sql)
             .then((result) => {
                 if (result !== null) {
-                    return this._hydrateModel(result);
+                    return this._hydrateDocument(result);
                 }
                 throw this._notExistsError(key);
             });
@@ -59,24 +59,24 @@ class SqlRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    store(object) {
-        if (!object.hasKey()) {
+    store(document) {
+        if (!document.hasKey()) {
             let sql = this._client.newQuery()
                 .table(this._table)
-                .insert(this._consumeModel(object));
+                .insert(this._consumeDocument(document));
             return this._client.insert(sql)
                 .then((insertId) => {
-                    object.setKey(insertId);
-                    return object;
+                    document.setKey(insertId);
+                    return document;
                 });
         }
         let sql = this._client.newQuery()
             .table(this._table)
-            .where(this._keyName, '=', object.getKey())
-            .update(this._consumeModel(object), 1);
+            .where(this._keyName, '=', document.getKey())
+            .update(this._consumeDocument(document), 1);
         return this._client.update(sql)
             .then(() => {
-                return object;
+                return document;
             });
     }
 

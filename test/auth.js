@@ -5,7 +5,7 @@ import Request, {
 import Response from '../src/lib/transport/response.js';
 import { server } from '../src/lib/server/base.js';
 import App from '../src/lib/app.js';
-import Model from '../src/lib/structures/model.js';
+import Document from '../src/lib/structures/document.js';
 import ResidentRepository from '../src/lib/repository/resident.js';
 import {
     Authenticator, 
@@ -52,7 +52,7 @@ class ArgumentRequest extends Request
     }
 }
 
-class User extends Model
+class User extends Document
 {
     attributes() {
         return {

@@ -109,7 +109,7 @@ describe('MySQL client', function() {
                     assert.strictEqual(result, 1);
                     let sql = db.newQuery()
                         .table('test')
-                        .where('weight', '>=', 50)
+                        .where('color', '=', 'red')
                         .select();
                     return db.fetch(sql);
                 }).then((result) => {

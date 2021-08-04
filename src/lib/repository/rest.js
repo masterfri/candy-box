@@ -32,7 +32,7 @@ class RestRepository extends AbstractRepository
     get(key) {
         let data = assign(this._keyName, key);
         return this._request('get', data).then((result) => {
-            return this._hydrateModel(result);
+            return this._hydrateDocument(result);
         });
     }
     
@@ -52,12 +52,12 @@ class RestRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    store(object) {
+    store(document) {
         return new Promise((resolve, reject) => {
-            this._request('store', this._consumeModel(object))
+            this._request('store', this._consumeDocument(document))
                 .then((result) => {
-                    this._updateModel(object, result);
-                    resolve(object);
+                    this._updateDocument(document, result);
+                    resolve(document);
                 })
                 .catch(reject);
         });

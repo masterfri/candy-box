@@ -1,5 +1,5 @@
 import assert from 'assert';
-import Model from '../src/lib/structures/model.js';
+import Document from '../src/lib/structures/document.js';
 import ResidentRepository from '../src/lib/repository/resident.js';
 import RelationAttribute, {
     Relation,
@@ -8,7 +8,7 @@ import RelationAttribute, {
 let humans;
 let pets;
 
-class HumanModel extends Model
+class HumanDocument extends Document
 {
     attributes() {
         return {
@@ -26,7 +26,7 @@ class HumanModel extends Model
     }
 }
 
-class PetModel extends Model
+class PetDocument extends Document
 {
     attributes() {
         return {
@@ -45,50 +45,50 @@ class PetModel extends Model
 
 describe('Relations', function() {
     before(function (done) {
-        humans = new ResidentRepository(HumanModel);
-        pets = new ResidentRepository(PetModel);
+        humans = new ResidentRepository(HumanDocument);
+        pets = new ResidentRepository(PetDocument);
         Promise.all([
-            humans.store(new HumanModel({
+            humans.store(new HumanDocument({
                 name: 'Jack',
                 sex: 'male',
             })).then((jack) => {
                 return Promise.all([
-                    humans.store(new HumanModel({
+                    humans.store(new HumanDocument({
                         name: 'Bob',
                         sex: 'male',
                         parent_id: jack.id,
                     })),
-                    humans.store(new HumanModel({
+                    humans.store(new HumanDocument({
                         name: 'Eva',
                         sex: 'female',
                         parent_id: jack.id,
                     })),
-                    humans.store(new HumanModel({
+                    humans.store(new HumanDocument({
                         name: 'Andy',
                         sex: 'male',
                         parent_id: jack.id,
                     })),
-                    pets.store(new PetModel({
+                    pets.store(new PetDocument({
                         name: 'Larry',
                         owner_id: jack.id,
                     })),
-                    pets.store(new PetModel({
+                    pets.store(new PetDocument({
                         name: 'Pit',
                         owner_id: jack.id,
                     })),
                 ]);
             }),
-            humans.store(new HumanModel({
+            humans.store(new HumanDocument({
                 name: 'Lina',
                 sex: 'female',
             })).then((lina) => {
                 return Promise.all([
-                    humans.store(new HumanModel({
+                    humans.store(new HumanDocument({
                         name: 'Migel',
                         sex: 'male',
                         parent_id: lina.id,
                     })),
-                    pets.store(new PetModel({
+                    pets.store(new PetDocument({
                         name: 'Petty',
                         owner_id: lina.id,
                     })),
@@ -188,7 +188,7 @@ describe('Relations', function() {
                 done();
             }).catch(done);
         });
-        it('Relations should be loaded on multiple models', function(done) {
+        it('Relations should be loaded on multiple documents', function(done) {
             humans.search({}).then((humans) => {
                 return Relation.resolve(humans, (relations) => {
                     relations.query('parent')

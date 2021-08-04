@@ -8,13 +8,13 @@ import Query, {
     Assert,
     Sort } from '../query/query.js';
 import Collection from '../structures/collection.js';
-import Model, {
-    Attribute } from '../structures/model.js';
+import Document, {
+    Attribute } from '../structures/document.js';
 
 class Relation
 {
     /**
-     * @var {Model}
+     * @var {Document}
      */
     _holder;
 
@@ -55,7 +55,7 @@ class Relation
     _query;
 
     /**
-     * @param {Model} holder
+     * @param {Document} holder
      * @param {AbstractRepository} repository 
      * @param {String} localKey
      * @param {String} foreignKey
@@ -142,7 +142,7 @@ class Relation
     /**
      * Load relations on specified target
      * 
-     * @param {Model|Array|Collection} target
+     * @param {Document|Array|Collection} target
      * @param {String|Array|Function|QueryCollection} relation
      * @param {Boolean} [skipResolved=true]
      * @returns {Promise}
@@ -150,7 +150,7 @@ class Relation
     static resolve(target, relation, skipResolved = true) {
         if (is(target, Collection)) {
             target = target.all();
-        } else if (is(target, Model)) {
+        } else if (is(target, Document)) {
             target = [target];
         } else if (!isArray(target)) {
             throw new Error('Invalid target to load relations on');
@@ -266,7 +266,7 @@ class Relation
                 effective.forEach((holder) => {
                     let key = holder.get(this._localKey);
                     holder[attr].set(this._consumeResult(
-                        result.filter((object) => object.get(this._foreignKey) === key)
+                        result.filter((document) => document.get(this._foreignKey) === key)
                     ));
                 });
                 if (relationQuery.hasLinked) {
@@ -279,7 +279,7 @@ class Relation
     }
 
     /**
-     * Collect relation attribute from models
+     * Collect relation attribute from documents
      * 
      * @protected
      * @param {Array} holders 
@@ -292,7 +292,7 @@ class Relation
             let value = holder[attr].value;
             if (is(value, Collection)) {
                 result.push(...value.all());
-            } else if (is(value, Model)) {
+            } else if (is(value, Document)) {
                 result.push(value);
             }
         });
@@ -541,7 +541,7 @@ class OneToOne extends Relation
             return value;
         }
         if (isObject(value)) {
-            return this._repository.newModel(value);
+            return this._repository.newDocument(value);
         }
         throw new TypeError('Invalid value has been supplied');
     }
@@ -580,8 +580,8 @@ class OneToMany extends Relation
         super.set(value);
         let key = this._holder.get(this._localKey);
         if (key) {
-            this._value.forEach((object) => {
-                object.set(this._foreignKey, key);
+            this._value.forEach((document) => {
+                document.set(this._foreignKey, key);
             });
         }
     }
@@ -633,7 +633,7 @@ class RelationAttribute extends Attribute
     /**
      * Initialize attribute
      * 
-     * @param {Model} target 
+     * @param {Document} target 
      * @param {String} name 
      */
     init(target, name) {

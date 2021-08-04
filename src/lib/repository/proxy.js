@@ -49,7 +49,7 @@ class RepositoryProxy
             [
                 () => this._getKeyFromRequest(request),
             ], 
-            (result) => this._serializeObject(result)
+            (result) => this._serializeDocument(result)
         );
     }
 
@@ -79,13 +79,13 @@ class RepositoryProxy
      * @see AbstractRepository
      */
     store(request) {
-        let object = this._repository.newModel(request.body);
-        let isUpdate = object.hasKey();
+        let document = this._getDocumentFromRequest(request);
+        let isUpdate = document.hasKey();
         return this._proxyMethod(
             request,
             'store', 
-            [object], 
-            (stored) => this._serializeObject(stored),
+            [document], 
+            (stored) => this._serializeDocument(stored),
             isUpdate ? Status.OK : Status.CREATED
         );
     }
@@ -325,6 +325,17 @@ class RepositoryProxy
     }
 
     /**
+     * Get document from request
+     * 
+     * @protected
+     * @param {Request} request 
+     * @returns {Document}
+     */
+    _getDocumentFromRequest(request) {
+        return this._repository.newDocument(request.body);
+    }
+
+    /**
      * Forward request to a certain method
      * 
      * @protected
@@ -386,23 +397,23 @@ class RepositoryProxy
     }
 
     /**
-     * Serialize object
+     * Serialize document
      * 
-     * @param {Model} object 
+     * @param {Document} document 
      * @returns {Object}
      */
-    _serializeObject(object) {
-        return object.toObject();
+    _serializeDocument(document) {
+        return document.toObject();
     }
 
     /**
-     * Serialize object
+     * Serialize collection
      * 
      * @param {Collection} collection 
      * @returns {Array}
      */
     _serializeCollection(collection) {
-        return collection.all().map((item) => this._serializeObject(item));
+        return collection.all().map((item) => this._serializeDocument(item));
     }
 }
 

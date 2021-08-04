@@ -24,7 +24,7 @@ const makeSorter = (sort) => {
 }
 
 /**
- * Repository that stores models in memory
+ * Repository that stores documents in memory
  * 
  * @class
  * @augments AbstractRepository
@@ -32,7 +32,7 @@ const makeSorter = (sort) => {
 class ResidentRepository extends AbstractRepository
 {
     /**
-     * Sequence number for the next model
+     * Sequence number for the next document
      * 
      * @protected
      * @var {Number}
@@ -61,9 +61,9 @@ class ResidentRepository extends AbstractRepository
      */
     attachTo(collection) {
         assertType(collection, Collection);
-        collection.forEach((object) => {
-            assertType(object, this._type);
-            this._updateNextKey(object.getKey());
+        collection.forEach((document) => {
+            assertType(document, this._type);
+            this._updateNextKey(document.getKey());
         });
         this._items = collection;
     }
@@ -106,11 +106,11 @@ class ResidentRepository extends AbstractRepository
     }
     
     /**
-     * Get model by its index
+     * Get document by its index
      * 
      * @protected
      * @param {Number} index 
-     * @returns {Model}
+     * @returns {Document}
      */
     _getIndex(index) {
         return this._items.get(index);
@@ -131,7 +131,7 @@ class ResidentRepository extends AbstractRepository
         return new Promise((resolve, reject) => {
             let index = this._findIndex(key);
             if (index !== -1) {
-                resolve(this._hydrateModel(this._getIndex(index)));
+                resolve(this._hydrateDocument(this._getIndex(index)));
             } else {
                 reject(this._notExistsError(key));
             }
@@ -167,21 +167,21 @@ class ResidentRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    store(object) {
+    store(document) {
         return new Promise((resolve) => {
-            if (!object.hasKey()) {
-                object.setKey(this._getNextKey());
-                this._items.push(this._consumeModel(object));
+            if (!document.hasKey()) {
+                document.setKey(this._getNextKey());
+                this._items.push(this._consumeDocument(document));
             } else {
-                let index = this._findIndex(object.getKey());
+                let index = this._findIndex(document.getKey());
                 if (index === -1) {
-                    this._items.push(this._consumeModel(object));
+                    this._items.push(this._consumeDocument(document));
                 } else {
-                    this._items.set(index, this._consumeModel(object));
+                    this._items.set(index, this._consumeDocument(document));
                 }
-                this._updateNextKey(object.getKey());
+                this._updateNextKey(document.getKey());
             }
-            resolve(object);
+            resolve(document);
         });
     }
     
@@ -260,7 +260,7 @@ class ResidentRepository extends AbstractRepository
     }
 
     /**
-     * Execute function on each model that matches the given query
+     * Execute function on each document that matches the given query
      * 
      * @protected
      * @param {any} query 
@@ -283,7 +283,7 @@ class ResidentRepository extends AbstractRepository
     }
     
     /**
-     * Apply aggregator on the models that match the given query
+     * Apply aggregator on the documents that match the given query
      * 
      * @protected
      * @param {any} query 
