@@ -177,7 +177,7 @@ class RestRepository extends AbstractRepository
     _serializeQuery(query) {
         return (
             new SerializedQuery(this.normalizeQuery(query))
-        ).toObject();
+        ).export();
     }
 }
 

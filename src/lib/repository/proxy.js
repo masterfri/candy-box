@@ -320,7 +320,7 @@ class RepositoryProxy
         if (data === null) {
             return null;
         }
-        let query = (new SerializedQuery(data)).toQuery();
+        let query = (new SerializedQuery(data)).instantiate();
         return query;
     }
 
@@ -403,7 +403,7 @@ class RepositoryProxy
      * @returns {Object}
      */
     _serializeDocument(document) {
-        return document.toObject();
+        return document.export();
     }
 
     /**

@@ -8,10 +8,10 @@ import {
 
 const copyViaSerialization = (query) => {
     let serialized = new SerializedQuery(query);
-    let data = JSON.parse(JSON.stringify(serialized.toObject()));
+    let data = JSON.parse(JSON.stringify(serialized.export()));
     // console.dir(data, {depth: null});
     let copy = new SerializedQuery(data);
-    return copy.toQuery();
+    return copy.instantiate();
 }
 
 describe('Query', function() {

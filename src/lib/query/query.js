@@ -760,7 +760,7 @@ class SerializedQuery
      * 
      * @returns {Object}
      */
-    toObject() {
+    export() {
         return this._data;
     }
 
@@ -769,7 +769,7 @@ class SerializedQuery
      * 
      * @returns {Query}
      */
-    toQuery() {
+    instantiate() {
         let query = new Query();
         if (this._data.where !== undefined) {
             this._data.where[1].forEach((or) => {

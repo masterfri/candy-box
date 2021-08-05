@@ -12,7 +12,7 @@ import {
 
 const toNative = (thing) => {
     if (is(thing, Document)) {
-        return thing.toObject();
+        return thing.export();
     }
     if (is(thing, Collection)) {
         return toNative(thing.all());
@@ -306,7 +306,7 @@ class Document extends Mixture
      * 
      * @returns {Object}
      */
-    toObject() {
+    export() {
         return toNative(this._attributes);
     }
     

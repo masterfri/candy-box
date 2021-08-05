@@ -36,10 +36,7 @@ class Message extends Mixture
      * @returns {any}
      */
     get(key, fallback = null) {
-        if (isObject(this._body)) {
-            return get(this._body, key, fallback);
-        }
-        return fallback;
+        return get(this._body, key, fallback);
     }
 
     /**

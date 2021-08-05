@@ -71,14 +71,14 @@ const get = (object, path, def = undefined) => {
     if (isObject(object)) {
         let dot = path.indexOf('.');
         if (dot === -1) {
-            return (path in object) ? object[path] : def;
+            return (path in object) ? object[path] : valueOf(def);
         }
         let root = path.substr(0, dot);
         if (root in object) {
             return get(object[root], path.substr(dot + 1), def);
         }
     }
-    return def;
+    return valueOf(def);
 }
 
 const set = (object, path, value) => {
@@ -94,6 +94,10 @@ const set = (object, path, value) => {
             return set(object[root], path.substr(dot + 1), value);
         }
     }
+}
+
+const valueOf = (v) => {
+    return isFunction(v) ? v() : v;
 }
 
 const forEach = (object, callback) => {

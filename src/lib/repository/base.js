@@ -224,7 +224,7 @@ class AbstractRepository extends Mixture
      * @returns {Object}
      */
     _consumeDocument(document) {
-        return document.toObject();
+        return document.export();
     }
 
     /**

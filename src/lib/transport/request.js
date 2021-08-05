@@ -85,15 +85,7 @@ class Request extends Message
      * @returns {any}
      */
     get(key, fallback = null) {
-        let value = super.get(key, undefined);
-        if (value !== undefined) {
-            return value;
-        }
-        value = get(this._query, key, undefined);
-        if (value !== undefined) {
-            return value;
-        }
-        return fallback;
+        return super.get(key, () => get(this._query, key, fallback));
     }
 
     /**
