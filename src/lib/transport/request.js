@@ -118,10 +118,9 @@ class Request extends Message
     /**
      * This method defines request validation
      * 
-     * @param {Function} chain 
      * @returns {Object|null}
      */
-    validation(chain) {
+    validation() {
         return null;
     }
     
@@ -152,9 +151,7 @@ class Request extends Message
         if (this._validated) {
             return Promise.resolve();
         }
-        let validation = this.validation(() => {
-            return this.validator();
-        });
+        let validation = this.validation();
         if (validation === null) {
             this._validated = true;
             return Promise.resolve();

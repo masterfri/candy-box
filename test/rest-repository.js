@@ -33,10 +33,10 @@ class StoreDocumentRequest extends Request
         return '/item';
     }
 
-    validation(chain) {
+    validation() {
         return {
-            color: chain().required(),
-            weight: chain().required().between(1, 300),
+            color: this.validator().required(),
+            weight: this.validator().required().between(1, 300),
         }
     }
 }

@@ -11,11 +11,11 @@ class TestRequest extends Request
     route() {
     }
 
-    validation(chain) {
+    validation() {
         return {
-            foo: chain().required(),
-            number: chain().between(1, 10),
-            email: chain().required().email(),
+            foo: this.validator().required(),
+            number: this.validator().between(1, 10),
+            email: this.validator().required().email(),
         }
     }
 }

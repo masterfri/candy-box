@@ -5,7 +5,6 @@ import Request, {
 import Response from '../src/lib/transport/response.js';
 import { server } from '../src/lib/server/base.js';
 import { ValidationError } from '../src/lib/validation/validator.js';
-import App from '../src/lib/app.js';
 
 class TestRequestClient extends Request
 {
@@ -16,11 +15,11 @@ class TestRequestClient extends Request
 
 class TestRequest extends TestRequestClient
 {
-    validation(chain) {
+    validation() {
         return {
-            foo: chain().required(),
-            number: chain().between(1, 10),
-            email: chain().required().email(),
+            foo: this.validator().required(),
+            number: this.validator().between(1, 10),
+            email: this.validator().required().email(),
         }
     }
 }
