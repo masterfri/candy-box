@@ -1,6 +1,7 @@
 import Identity, {
     AbstractIdentityResolver,
-    AbstractIdentityTrace } from './identity.js';
+    AbstractIdentityTrace,
+    UnknownIdentityError } from './identity.js';
 import { WebtokenSymbol } from '../security/webtoken.js';
 import App from '../app.js';
 
@@ -16,6 +17,8 @@ class WebtokenResolver extends AbstractIdentityResolver
             return webtoken.verify(token)
                 .then((decoded) => {
                     return new Identity(decoded._IID, (id) => source.getInstance(id));
+                }).catch(() => {
+                    throw new UnknownIdentityError('Invalid token');
                 });
         }
         return false;

@@ -164,7 +164,7 @@ const objectDiff = (before, after) => {
 };
 
 const isObject = (o) => {
-    return typeof(o) === 'object';
+    return o !== null && typeof(o) === 'object';
 }
 
 const isFunction = (o) => {
@@ -239,6 +239,7 @@ export {
     assign,
     get,
     set,
+    valueOf,
     forEach,
     isScalar,
     objectsEqual,

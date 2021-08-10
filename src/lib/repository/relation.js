@@ -257,7 +257,12 @@ class Relation
         let effective = skipResolved
             ? holders.filter((holder) => !holder[attr].isResolved)
             : holders;
-        let keys = effective.map((holder) => holder.get(this._localKey));
+        let keys = effective
+            .map((holder) => holder.get(this._localKey))
+            .filter((key) => key !== null);
+        if (keys.length === 0) {
+            return Promise.resolve(this._repository.newCollection());
+        }
         let query = this._newQuery(keys);
         relationQuery.applyTo(query);
         return this._repository
