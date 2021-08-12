@@ -233,8 +233,8 @@ class SqlRepository extends AbstractRepository
      */
     _buildExpression(where, operator, prop, val) {
         switch (operator) {
-            case Assert.EQ: return where.eq(prop, val);
-            case Assert.NEQ: return where.neq(prop, val);
+            case Assert.EQ: return val === null ? where.isNull(prop) : where.eq(prop, val);
+            case Assert.NEQ: return val === null ? where.isNotNull(prop) : where.neq(prop, val);
             case Assert.LT: return where.lt(prop, val);
             case Assert.LTE: return where.lte(prop, val);
             case Assert.GT: return where.gt(prop, val);

@@ -56,9 +56,7 @@ class Attribute extends Mixture
         Object.defineProperty(target, name, {
             enumerable: true,
             configurable: false,
-            get: () => {
-                return this.get(target, name);
-            },
+            get: () => this.get(target, name),
             set: (val) => {
                 this.set(target, name, val);
             },

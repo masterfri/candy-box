@@ -642,17 +642,20 @@ class RelationAttribute extends Attribute
      * @param {String} name 
      */
     init(target, name) {
+        let relation = new this._relation(
+            target, 
+            this._repository, 
+            this._localKey, 
+            this._foreignKey,
+            this._query
+        );
         Object.defineProperty(target, name, {
             enumerable: true,
             configurable: false,
-            writable: false,
-            value: new this._relation(
-                target, 
-                this._repository, 
-                this._localKey, 
-                this._foreignKey,
-                this._query
-            ),
+            get: () => relation,
+            set: (val) => {
+                relation.set(val);
+            },
         });
     }
 
