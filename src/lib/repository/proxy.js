@@ -6,7 +6,8 @@ import Response, {
 import { NotExistsError } from './base.js';
 import { 
     is,
-    isFunction } from '../helpers.js';
+    isFunction,
+    promise } from '../helpers.js';
 import { gate } from '../auth/auth.js';
 
 /**
@@ -347,10 +348,9 @@ class RepositoryProxy
      * @returns {Promise}
      */
     _proxyMethod(request, method, params, transformer = null, code = Status.OK) {
-        return new Promise((resolve, reject) => {
-            try {
-                let args = params.map((param) => isFunction(param) ? param() : param);
-                this._passGate(request, method, args)
+        return Promise.all(params.map((param) => promise(param)))
+            .then((args) => {
+                return this._passGate(request, method, args)
                     .then(() => this._repository[method](...args))
                     .then((result) => {
                         if (transformer !== null) {
@@ -359,25 +359,18 @@ class RepositoryProxy
                         if (!is(result, Response)) {
                             result = new Response(result, code);
                         }
-                        resolve(result);
+                        return result;
                     })
                     .catch((error) => {
-                        if (is(error, NotExistsError)) {
-                            resolve(
-                                new Response(error.message, Status.NOT_FOUND)
-                            );
-                        } else {
-                            reject(error);
+                        if (is(error, Response)) {
+                            return error;
                         }
+                        if (is(error, NotExistsError)) {
+                            return new Response(error.message, Status.NOT_FOUND)
+                        }
+                        throw error;
                     });
-            } catch (error) {
-                if (is(error, Response)) {
-                    resolve(error);
-                } else {
-                    reject(error);
-                }
-            }
-        });
+            });
     }
 
     /**

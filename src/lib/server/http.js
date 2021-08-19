@@ -128,10 +128,10 @@ class HttpServer extends AbstractServer
     _delegate(target, request) {
         try {
             let response = target(request);
-            if (response instanceof Promise) {
+            if (is(response, Promise)) {
                 return response;
             }
-            if (response instanceof Error) {
+            if (is(response, Error)) {
                 return Promise.reject(response);
             }
             return Promise.resolve(response);

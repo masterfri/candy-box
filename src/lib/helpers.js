@@ -163,6 +163,20 @@ const objectDiff = (before, after) => {
     return diff;
 };
 
+const promise = (val) => {
+    if (is(val, Promise)) {
+        return val;
+    }
+    if (isFunction(val)) {
+        try {
+            return promise(val());
+        } catch (err) {
+            Promise.reject(err);
+        }
+    }
+    return Promise.resolve(val);
+}
+
 const isObject = (o) => {
     return o !== null && typeof(o) === 'object';
 }
@@ -244,6 +258,7 @@ export {
     isScalar,
     objectsEqual,
     objectDiff,
+    promise,
     isObject,
     isFunction,
     isNumber,
