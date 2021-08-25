@@ -230,11 +230,11 @@ class AbstractRepository extends Mixture
     /**
      * Create document with data loaded from repository
      * 
-     * @param {Object} document 
+     * @param {Object} data
      * @returns {Document}
      */
-    _hydrateDocument(document) {
-        return this.newDocument(document);
+    _makeDocument(data) {
+        return this.newDocument(data);
     }
 
     /**
@@ -243,9 +243,9 @@ class AbstractRepository extends Mixture
      * @param {Array|Collection} items
      * @returns {TypedCollection}
      */
-    _hydrateCollection(items) {
+    _makeCollection(items) {
         return this.newCollection(
-            items.map((item) => this._hydrateDocument(item))
+            items.map((item) => this._makeDocument(item))
         );
     }
 

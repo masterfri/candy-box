@@ -32,7 +32,7 @@ class RestRepository extends AbstractRepository
     get(key) {
         let data = assign(this._keyName, key);
         return this._request('get', data).then((result) => {
-            return this._hydrateDocument(result);
+            return this._makeDocument(result);
         });
     }
     
@@ -44,7 +44,7 @@ class RestRepository extends AbstractRepository
         return this._request('search', {
             query: this._serializeQuery(query),
         }).then((results) => {
-            return this._hydrateCollection(results);
+            return this._makeCollection(results);
         });
     }
     

@@ -48,7 +48,7 @@ class RepositoryProxy
             request,
             'get', 
             [
-                () => this._getKeyFromRequest(request),
+                () => this._pullDocumentKey(request),
             ], 
             (result) => this._serializeDocument(result)
         );
@@ -66,7 +66,7 @@ class RepositoryProxy
             request,
             'search', 
             [
-                () => this._getQueryFromRequest(request),
+                () => this._pullQuery(request),
             ], 
             (results) => this._serializeCollection(results)
         );
@@ -80,7 +80,7 @@ class RepositoryProxy
      * @see AbstractRepository
      */
     store(request) {
-        let document = this._getDocumentFromRequest(request);
+        let document = this._pullDocument(request);
         let isUpdate = document.hasKey();
         return this._proxyMethod(
             request,
@@ -103,7 +103,7 @@ class RepositoryProxy
             request,
             'delete', 
             [
-                () => this._getKeyFromRequest(request),
+                () => this._pullDocumentKey(request),
             ], 
             () => new Response()
         );
@@ -121,7 +121,7 @@ class RepositoryProxy
             request,
             'exists', 
             [
-                () => this._getQueryFromRequest(request),
+                () => this._pullQuery(request),
             ]
         );
     }
@@ -138,7 +138,7 @@ class RepositoryProxy
             request,
             'count', 
             [
-                () => this._getQueryFromRequest(request),
+                () => this._pullQuery(request),
             ]
         );
     }
@@ -155,8 +155,8 @@ class RepositoryProxy
             request,
             'sum', 
             [
-                () => this._getAttributeNameFromRequest(request),
-                () => this._getQueryFromRequest(request),
+                () => this._pullParam(request, 'attribute'),
+                () => this._pullQuery(request),
             ]
         );
     }
@@ -173,8 +173,8 @@ class RepositoryProxy
             request,
             'avg', 
             [
-                () => this._getAttributeNameFromRequest(request),
-                () => this._getQueryFromRequest(request),
+                () => this._pullParam(request, 'attribute'),
+                () => this._pullQuery(request),
             ]
         );
     }
@@ -191,8 +191,8 @@ class RepositoryProxy
             request,
             'min', 
             [
-                () => this._getAttributeNameFromRequest(request),
-                () => this._getQueryFromRequest(request),
+                () => this._pullParam(request, 'attribute'),
+                () => this._pullQuery(request),
             ]
         );
     }
@@ -209,8 +209,8 @@ class RepositoryProxy
             request,
             'max', 
             [
-                () => this._getAttributeNameFromRequest(request),
-                () => this._getQueryFromRequest(request),
+                () => this._pullParam(request, 'attribute'),
+                () => this._pullQuery(request),
             ]
         );
     }
@@ -280,33 +280,30 @@ class RepositoryProxy
     }
 
     /**
+     * Get parameter from request
+     * 
+     * @param {Request} request 
+     * @param {String} param 
+     * @param {Boolean} [allowNull=false] 
+     * @returns {any}
+     */
+    _pullParam(request, param, allowNull = false) {
+        let value = request.get(param);
+        if (value === null && allowNull === false) {
+            throw new HttpError(Status.BAD_REQUEST);
+        }
+        return value;
+    }
+
+    /**
      * Get key value from request
      * 
      * @protected
      * @param {Request} request 
      * @returns {Number}
      */
-    _getKeyFromRequest(request) {
-        let key = request.get(this._repository.keyName);
-        if (key === null) {
-            throw new HttpError(Status.BAD_REQUEST);
-        }
-        return key;
-    }
-
-    /**
-     * Get attribute name from request
-     * 
-     * @protected
-     * @param {Request} request 
-     * @returns {String}
-     */
-    _getAttributeNameFromRequest(request) {
-        let attribute = request.get('attribute');
-        if (attribute === null) {
-            throw new HttpError(Status.BAD_REQUEST);
-        }
-        return attribute;
+    _pullDocumentKey(request) {
+        return this._pullParam(request, this._repository.keyName);
     }
 
     /**
@@ -316,13 +313,9 @@ class RepositoryProxy
      * @param {Request} request 
      * @returns {Query}
      */
-    _getQueryFromRequest(request) {
-        let data = request.get('query');
-        if (data === null) {
-            return null;
-        }
-        let query = (new SerializedQuery(data)).instantiate();
-        return query;
+    _pullQuery(request) {
+        let data = this._pullParam(request, 'query');
+        return (new SerializedQuery(data)).instantiate();
     }
 
     /**
@@ -332,7 +325,7 @@ class RepositoryProxy
      * @param {Request} request 
      * @returns {Document}
      */
-    _getDocumentFromRequest(request) {
+    _pullDocument(request) {
         return this._repository.newDocument(request.body);
     }
 

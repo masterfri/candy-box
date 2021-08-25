@@ -131,7 +131,7 @@ class ResidentRepository extends AbstractRepository
         return new Promise((resolve, reject) => {
             let index = this._findIndex(key);
             if (index !== -1) {
-                resolve(this._hydrateDocument(this._getIndex(index)));
+                resolve(this._makeDocument(this._getIndex(index)));
             } else {
                 reject(this._notExistsError(key));
             }
@@ -159,7 +159,7 @@ class ResidentRepository extends AbstractRepository
             } else if (normQuery.start !== 0) {
                 results = results.slice(normQuery.start);
             }
-            resolve(this._hydrateCollection(results));
+            resolve(this._makeCollection(results));
         });
     }
     

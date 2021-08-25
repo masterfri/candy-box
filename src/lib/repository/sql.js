@@ -35,7 +35,7 @@ class SqlRepository extends AbstractRepository
         return this._client.fetchRow(sql)
             .then((result) => {
                 if (result !== null) {
-                    return this._hydrateDocument(result);
+                    return this._makeDocument(result);
                 }
                 throw this._notExistsError(key);
             });
@@ -51,7 +51,7 @@ class SqlRepository extends AbstractRepository
             .select(normQuery.limit, normQuery.start);
         return this._client.fetch(sql)
             .then((results) => {
-                return this._hydrateCollection(results);
+                return this._makeCollection(results);
             });
     }
 
