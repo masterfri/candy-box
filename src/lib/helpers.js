@@ -171,7 +171,7 @@ const promise = (val) => {
         try {
             return promise(val());
         } catch (err) {
-            Promise.reject(err);
+            return Promise.reject(err);
         }
     }
     return Promise.resolve(val);

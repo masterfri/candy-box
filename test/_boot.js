@@ -20,6 +20,9 @@ import {
     SqlClientSymbol,
 } from '../src/lib/sql/base-client.js';
 import MysqlClient from '../src/lib/sql/mysql-client.js';
+import Logger, {
+    LoggerSymbol,
+} from '../src/lib/logging/logger.js';
 
 App.configure({
     server: {
@@ -46,6 +49,9 @@ App.configure({
             public: 'test/_jwtRS256.key.pub',
         },
     },
+    logger: {
+        level: 'info',
+    },
 });
 
 App.register(({box, config}) => {
@@ -55,6 +61,7 @@ App.register(({box, config}) => {
     box.singleton(TransportSymbol, () => new HttpTransport(config.transport || {}));
     box.singleton(ServerSymbol, () => new HttpServer(config.server || {}));
     box.singleton(SqlClientSymbol, () => new MysqlClient(config.db || {}));
+    box.singleton(LoggerSymbol, () => new Logger(config.logger || {}));
 });
 
 App.run();

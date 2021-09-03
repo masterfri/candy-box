@@ -12,6 +12,8 @@ import {
     DenyReason } from '../auth/auth.js';
 import {
     ValidationError } from '../validation/validator.js';
+import { LoggerSymbol } from '../logging/logger.js';
+import App from '../app.js';
 
 /**
  * HTTP server
@@ -46,6 +48,12 @@ class HttpServer extends AbstractServer
     _config;
 
     /**
+     * @protected
+     * @var {Logger}
+     */
+    _logger;
+
+    /**
      * @param {Object} [config={}] 
      */
     constructor(config = {}) {
@@ -56,6 +64,7 @@ class HttpServer extends AbstractServer
         }));
         this._express.use(this._router);
         this._config = config;
+        this._logger = App.make(LoggerSymbol);
     }
 
     /**
@@ -111,6 +120,7 @@ class HttpServer extends AbstractServer
                 } else if (is(error, HttpError)) {
                     res.status(error.code).send(error.message);
                 } else {
+                    this._logger.error(error);
                     res.status(Status.INTERNAL_SERVER_ERROR).send('Server error: ' + error);
                 }
             });

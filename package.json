@@ -26,6 +26,7 @@
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.27.0",
     "mysql2": "^2.2.5",
-    "validate.js": "^0.13.1"
+    "validate.js": "^0.13.1",
+    "winston": "^3.3.3"
   }
 }
