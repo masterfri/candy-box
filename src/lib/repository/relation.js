@@ -140,6 +140,21 @@ class Relation
     }
 
     /**
+     * Export resolved value into plain object
+     * 
+     * @param {Function} [callback=null] 
+     * @returns {Array|null}
+     */
+    export(callback = null) {
+        if (this._value !== undefined) {
+            return this._value.all().map((item) => {
+                return callback === null ? item.export() : callback(item);
+            });
+        }
+        return null;
+    }
+
+    /**
      * Load relations on specified target
      * 
      * @param {Document|Array|Collection} target
@@ -572,6 +587,19 @@ class OneToOne extends Relation
     init() {
         this.set(null);
         return this._value;
+    }
+
+    /**
+     * Export resolved value into plain object
+     * 
+     * @param {Function} [callback=null] 
+     * @returns {Object|null}
+     */
+    export(callback = null) {
+        if (this._value !== undefined) {
+            return callback === null ? this._value.export() : callback(this._value);
+        }
+        return null;
     }
 }
 
