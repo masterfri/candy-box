@@ -11,11 +11,11 @@ import {
     isBool,
     isString,
     isNumber,
-    isNull } from '../helpers.js';
+    isNil } from '../helpers.js';
 
 const isEqual = (a, b) => {
-    if (isNull(b)) {
-        return isNull(a);
+    if (isNil(b)) {
+        return isNil(a);
     }
     if (isBool(b)) {
         return Boolean(Number(a)) === b;
@@ -31,7 +31,7 @@ const isNotEqual = (a, b) => {
 }
 
 const isLessThan = (a, b) => {
-    if (isNull(a) || isNull(b)) {
+    if (isNil(a) || isNil(b)) {
         return false;
     }
     if (isString(b)) {
@@ -41,7 +41,7 @@ const isLessThan = (a, b) => {
 }
 
 const isLessThanOrEqual = (a, b) => {
-    if (isNull(a) || isNull(b)) {
+    if (isNil(a) || isNil(b)) {
         return false;
     }
     if (isString(b)) {
@@ -51,7 +51,7 @@ const isLessThanOrEqual = (a, b) => {
 }
 
 const isGreaterThan = (a, b) => {
-    if (isNull(a) || isNull(b)) {
+    if (isNil(a) || isNil(b)) {
         return false;
     }
     if (isString(b)) {
@@ -61,7 +61,7 @@ const isGreaterThan = (a, b) => {
 }
 
 const isGreaterThanOrEqual = (a, b) => {
-    if (isNull(a) || isNull(b)) {
+    if (isNil(a) || isNil(b)) {
         return false;
     }
     if (isString(a)) {
@@ -183,13 +183,13 @@ const testCondition = (condition, input) => {
 }
 
 const compare = (a, b, descOrder = false) => {
-    if (isNull(a) || isNull(b)) {
+    if (isNil(a) || isNil(b)) {
         return 0;
     }
-    if (isNull(a)) {
+    if (isNil(a)) {
         return descOrder ? 1 : -1;
     }
-    if (isNull(b)) {
+    if (isNil(b)) {
         return descOrder ? -1 : 1;
     }
     if (isLessThan(a, b)) {
@@ -202,7 +202,7 @@ const compare = (a, b, descOrder = false) => {
 }
 
 export {
-    isNull,
+    isNil,
     isEqual,
     isNotEqual,
     isLessThan,

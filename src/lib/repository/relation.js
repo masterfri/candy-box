@@ -3,7 +3,7 @@ import {
     isArray,
     isObject,
     isFunction,
-    isNull } from '../helpers.js';
+    isNil } from '../helpers.js';
 import Query, {
     Assert,
     Sort } from '../query/query.js';
@@ -572,7 +572,7 @@ class OneToOne extends Relation
      */
     set(value) {
         super.set(value);
-        if (!isNull(this._value)) {
+        if (!isNil(this._value)) {
             let valueKey = this._value.get(this._foreignKey);
             if (valueKey) {
                 this._holder.set(this._localKey, valueKey);

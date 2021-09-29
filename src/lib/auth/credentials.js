@@ -1,7 +1,7 @@
 import {
     isObject,
     get,
-    isNull,
+    isNil,
     isArray } from '../helpers.js';
 import {
     AbstractIdentityResolver } from './identity.js';
@@ -60,7 +60,7 @@ class CredentialsResolver extends AbstractIdentityResolver
         if (isObject(data)) {
             for (let key in this._attributes) {
                 let value = get(data, this._attributes[key]);
-                if (isNull(value)) {
+                if (isNil(value)) {
                     return null;
                 }
                 credentials[key] = value;

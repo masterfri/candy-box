@@ -10,6 +10,7 @@ class TestDocument extends Document
         return {
             color: Attribute.string('orange'),
             weight: Attribute.number(),
+            date: Date,
             collection: Attribute.collection(TestDocument),
         };
     }
@@ -19,13 +20,15 @@ describe('Document', function() {
     describe('#attributes', function() {
         it('Attribute default value should be initiated', function() {
             let document = new TestDocument();
-            assert.equal(document.color, 'orange');
+            assert.strictEqual(document.color, 'orange');
         });
         it('Attribute value should always has type as defined', function() {
             let document = new TestDocument({
                 weight: '134',
+                date: '2021-09-05',
             });
-            assert.equal(typeof(document.weight), 'number');
+            assert.strictEqual(typeof(document.weight), 'number');
+            assert.ok(document.date instanceof Date);
         });
         it('Collection attribute should be initiated as empty collection', function() {
             let document = new TestDocument();

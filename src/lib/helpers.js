@@ -4,24 +4,38 @@ const argsToArray = (...args) => {
 
 const makeMutator = (type, nullable = false) => {
     if (type === Number) {
-        return (v) => (nullable && isNull(v)) ? null : (isNaN(v) ? 0 : Number(v));
+        return nullable 
+            ? (v) => isNil(v) ? null : (isNaN(v) ? 0 : Number(v))
+            : (v) => isNaN(v) ? 0 : Number(v);
     }
     if (type === String) {
-        return (v) => (nullable && isNull(v)) ? null : String(v);
+        return nullable
+            ? (v) => isNil(v) ? null : String(v)
+            : (v) => String(v);
     }
     if (type === Boolean) {
-        return (v) => (nullable && isNull(v)) ? null : Boolean(Number(v));
+        return nullable
+            ? (v) => isNil(v) ? null : Boolean(Number(v))
+            : (v) => Boolean(Number(v));
     }
     if (type === Object) {
-        return (v) => (nullable && isNull(v)) ? null : (isObject(v) ? v : {});
+        return nullable
+            ? (v) => isNil(v) ? null : (isObject(v) ? v : {})
+            : (v) => isObject(v) ? v : {};
     }
     if (type === Array) {
-        return (v) => (nullable && isNull(v)) ? null : (isArray(v) ? v : []);
+        return nullable
+            ? (v) => isNil(v) ? null : (isArray(v) ? v : [])
+            : (v) => isArray(v) ? v : [];
     }
     if (isFunction(type)) {
-        return (nullable && isNull(v)) ? null : ((v) => (v instanceof type) ? v : new type(v));
+        return nullable
+            ? (v) => isNil(v) ? null: (is(v, type) ? v : new type(v))
+            : (v) => (v instanceof type) ? v : new type(v);
     }
-    return (v) => (nullable && isNull(v)) ? null : v;
+    return nullable
+        ? (v) => isNil(v) ? null : v
+        : (v) => v;
 }
 
 const onlyProps = (source, props) => {
@@ -201,7 +215,7 @@ const isArray = (o) => {
     return o instanceof Array;
 }
 
-const isNull = (o) => {
+const isNil = (o) => {
     return o === null || o === undefined;
 }
 
@@ -265,7 +279,7 @@ export {
     isBool,
     isString,
     isArray,
-    isNull,
+    isNil,
     is,
     isSubclass,
     safeCall,
