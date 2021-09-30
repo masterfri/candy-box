@@ -8,7 +8,8 @@ import {
     Assert } from '../query/query.js';
 import { 
     is,
-    isFunction } from '../helpers.js';
+    isFunction,
+    forEach } from '../helpers.js';
 
 class SqlRepository extends AbstractRepository
 {
@@ -47,7 +48,7 @@ class SqlRepository extends AbstractRepository
      */
     search(query) {
         let normQuery = this.normalizeQuery(query);
-        let sql = this._consumeQuery(normQuery)
+        let sql = this._toSqlBuilder(normQuery)
             .select(normQuery.limit, normQuery.start);
         return this._client.fetch(sql)
             .then((results) => {
@@ -104,7 +105,7 @@ class SqlRepository extends AbstractRepository
      */
     exists(query) {
         let normQuery = this.normalizeQuery(query);
-        let sql = this._consumeQuery(normQuery, true, true)
+        let sql = this._toSqlBuilder(normQuery, true, true)
             .column(this._keyName)
             .select(1);
         return this._client.fetch(sql)
@@ -154,14 +155,25 @@ class SqlRepository extends AbstractRepository
     }
 
     /**
-     * Convert query to SQL
+     * @inheritdoc
+     */
+    _consumeDocument(document) {
+        let result = {};
+        forEach(document.export(), (val, key) => {
+            result[key] = this._client.toSqlValue(val);
+        });
+        return result;
+    }
+
+    /**
+     * Convert query to SQL builder
      * 
      * @param {Query} query 
      * @param {Boolean} [skipOrder=false]
      * @param {Boolean} [skipGroup=false]
      * @returns {QueryBuilder}
      */
-    _consumeQuery(query, skipOrder = false, skipGroup = false) {
+    _toSqlBuilder(query, skipOrder = false, skipGroup = false) {
         let builder = this._client.newQuery();
         builder.table(this._table);
         if (!query.condition.isEmpty) {
@@ -216,9 +228,8 @@ class SqlRepository extends AbstractRepository
                 let column = property.slice(0, pathStart);
                 let path = property.slice(pathStart + 1);
                 property = where.json(column, path);
-                argument = JSON.stringify(argument);
             }
-            this._buildExpression(where, operator, property, argument);
+            this._buildExpression(where, operator, property, this._client.toSqlValue(argument));
         }
     }
 
@@ -256,7 +267,7 @@ class SqlRepository extends AbstractRepository
      */
     _aggregate(select, query) {
         let normQuery = this.normalizeQuery(query);
-        let builder = this._consumeQuery(normQuery, true, true);
+        let builder = this._toSqlBuilder(normQuery, true, true);
         let sql = builder.columnRaw(isFunction(select) ? select(builder) : select)
             .select();
         return this._client.fetchValue(sql);

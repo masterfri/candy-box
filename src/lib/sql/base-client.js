@@ -1,10 +1,19 @@
 import { Mixture } from '../mixture.js';
 import {
     is,
-    getProp } from '../helpers.js';
+    getProp, 
+    isObject,
+    isNil} from '../helpers.js';
 import { abstractMethodError } from '../helpers.js';
 import { SqlFragment } from './base-query-builder.js';
 import App from '../app.js';
+
+const toMysqlDate = (d) => {
+    return (new Date(d.getTime() - d.getTimezoneOffset() * 60000))
+        .toISOString()
+        .slice(0, 19)
+        .replace('T', ' ');
+}
 
 /**
  * Base sql client class
@@ -136,6 +145,25 @@ class AbstractSqlClient extends Mixture
     fetchValue(sql, bindings = [], column = null) {
         return this.fetchRow(sql, bindings)
             .then((row) => row === null ? null : getProp(row, column));
+    }
+
+    /**
+     * Format value before usage
+     * 
+     * @param {any} val 
+     * @returns {any}
+     */
+    toSqlValue(val) {
+        if (is(val, Date)) {
+            return toMysqlDate(val);
+        }
+        if (isObject(val)) {
+            return JSON.stringify(val);
+        }
+        if (isNil(val)) {
+            return '';
+        }
+        return val;
     }
 
     /**

@@ -213,6 +213,15 @@ class Relation
     }
 
     /**
+     * Alias for `value`
+     * 
+     * @var {any}
+     */
+    get $() {
+        return this._value;
+    }
+
+    /**
      * Related repository
      * 
      * @var {AbstractRepository}
