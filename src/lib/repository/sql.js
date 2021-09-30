@@ -9,6 +9,7 @@ import {
 import { 
     is,
     isFunction,
+    isArray,
     forEach } from '../helpers.js';
 
 class SqlRepository extends AbstractRepository
@@ -229,7 +230,7 @@ class SqlRepository extends AbstractRepository
                 let path = property.slice(pathStart + 1);
                 property = where.json(column, path);
             }
-            this._buildExpression(where, operator, property, this._client.toSqlValue(argument));
+            this._buildExpression(where, operator, property, argument);
         }
     }
 
@@ -244,16 +245,30 @@ class SqlRepository extends AbstractRepository
      */
     _buildExpression(where, operator, prop, val) {
         switch (operator) {
-            case Assert.EQ: return val === null ? where.isNull(prop) : where.eq(prop, val);
-            case Assert.NEQ: return val === null ? where.isNotNull(prop) : where.neq(prop, val);
-            case Assert.LT: return where.lt(prop, val);
-            case Assert.LTE: return where.lte(prop, val);
-            case Assert.GT: return where.gt(prop, val);
-            case Assert.GTE: return where.gte(prop, val);
-            case Assert.IN: return where.in(prop, val);
-            case Assert.NOT_IN: return where.notIn(prop, val);
-            case Assert.CONTAINS: return where.contains(prop, val);
-            case Assert.STARTS: return where.startsWith(prop, val);
+            case Assert.EQ:
+                return val === null
+                    ? where.isNull(prop)
+                    : where.eq(prop, this._client.toSqlValue(val));
+            case Assert.NEQ:
+                return val === null
+                    ? where.isNotNull(prop)
+                    : where.neq(prop, this._client.toSqlValue(val));
+            case Assert.LT: 
+                return where.lt(prop, this._client.toSqlValue(val));
+            case Assert.LTE: 
+                return where.lte(prop, this._client.toSqlValue(val));
+            case Assert.GT: 
+                return where.gt(prop, this._client.toSqlValue(val));
+            case Assert.GTE: 
+                return where.gte(prop, this._client.toSqlValue(val));
+            case Assert.IN: 
+                return where.in(prop, val.map((v) => this._client.toSqlValue(v)));
+            case Assert.NOT_IN: 
+                return where.notIn(prop, val.map((v) => this._client.toSqlValue(v)));
+            case Assert.CONTAINS:
+                return where.contains(prop, this._client.toSqlValue(val));
+            case Assert.STARTS: 
+                return where.startsWith(prop, this._client.toSqlValue(val));
         }
         throw new Error(`Invalid assertion operator: ${operator}`);
     }

@@ -73,7 +73,7 @@ describe('SQL repository', function() {
             let repository = new SqlRepository(TestDocument, 'test', db);
             Promise.all([
                 repository.store(new TestDocument({color: 'red', weight: 100})),
-                repository.store(new TestDocument({color: 'red', weight: 150})),
+                repository.store(new TestDocument({color: 'green', weight: 150})),
                 repository.store(new TestDocument({color: 'blue', weight: 60})),
             ]).then(() => {
                 let query = (new Query).where('color', 'blue');
@@ -82,7 +82,7 @@ describe('SQL repository', function() {
                 assert.equal(result.length, 1);
                 assert.equal(result.first().weight, 60);
                 let query = (new Query).where((cond) => {
-                    cond.lte('weight', 100);
+                    cond.in('color', ['red', 'blue']);
                 });
                 return repository.search(query);
             }).then((result) => {
