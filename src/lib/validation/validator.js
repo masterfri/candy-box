@@ -1,52 +1,24 @@
 import validate from 'validate.js';
-import moment from 'moment';
 import { Mixture } from '../mixture.js';
 import App from '../app.js';
 
-const DateHelper = {
-    templates: {
-        parse: {
-            date: 'YYYY-MM-DD',
-            datetime: 'YYYY-MM-DD hh:mm:ss',
-            get: (options) => {
-                return options.dateOnly
-                    ? DateHelper.templates.parse.date
-                    : DateHelper.templates.parse.datetime;
-            },
-        },
-        format: {
-            date: 'MM/DD/YYYY',
-            datetime: 'MM/DD/YYYY hh:mm:ss',
-            get: (options) => {
-                return options.dateOnly
-                    ? DateHelper.templates.format.date
-                    : DateHelper.templates.format.datetime;
-            },
-        },
-    },
-    parse: (date, options) => {
-        if (typeof date === 'string') {
-            return moment
-                .utc(date, DateHelper.templates.parse.get(options));
-        }
-        if (moment.isMoment(date)) {
-            return date;
-        }
-        return moment(date);
-    },
-    format: (date, options) => {
-        return moment
-            .utc(date)
-            .format(DateHelper.templates.format.get(options));
-    },
-};
+const parseDate = (date) => {
+    return new Date(date);
+}
+
+const formatDate = (date, options) => {
+    if (options.dateOnly) {
+        return (new Date(date)).toLocaleDateString();
+    }
+    return (new Date(date)).toLocaleString();
+}
 
 validate.extend(validate.validators.datetime, {
-    parse: (value, options) => {
-        return DateHelper.parse(value, options).valueOf();
+    parse: (value) => {
+        return parseDate(value).getTime();
     },
     format: (value, options) => {
-        return DateHelper.format(value, options);
+        return formatDate(value, options);
     },
 });
 
@@ -208,7 +180,7 @@ class Validator extends Mixture
     after(date, options = {}) {
         return this.date({
             ...options,
-            earliest: DateHelper.parse(date, options),
+            earliest: parseDate(date),
         });
     }
 
@@ -222,7 +194,7 @@ class Validator extends Mixture
     before(date, options = {}) {
         return this.date({
             ...options,
-            latest: DateHelper.parse(date, options),
+            latest: parseDate(date),
         });
     }
 
@@ -523,7 +495,6 @@ export default Validator;
 
 export {
     ValidationError,
-    DateHelper,
     ValidatorSymbol,
     validator,
 };

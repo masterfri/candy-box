@@ -9,7 +9,6 @@ import {
 import { 
     is,
     isFunction,
-    isArray,
     forEach } from '../helpers.js';
 
 class SqlRepository extends AbstractRepository

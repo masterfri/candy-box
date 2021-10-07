@@ -3,32 +3,9 @@ import TypedCollection from './typed-collection.js';
 import { Mixture } from '../mixture.js';
 import {
     makeMutator,
-    objectDiff,
     is,
     isFunction,
-    isObject,
-    isArray,
-    forEach } from '../helpers.js';
-
-const toNative = (thing) => {
-    if (is(thing, Document)) {
-        return thing.export();
-    }
-    if (is(thing, Collection)) {
-        return toNative(thing.all());
-    }
-    if (isArray(thing)) {
-        return thing.map((item) => toNative(item));
-    }
-    if (isObject(thing)) {
-        let flat = {};
-        forEach(thing, (value, key) => {
-            flat[key] = toNative(value);
-        });
-        return flat;
-    }
-    return thing;
-}
+    isArray } from '../helpers.js';
 
 class Attribute extends Mixture
 {
@@ -226,26 +203,14 @@ class Document extends Mixture
      * @var {Object}
      */
     _attributes = {};
-    
-    /**
-     * Saved state values
-     * 
-     * @protected
-     * @var {Object}
-     */
-    _state = {};
 
     /**
      * @param {Object} [attributes={}] Data to fill document attributes
-     * @param {Boolean} [saveState=false] Save state after attributes has been assigned
      */ 
-    constructor(attributes = {}, saveState = false) {
+    constructor(attributes = {}) {
         super();
         this._setupAttributes();
         this.assign(attributes);
-        if (saveState) {
-            this.saveState();
-        }
     }
 
     /**
@@ -300,12 +265,12 @@ class Document extends Mixture
     }
     
     /**
-     * Convert document to plain object
+     * Export attributes from the document
      * 
      * @returns {Object}
      */
     export() {
-        return toNative(this._attributes);
+        return {...this._attributes};
     }
     
     /**
@@ -345,51 +310,12 @@ class Document extends Mixture
     }
     
     /**
-     * Get values of document attributes
-     * 
-     * @returns {Object}
-     */
-    getAttributeValues() {
-        return {...this._attributes};
-    }
-
-    /**
      * Make a copy of the document
      * 
      * @returns {Document}
      */
     clone() {
-        return new this.constructor(this.getAttributeValues());
-    }
-
-    /**
-     * Memorize current attribute values
-     */
-    saveState() {
-        this._state = {...this._attributes};
-    }
-
-    /**
-     * Restore memorized attribute values
-     */
-    revertState() {
-        this._attributes = {...this._state};
-    }
-
-    /**
-     * Forget memorized attribute values
-     */
-    clearState() {
-        this._state = {};
-    }
-
-    /**
-     * Get list of attributes that were changed since the moment they were memorized
-     * 
-     * @returns {Object}
-     */
-    diffState() {
-        return objectDiff(this._state, this._attributes);
+        return new this.constructor({...this._attributes});
     }
 
     /**

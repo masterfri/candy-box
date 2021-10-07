@@ -40,25 +40,4 @@ describe('Document', function() {
             assert.ok(document.collection.first() instanceof TestDocument);
         });
     });
-
-    describe('#states', function() {
-        it('Attribute states should be restored', function() {
-            let document = new TestDocument();
-            document.assign({weight: 10, color: 'red'});
-            assert.equal(document.color, 'red');
-            document.saveState();
-            document.assign({color: 'blue'});
-            assert.equal(document.color, 'blue');
-            document.revertState();
-            assert.equal(document.color, 'red');
-        });
-        it('Attributes diff should be calculated properly', function() {
-            let document = new TestDocument();
-            document.assign({weight: 10, color: 'red'});
-            assert.equal(document.color, 'red');
-            document.saveState();
-            document.assign({color: 'blue'});
-            assert.deepEqual(document.diffState(), {color: 'red'});
-        });
-    });
 });

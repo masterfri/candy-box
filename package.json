@@ -20,11 +20,9 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
-    "axios": "^0.19.2",
-    "crypto": "^1.0.1",
+    "axios": "^0.21.4",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "moment": "^2.27.0",
     "mysql2": "^2.2.5",
     "validate.js": "^0.13.1",
     "winston": "^3.3.3"

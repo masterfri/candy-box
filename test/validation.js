@@ -22,7 +22,7 @@ describe('Validation', function() {
         });
     });
     describe('#date', function() {
-        it('Validation should pass', function(done) {
+        it('Validation should pass for date', function(done) {
             let chain = new Validator();
             chain.date();
             chain.validate('date', {date: '2020-05-10'}).then(() => {
@@ -31,7 +31,16 @@ describe('Validation', function() {
                 done(err);
             });
         });
-        it('Validation should pass', function(done) {
+        it('Validation should pass for datetime', function(done) {
+            let chain = new Validator();
+            chain.datetime();
+            chain.validate('date', {date: '2020-05-10 06:30:00'}).then(() => {
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
+        it('Validation should pass for earlier date', function(done) {
             let chain = new Validator();
             chain.before('2020-05-10', {
                 dateOnly: true,
@@ -42,7 +51,7 @@ describe('Validation', function() {
                 done(err);
             });
         });
-        it('Validation should fail', function(done) {
+        it('Validation should fail for non-date value', function(done) {
             let chain = new Validator();
             chain.date();
             chain.validate('date', {date: 'foobar'}).then(() => {
@@ -51,7 +60,16 @@ describe('Validation', function() {
                 done();
             });
         });
-        it('Validation should fail', function(done) {
+        it('Validation should fail for datetime when only date expected', function(done) {
+            let chain = new Validator();
+            chain.date();
+            chain.validate('date', {date: '2020-05-10 06:30:00'}).then(() => {
+                done('Validation passed');
+            }).catch((err) => {
+                done();
+            });
+        });
+        it('Validation should fail for date above threshold', function(done) {
             let chain = new Validator();
             chain.before('2020-05-10', {
                 dateOnly: true,
