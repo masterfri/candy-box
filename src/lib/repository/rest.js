@@ -29,22 +29,18 @@ class RestRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    get(key) {
+    _getInternal(key) {
         let data = assign(this._keyName, key);
-        return this._request('get', data).then((result) => {
-            return this._makeDocument(result);
-        });
+        return this._request('get', data);
     }
     
     /**
      * @override
      * @inheritdoc
      */
-    search(query) {
+    _searchInternal(query) {
         return this._request('search', {
             query: this._serializeQuery(query),
-        }).then((results) => {
-            return this._makeCollection(results);
         });
     }
     
@@ -52,22 +48,15 @@ class RestRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    store(document) {
-        return new Promise((resolve, reject) => {
-            this._request('store', this._consumeDocument(document))
-                .then((result) => {
-                    this._updateDocument(document, result);
-                    resolve(document);
-                })
-                .catch(reject);
-        });
+    _storeInternal(_key, data) {
+        return this._request('store', data);
     }
     
     /**
      * @override
      * @inheritdoc
      */
-    delete(key) {
+    _deleteInternal(key) {
         let data = assign(this._keyName, key);
         return this._request('delete', data).then(() => {
             return true;
@@ -78,11 +67,9 @@ class RestRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    exists(query) {
+    _existsInternal(query) {
         return this._request('exists', {
             query: this._serializeQuery(query),
-        }).then((result) => {
-            return Boolean(result);
         });
     }
     
@@ -90,12 +77,9 @@ class RestRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    count(query = null) {
-        let data = query === null ? {} : {
+    _countInternal(query) {
+        return this._request('count', {
             query: this._serializeQuery(query),
-        };
-        return this._request('count', data).then((result) => {
-            return Number(result);
         });
     }
     
@@ -103,12 +87,10 @@ class RestRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    sum(attribute, query = null) {
+    _sumInternal(attribute, query) {
         return this._request('sum', {
             attribute,
             query: this._serializeQuery(query),
-        }).then((result) => {
-            return Number(result);
         });
     }
     
@@ -116,12 +98,10 @@ class RestRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    avg(attribute, query = null) {
+    _avgInternal(attribute, query) {
         return this._request('avg', {
             attribute,
             query: this._serializeQuery(query),
-        }).then((result) => {
-            return Number(result);
         });
     }
     
@@ -129,12 +109,10 @@ class RestRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    min(attribute, query = null) {
+    _minInternal(attribute, query) {
         return this._request('min', {
             attribute,
             query: this._serializeQuery(query),
-        }).then((result) => {
-            return Number(result);
         });
     }
     
@@ -142,12 +120,10 @@ class RestRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    max(attribute, query = null) {
+    _maxInternal(attribute, query) {
         return this._request('max', {
             attribute,
             query: this._serializeQuery(query),
-        }).then((result) => {
-            return Number(result);
         });
     }
 
@@ -175,9 +151,7 @@ class RestRepository extends AbstractRepository
      * @returns {Object}
      */
     _serializeQuery(query) {
-        return (
-            new SerializedQuery(this.normalizeQuery(query))
-        ).export();
+        return (new SerializedQuery(query)).export();
     }
 }
 

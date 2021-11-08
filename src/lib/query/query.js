@@ -908,6 +908,8 @@ const Assert = {
     NOT_IN,
     CONTAINS,
     STARTS,
+    IS,
+    IS_NOT,
 }
 
 export default Query;

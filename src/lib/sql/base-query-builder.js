@@ -1,5 +1,4 @@
 import {
-    argsToArray,
     is,
     isArray,
     isObject,
@@ -744,7 +743,7 @@ class QueryBuilder
      */
     column(...cols) {
         let frag = this._fragment(FRAG_COLS);
-        argsToArray(cols).forEach((col) => {
+        Array.from(cols).forEach((col) => {
             if (isString(col)) {
                 frag.add(this.quote(col));
             } else if (is(col, SqlFragment)) {
@@ -780,7 +779,7 @@ class QueryBuilder
      */
     table(...tables) {
         let frag = this._fragment(FRAG_TABLE);
-        argsToArray(tables).forEach((table) => {
+        Array.from(tables).forEach((table) => {
             if (isString(table)) {
                 frag.add(this.quote(table));
             } else if (isArray(table)) {
@@ -929,7 +928,7 @@ class QueryBuilder
      * @returns {QueryBuilder}
      */
     ascendingBy(...cols) {
-        argsToArray(cols).forEach((col) => {
+        Array.from(cols).forEach((col) => {
             this.orderBy(col);
         });
         return this;
@@ -942,7 +941,7 @@ class QueryBuilder
      * @returns {QueryBuilder}
      */
     descendingBy(...cols) {
-        argsToArray(cols).forEach((col) => {
+        Array.from(cols).forEach((col) => {
             this.orderBy(col, 'desc');
         });
         return this;
@@ -956,7 +955,7 @@ class QueryBuilder
      */
     groupBy(...cols) {
         let frag = this._fragment(FRAG_GROUP);
-        argsToArray(cols).forEach((col) => {
+        Array.from(cols).forEach((col) => {
             frag.add(this.quote(col));
         });
         return this;

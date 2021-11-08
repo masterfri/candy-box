@@ -1,7 +1,3 @@
-const argsToArray = (...args) => {
-    return Array.prototype.slice.call(...args);
-}
-
 const makeMutator = (type, nullable = false) => {
     if (type === Number) {
         return nullable 
@@ -38,7 +34,7 @@ const makeMutator = (type, nullable = false) => {
         : (v) => v;
 }
 
-const onlyProps = (source, props) => {
+const pickProps = (source, props) => {
     let result = {};
     Object.keys(source).forEach((prop) => {
         if (props.indexOf(prop) !== -1) {
@@ -48,7 +44,7 @@ const onlyProps = (source, props) => {
     return result;
 }
 
-const withoutProps = (source, props) => {
+const skipProps = (source, props) => {
     let result = {};
     Object.keys(source).forEach((prop) => {
         if (props.indexOf(prop) === -1) {
@@ -110,17 +106,100 @@ const set = (object, path, value) => {
     }
 }
 
+const inject = (target, ...extensions) => {
+    Array.from(extensions).forEach((extension) => {
+        let descriptors = Object.getOwnPropertyDescriptors(extension);
+        forEach(descriptors, (descriptor, name) => {
+            if (target.prototype[name] === undefined) {
+                Object.defineProperty(target.prototype, name, descriptor);
+            }
+        });
+    });
+    return target;
+}
+
 const valueOf = (v) => {
     return isFunction(v) ? v() : v;
 }
 
+const sum = (values) => {
+    let sum = 0;
+    forEach(values, (val) => {
+        if (!isNaN(val)) {
+            sum += Number(val);
+        }
+    });
+    return sum;
+}
+
+const avg = (values) => {
+    let sum = 0, count = 0;
+    forEach(values, (val) => {
+        if (!isNaN(val)) {
+            sum += Number(val);
+            count++;
+        }
+    });
+    return count === 0 ? 0 : sum / count;
+}
+
+const min = (values) => {
+    let res = undefined;
+    forEach(values, (val) => {
+        if (!isNil(val)) {
+            if (res === undefined || res > val) {
+                res = val;
+            }
+        }
+    });
+    return res;
+}
+
+const max = (values) => {
+    let res = undefined;
+    forEach(values, (val) => {
+        if (!isNil(val)) {
+            if (res === undefined || res < val) {
+                res = val;
+            }
+        }
+    });
+    return res;
+}
+
 const forEach = (object, callback) => {
-    if (isArray(object)) {
-        object.forEach(callback);
+    if (isObject(object)) {
+        if (isFunction(object[Symbol.iterator])) {
+            let index = 0;
+            for (let val of object) {
+                callback(val, index++, object);
+            }
+        } else {
+            for (let key in object) {
+                callback(object[key], key, object);
+            }
+        }
     } else {
-        Object.keys(object).forEach((key) => {
-            callback(object[key], key, object);
-        });
+        callback(object, null, object);
+    }
+}
+
+function* filter (iterable, test) {
+    if (isIterable(iterable)) {
+        for (let val of iterable) {
+            if (test(val)) {
+                yield val;
+            }
+        }
+    }
+}
+
+function* pick (iterable, prop) {
+    if (isIterable(iterable)) {
+        let getter = isFunction(prop) ? prop : (v) => get(v, prop);
+        for (let val of iterable) {
+            yield getter(val);
+        }
     }
 }
 
@@ -156,26 +235,6 @@ const arraysEqual = (a, b) => {
         return val === b[index];
     });
 }
-
-const objectDiff = (before, after) => {
-    let diff = {};
-    Object.keys(after).forEach((key) => {
-        if (is(after[key], Array)) {
-            if (!arraysEqual(before[key], after[key])) {
-                diff[key] = before[key];
-            }
-        } else if (isObject(after[key])) {
-            if (!objectsEqual(before[key], after[key])) {
-                diff[key] = before[key];
-            }
-        } else {
-            if (before[key] !== after[key]) {
-                diff[key] = before[key];
-            }
-        }
-    });
-    return diff;
-};
 
 const promise = (val) => {
     if (is(val, Promise)) {
@@ -219,6 +278,14 @@ const isNil = (o) => {
     return o === null || o === undefined;
 }
 
+const isPrimitive = (o) => {
+    return isNil(o) || isString(o) || isNumber(o) || isBool(o);
+}
+
+const isIterable = (o) => {
+    return isObject(o) && isFunction(o[Symbol.iterator]);
+}
+
 const is = (o, t) => {
     return o instanceof t;
 }
@@ -239,6 +306,30 @@ const assertType = (o, t) => {
     }
 }
 
+const assertIsString = (o) => {
+    if (!isString(o)) {
+        throw new TypeError('The given value should be a string');
+    }
+}
+
+const assertIsFunction = (o) => {
+    if (!isFunction(o)) {
+        throw new TypeError('The given value should be a function');
+    }
+}
+
+const assertIsNumber = (o) => {
+    if (!isNumber(o)) {
+        throw new TypeError('The given value should be a number');
+    }
+}
+
+const assertIsBool = (o) => {
+    if (!isBool(o)) {
+        throw new TypeError('The given value should be boolean one');
+    }
+}
+
 const assertIsObject = (o) => {
     if (!isObject(o)) {
         throw new TypeError('The given value should be an object');
@@ -251,6 +342,18 @@ const assertIsArray = (a) => {
     }
 }
 
+const assertIsPrimitive = (o) => {
+    if (!isPrimitive(o)) {
+        throw new TypeError('The given value should be primitive one');
+    }
+}
+
+const assertNotNil = (a) => {
+    if (isNil(a)) {
+        throw new TypeError('The given value should be not nil');
+    }
+}
+
 const abstractMethodError = (m) => {
     throw new Error(`Method "${m}" must be implemented in subclass`);
 }
@@ -258,20 +361,26 @@ const abstractMethodError = (m) => {
 const nop = () => {}
 
 export {
-    argsToArray,
     makeMutator,
     getProps,
     getProp,
-    onlyProps,
-    withoutProps,
+    pickProps,
+    skipProps,
     assign,
     get,
     set,
+    inject,
     valueOf,
+    sum,
+    avg,
+    min,
+    max,
     forEach,
+    filter,
+    pick,
     isScalar,
     objectsEqual,
-    objectDiff,
+    arraysEqual,
     promise,
     isObject,
     isFunction,
@@ -280,12 +389,20 @@ export {
     isString,
     isArray,
     isNil,
+    isPrimitive,
+    isIterable,
     is,
     isSubclass,
     safeCall,
     assertType,
+    assertIsString,
+    assertIsFunction,
+    assertIsNumber,
+    assertIsBool,
     assertIsObject,
     assertIsArray,
+    assertIsPrimitive,
+    assertNotNil,
     abstractMethodError,
     nop,
 };

@@ -11,6 +11,7 @@ import Request, {
     Method } from '../src/lib/transport/request.js';
 import { ValidationError } from '../src/lib/validation/validator.js';
 import Query from '../src/lib/query/query.js';
+import validateQuery from '../src/lib/query/validator.js';
 
 class TestDocument extends Document
 {
@@ -41,16 +42,47 @@ class StoreDocumentRequest extends Request
     }
 }
 
+class SearchDocumentRequest extends Request
+{
+    method() {
+        return Method.GET;
+    }
+
+    route() {
+        return '/item2';
+    }
+
+    validation() {
+        return {
+            query: this.validator().custom(validateQuery, {
+                filterable: {
+                    color: this.validator()
+                        .in(['red', 'green', 'blue']),
+                    weight: this.validator()
+                        .number()
+                        .between(0, 1000),
+                },
+                sortable: ['color', 'weight'], 
+                groupable: ['color'], 
+                limit: 50,
+            }),
+        }
+    }
+}
+
 let repository = new ResidentRepository(TestDocument);
 let proxy = new RepositoryProxy(repository);
 let noValidationMapping = new RepositoryRequestMap('/item');
 let mapping = new RepositoryRequestMap('/item');
+let mapping2 = new RepositoryRequestMap('/item2');
 mapping.map('store', StoreDocumentRequest);
+mapping2.map('search', SearchDocumentRequest);
 
 describe('Rest repository', function() {
     before(function (done) {
         server()
             .map(mapping, proxy)
+            .map(mapping2, proxy)
             .start()
             .then(done);
     });
@@ -108,8 +140,8 @@ describe('Rest repository', function() {
                 let query = (new Query).where('color', 'white');
                 return repo.search(query);
             }).then((results) => {
-                assert.equal(results.length, 1);
-                assert.equal(results.first().weight, 10);
+                assert.strictEqual(results.length, 1);
+                assert.strictEqual(results.first().weight, 10);
                 done();
             }).catch(done);
         });
@@ -140,14 +172,14 @@ describe('Rest repository', function() {
                 let query = (new Query).where('color', 'blue');
                 return repo.search(query);
             }).then((result) => {
-                assert.equal(result.length, 1);
-                assert.equal(result.first().weight, 60);
+                assert.strictEqual(result.length, 1);
+                assert.strictEqual(result.first().weight, 60);
                 let query = (new Query).where((cond) => {
                     cond.lte('weight', 100);
                 });
                 return repo.search(query);
             }).then((result) => {
-                assert.equal(result.length, 2);
+                assert.strictEqual(result.length, 2);
                 done();
             }).catch((err) => {
                 done(err);
@@ -209,13 +241,13 @@ describe('Rest repository', function() {
             ]).then(() => {
                 return repo.count({color: 'blue'});
             }).then((result) => {
-                assert.equal(result, 1);
+                assert.strictEqual(result, 1);
                 let query = (new Query).where((cond) => {
                     cond.lte('weight', 100);
                 });
                 return repo.count(query);
             }).then((result) => {
-                assert.equal(result, 2);
+                assert.strictEqual(result, 2);
                 done();
             }).catch((err) => {
                 done(err);
@@ -232,10 +264,10 @@ describe('Rest repository', function() {
             ]).then(() => {
                 return repo.sum('weight', {color: 'red'});
             }).then((result) => {
-                assert.equal(result, 250);
+                assert.strictEqual(result, 250);
                 return repo.sum('weight');
             }).then((result) => {
-                assert.equal(result, 310);
+                assert.strictEqual(result, 310);
                 done();
             }).catch((err) => {
                 done(err);
@@ -252,10 +284,10 @@ describe('Rest repository', function() {
             ]).then(() => {
                 return repo.avg('weight', {color: 'red'});
             }).then((result) => {
-                assert.equal(result, 150);
+                assert.strictEqual(result, 150);
                 return repo.avg('weight');
             }).then((result) => {
-                assert.equal(result, 200);
+                assert.strictEqual(result, 200);
                 done();
             }).catch((err) => {
                 done(err);
@@ -272,10 +304,10 @@ describe('Rest repository', function() {
             ]).then(() => {
                 return repo.min('weight', {color: 'blue'});
             }).then((result) => {
-                assert.equal(result, 300);
+                assert.strictEqual(result, 300);
                 return repo.min('weight');
             }).then((result) => {
-                assert.equal(result, 100);
+                assert.strictEqual(result, 100);
                 done();
             }).catch((err) => {
                 done(err);
@@ -292,10 +324,10 @@ describe('Rest repository', function() {
             ]).then(() => {
                 return repo.max('weight', {color: 'red'});
             }).then((result) => {
-                assert.equal(result, 200);
+                assert.strictEqual(result, 200);
                 return repo.max('weight');
             }).then((result) => {
-                assert.equal(result, 300);
+                assert.strictEqual(result, 300);
                 done();
             }).catch((err) => {
                 done(err);
@@ -316,13 +348,67 @@ describe('Rest repository', function() {
                     .ascendingBy('weight');
                 return repo.search(query);
             }).then((result) => {
-                assert.equal(result.length, 3);
+                assert.strictEqual(result.length, 3);
                 assert.ok(result.get(0).weight <= result.get(1).weight);
                 assert.ok(result.get(1).weight <= result.get(2).weight);
                 done();
             }).catch((err) => {
                 done(err);
             });
+        });
+    });
+    describe('#query validation', function() {
+        it('Query should pass validation', function(done) {
+            let repo = new RestRepository(TestDocument, mapping2);
+            Promise.all([
+                repo.store(new TestDocument({color: 'red', weight: 200})),
+                repo.store(new TestDocument({color: 'green', weight: 80})),
+                repo.store(new TestDocument({color: 'blue', weight: 150})),
+                repo.store(new TestDocument({color: 'red', weight: 180})),
+            ]).then(() => {
+                let query = (new Query)
+                    .where((cond) => {
+                        cond.eq('color', 'red')
+                            .gte('weight', 200)
+                            .or()
+                            .eq('color', 'green')
+                    })
+                    .ascendingBy('weight')
+                    .limitTo(20);
+                return repo.search(query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 2);
+                done();
+            }).catch(done);
+        });
+        it('Query should not pass validation', function(done) {
+            let repo = new RestRepository(TestDocument, mapping2);
+            Promise.all([
+                repo.store(new TestDocument({color: 'red', weight: 200})),
+                repo.store(new TestDocument({color: 'green', weight: 80})),
+                repo.store(new TestDocument({color: 'blue', weight: 150})),
+                repo.store(new TestDocument({color: 'red', weight: 180})),
+            ]).then(() => {
+                let query = (new Query)
+                    .where((cond) => {
+                        cond.eq('color', 'brown')
+                            .gte('weight', 2000)
+                            .or()
+                            .eq('color', 'green')
+                    })
+                    .ascendingBy('weight')
+                    .ascendingBy('colour')
+                    .limitTo(200);
+                return repo.search(query);
+            }).then((result) => {
+                done('Query validation passed');
+            }).catch((err) => {
+                assert.strictEqual(err.errors['query.color'][0], 'brown is not included in the list');
+                assert.strictEqual(err.errors['query.weight'][0], 'Value must be less than or equal to 1000');
+                assert.strictEqual(err.errors['query.colour'][0], 'Attribute is not sortable');
+                assert.strictEqual(err.errors['query'][0], 'Query limit should be set to a number less or equal to 50');
+                done();
+            }).catch(done);
         });
     });
 });

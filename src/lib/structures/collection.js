@@ -1,7 +1,6 @@
 import {
     getProps, 
     objectsEqual, 
-    argsToArray,
     isFunction,
     isObject,
     is } from '../helpers.js';
@@ -165,9 +164,12 @@ class Collection
      * @see Array.concat
      */
     concat(...args) {
-        return this.newCollection(this._items.concat(...argsToArray(args).map((arg) => {
-            return arg instanceof Collection ? arg.all() : arg;
-        })));
+        return this.newCollection(
+            this._items.concat(
+                ...Array.from(args)
+                    .map((arg) => arg instanceof Collection ? arg.all() : arg)
+            )
+        );
     }
 
     /**
@@ -177,10 +179,12 @@ class Collection
      * @returns {Collection}
      */
     intersect(...args) {
-        let arrays = argsToArray(args);
-        return this.newCollection(this._items.filter((item) => {
-            return arrays.every((array) => array.indexOf(item) !== -1);
-        }));
+        let arrays = Array.from(args);
+        return this.newCollection(
+            this._items.filter((item) => {
+                return arrays.every((array) => array.indexOf(item) !== -1);
+            })
+        );
     }
 
     /**
@@ -190,10 +194,12 @@ class Collection
      * @returns {Collection}
      */
     difference(...args) {
-        let arrays = argsToArray(args);
-        return this.newCollection(this._items.filter((item) => {
-            return arrays.every((array) => array.indexOf(item) === -1);
-        }));
+        let arrays = Array.from(args);
+        return this.newCollection(
+            this._items.filter((item) => {
+                return arrays.every((array) => array.indexOf(item) === -1);
+            })
+        );
     }
 
     /**
@@ -295,7 +301,7 @@ class Collection
      */
     group(...args) {
         if (!isFunction(args[0])) {
-            let props = argsToArray(args);
+            let props = Array.from(args);
             return this.group((item) => {
                 return getProps(item, props);
             });

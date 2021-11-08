@@ -1,13 +1,14 @@
 import Collection from '../structures/collection.js';
-import { assertType } from '../helpers.js';
+import { 
+    assertType,
+    filter,
+    pick,
+    sum,
+    avg,
+    min,
+    max } from '../helpers.js';
 import AbstractRepository from './base.js';
-import {
-    CountAggregator,
-    SumAggregator,
-    AvgAggregator,
-    MinAggregator,
-    MaxAggregator } from '../query/aggregators.js';
-import {
+import { 
     testCondition,
     compare } from '../query/assertions.js';
 
@@ -127,13 +128,13 @@ class ResidentRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    get(key) {
-        return new Promise((resolve, reject) => {
+    _getInternal(key) {
+        return new Promise((resolve) => {
             let index = this._findIndex(key);
             if (index !== -1) {
-                resolve(this._makeDocument(this._getIndex(index)));
+                resolve(this._getIndex(index));
             } else {
-                reject(this._notExistsError(key));
+                resolve(null);
             }
         });
     }
@@ -142,24 +143,23 @@ class ResidentRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    search(query) {
+    _searchInternal(query) {
         return new Promise((resolve) => {
-            let normQuery = this.normalizeQuery(query);
-            let condition = normQuery.condition;
+            let condition = query.condition;
             let results = this._items.filter((item) => testCondition(condition, item));
-            if (normQuery.order.length !== 0) {
-                results = results.sort(makeSorter(normQuery.order));
+            if (query.order.length !== 0) {
+                results = results.sort(makeSorter(query.order));
             }
-            if (normQuery.group.length !== 0) {
-                let groups = results.group(normQuery.group);
+            if (query.group.length !== 0) {
+                let groups = results.group(query.group);
                 results = new Collection(groups.map((g) => g.items[0]));
             }
-            if (normQuery.limit !== false) {
-                results = results.slice(normQuery.start, normQuery.start + normQuery.limit);
-            } else if (normQuery.start !== 0) {
-                results = results.slice(normQuery.start);
+            if (query.limit !== false) {
+                results = results.slice(query.start, query.start + query.limit);
+            } else if (query.start !== 0) {
+                results = results.slice(query.start);
             }
-            resolve(this._makeCollection(results));
+            resolve(results);
         });
     }
     
@@ -167,21 +167,21 @@ class ResidentRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    store(document) {
+    _storeInternal(key, data) {
         return new Promise((resolve) => {
-            if (!document.hasKey()) {
-                document.setKey(this._getNextKey());
-                this._items.push(this._consumeDocument(document));
+            if (key === null) {
+                data[this._keyName] = this._getNextKey();
+                this._items.push(data);
             } else {
-                let index = this._findIndex(document.getKey());
+                let index = this._findIndex(key);
                 if (index === -1) {
-                    this._items.push(this._consumeDocument(document));
+                    this._items.push(data);
                 } else {
-                    this._items.set(index, this._consumeDocument(document));
+                    this._items.set(index, data);
                 }
-                this._updateNextKey(document.getKey());
+                this._updateNextKey(key);
             }
-            resolve(document);
+            resolve(data);
         });
     }
     
@@ -189,14 +189,14 @@ class ResidentRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    delete(key) {
-        return new Promise((resolve, reject) => {
+    _deleteInternal(key) {
+        return new Promise((resolve) => {
             let index = this._findIndex(key);
             if (index !== -1) {
                 this._items.removeIndex(index);
                 resolve(true);
             } else {
-                reject(this._notExistsError(key));
+                resolve(false);
             }
         });
     }
@@ -205,10 +205,9 @@ class ResidentRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    exists(query) {
+    _existsInternal(query) {
         return new Promise((resolve) => {
-            let normQuery = this.normalizeQuery(query);
-            let condition = normQuery.condition;
+            let condition = query.condition;
             let result = this._items.some((item) => {
                 return testCondition(condition, item);
             });
@@ -220,84 +219,69 @@ class ResidentRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    count(query = null) {
-        if (query === null) {
+    _countInternal(query) {
+        let cond = query.condition;
+        if (cond.isEmpty) {
             return Promise.resolve(this._items.length);
         }
-        return this._aggregate(query, null, new CountAggregator());
+        let count = 0;
+        let filtered = filter(this._items, (v) => testCondition(cond, v));
+        for (let val of filtered) {
+            count++;
+        }
+        return Promise.resolve(count);
     }
     
     /**
      * @override
      * @inheritdoc
      */
-    sum(attribute, query = null) {
-        return this._aggregate(query, attribute, new SumAggregator());
+    _sumInternal(attribute, query) {
+        return Promise.resolve(
+            sum(this._pickValues(attribute, query.condition))
+        );
     }
     
     /**
      * @override
      * @inheritdoc
      */
-    avg(attribute, query = null) {
-        return this._aggregate(query, attribute, new AvgAggregator());
+    _avgInternal(attribute, query) {
+        return Promise.resolve(
+            avg(this._pickValues(attribute, query.condition))
+        );
     }
     
     /**
      * @override
      * @inheritdoc
      */
-    min(attribute, query = null) {
-        return this._aggregate(query, attribute, new MinAggregator());
+    _minInternal(attribute, query) {
+        return Promise.resolve(
+            min(this._pickValues(attribute, query.condition))
+        );
     }
     
     /**
      * @override
      * @inheritdoc
      */
-    max(attribute, query = null) {
-        return this._aggregate(query, attribute, new MaxAggregator());
+    _maxInternal(attribute, query) {
+        return Promise.resolve(
+            max(this._pickValues(attribute, query.condition))
+        );
     }
 
     /**
-     * Execute function on each document that matches the given query
+     * Pick attribute values from collection items
      * 
-     * @protected
-     * @param {any} query 
-     * @param {Function} callback 
-     */
-    _forEach(query, callback) {
-        if (query === null) {
-            this._items.forEach((item) => {
-                callback(item);
-            });    
-        } else {
-            let normQuery = this.normalizeQuery(query);
-            let condition = normQuery.condition;
-            this._items.forEach((item) => {
-                if (testCondition(condition, item)) {
-                    callback(item);
-                }
-            });
-        }
-    }
-    
-    /**
-     * Apply aggregator on the documents that match the given query
-     * 
-     * @protected
-     * @param {any} query 
      * @param {String} attribute 
-     * @param {Aggregator} aggregator 
-     * @returns {Promise}
+     * @param {Condition} condition 
      */
-    _aggregate(query, attribute, aggregator) {
-        return new Promise((resolve) => {
-            this._forEach(query, (item) => {
-                aggregator.add(attribute === null ? item : item[attribute]);
-            });
-            resolve(aggregator.result);
-        });
+    _pickValues(attribute, condition) {
+        return condition.isEmpty 
+            ? pick(this._items, attribute)
+            : pick(filter(this._items, (v) => testCondition(condition, v)), attribute);
     }
 }
 

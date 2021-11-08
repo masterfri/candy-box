@@ -1,13 +1,12 @@
 import Collection from './collection.js';
 import TypedCollection from './typed-collection.js';
-import { Mixture } from '../mixture.js';
 import {
     makeMutator,
     is,
     isFunction,
     isArray } from '../helpers.js';
 
-class Attribute extends Mixture
+class Attribute
 {
     /**
      * @protected
@@ -19,7 +18,6 @@ class Attribute extends Mixture
      * @param {any} [defaults=undefined]
      */
     constructor(defaults = undefined) {
-        super();
         this._defaults = defaults;
     }
 
@@ -192,9 +190,8 @@ class CollectionAttribute extends TypedAttribute
  * Base class for all documents
  * 
  * @class
- * @augments Mixture
  */
-class Document extends Mixture
+class Document
 {
     /**
      * Document attributes values
@@ -208,7 +205,6 @@ class Document extends Mixture
      * @param {Object} [attributes={}] Data to fill document attributes
      */ 
     constructor(attributes = {}) {
-        super();
         this._setupAttributes();
         this.assign(attributes);
     }

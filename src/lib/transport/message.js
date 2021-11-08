@@ -1,10 +1,7 @@
-import { Mixture } from '../mixture.js';
-import {
-    isObject,
-    get,
+import { get,
     forEach } from '../helpers.js';
 
-class Message extends Mixture
+class Message
 {
     /**
      * @protected
@@ -23,7 +20,6 @@ class Message extends Mixture
      * @param {Object} [headers={}]
      */
     constructor(body = {}, headers = {}) {
-        super();
         this._body = body;
         this.headers = headers;
     }

@@ -1,4 +1,3 @@
-import { Mixture } from '../mixture.js';
 import {
     PlainRequest,
     Method } from '../transport/request.js';
@@ -10,9 +9,8 @@ import App from '../app.js';
  * 
  * @abstract
  * @class
- * @augments Mixture
  */
-class AbstractServer extends Mixture
+class AbstractServer
 {
     /**
      * Start server
@@ -50,7 +48,7 @@ class AbstractServer extends Mixture
     /**
      * Define a route by request
      * 
-     * @param {Request} request 
+     * @param {Function} request 
      * @param {Function} target 
      * @returns {AbstractServer}
      */

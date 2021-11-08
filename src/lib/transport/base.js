@@ -1,4 +1,3 @@
-import { Mixture } from '../mixture.js';
 import { abstractMethodError } from '../helpers.js';
 import qs from 'qs';
 import App from '../app.js';
@@ -56,9 +55,8 @@ class AbstractTransportRequest
  * 
  * @abstract
  * @class
- * @augments Mixture
  */
-class AbstractTransport extends Mixture
+class AbstractTransport
 {
     /**
      * @protected

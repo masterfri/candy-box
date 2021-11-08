@@ -1,49 +1,60 @@
 import assert from 'assert';
-import {
-    Component,
-    Mixture,
-} from '../src/lib/mixture.js';
+import { inject } from '../src/lib/helpers.js';
 
-class TestComponentA extends Component
-{
-    static methods() {
-        return {
-            componentMethodA() {
-                return 1;
-            },
-            componentMethodB() {
-                return 1;
-            }
-        };
-    }
-}
-
-class TestClass extends Mixture
-{
-    components() {
-        return [
-            TestComponentA,
-        ];
-    }
-
-    componentMethodB() {
+let TestComponent = {
+    methodA() {
+        return 1;
+    },
+    methodB() {
         return 2;
+    },
+    incB() {
+        this._varB++;
+        return this._varB;
+    },
+    _varA: 1,
+    _varB: 2,
+};
+
+class TestClass
+{
+    _varB = 3;
+
+    methodB() {
+        return 3;
+    }
+
+    methodC() {
+        return 4;
     }
 }
+
+inject(TestClass, TestComponent);
 
 describe('Mixture', function() {
     describe('#component', function() {
-        it('TestClass should have method componentMethodA', function() {
+        it('TestClass should have required properties', function() {
             let obj = new TestClass();
-            assert.equal(typeof obj.componentMethodA, 'function');
+            assert.strictEqual(typeof obj.methodA, 'function');
+            assert.strictEqual(typeof obj.methodB, 'function');
+            assert.strictEqual(typeof obj.methodC, 'function');
+            assert.strictEqual(typeof obj._varA, 'number');
+            assert.strictEqual(typeof obj._varB, 'number');
         });
-        it('TestClass::componentMethodA should return proper value', function() {
+        it('Methods of TestClass should return proper results', function() {
             let obj = new TestClass();
-            assert.equal(obj.componentMethodA(), 1);
+            assert.strictEqual(obj.methodA(), 1);
+            assert.strictEqual(obj.methodB(), 3);
+            assert.strictEqual(obj.methodC(), 4);
         });
-        it('TestClass::componentMethodB should return proper value', function() {
+        it('Properties of TestClass should return proper values', function() {
             let obj = new TestClass();
-            assert.equal(obj.componentMethodB(), 2);
+            let obj2 = new TestClass();
+            obj2._varA = 5;
+            obj2.incB();
+            assert.strictEqual(obj._varA, 1);
+            assert.strictEqual(obj._varB, 3);
+            assert.strictEqual(obj2._varB, 4);
         });
     });
 });

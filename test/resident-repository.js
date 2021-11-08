@@ -1,7 +1,8 @@
 import assert from 'assert';
 import Document from '../src/lib/structures/document.js';
 import ResidentRepository from '../src/lib/repository/resident.js';
-import Query from '../src/lib/query/query.js';
+import Query, {
+    Assert } from '../src/lib/query/query.js';
 
 class TestDocument extends Document
 {
@@ -13,6 +14,53 @@ class TestDocument extends Document
                 default: 'orange',
             },
             weight: Number,
+        };
+    }
+}
+
+class TestRepository extends ResidentRepository
+{
+    virtualFilters() {
+        return {
+            size(condition, operator, value) {
+                let sizes = {
+                    'small': [0, 100],
+                    'medium': [100, 200],
+                    'big': [200, 99999],
+                }
+                let range = sizes[value];
+                if (range === undefined) {
+                    throw new Error('Unknown size');
+                }
+                let [min, max] = range;
+                if (operator === Assert.EQ) {
+                    condition.gte('weight', min);
+                    condition.lt('weight', max);
+                } else if (operator === Assert.NEQ) {
+                    condition.not((cond) => {
+                        cond.gte('weight', min);
+                        cond.lt('weight', max);
+                    });
+                } else if (operator === Assert.LT) {
+                    condition.lt('weight', min);
+                } else if (operator === Assert.LTE) {
+                    condition.lt('weight', max);
+                } else if (operator === Assert.GT) {
+                    condition.gt('weight', max);
+                } else if (operator === Assert.GTE) {
+                    condition.gt('weight', min);
+                } else {
+                    throw new Error(`Unsupported operator '${operator}'`);
+                }
+            }
+        };
+    }
+
+    virtualSorters() {
+        return {
+            size(query, dir) {
+                query.orderBy('weight', dir);
+            }
         };
     }
 }
@@ -229,6 +277,67 @@ describe('Resident repository', function() {
                 assert.equal(result.length, 3);
                 assert.ok(result.get(0).weight <= result.get(1).weight);
                 assert.ok(result.get(1).weight <= result.get(2).weight);
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
+    });
+    describe('#virtual attributes', function() {
+        it('Search through virtual attributes should go ptoperly', function(done) {
+            let repository = new TestRepository(TestDocument);
+            Promise.all([
+                repository.store(new TestDocument({color: 'red', weight: 200})),
+                repository.store(new TestDocument({color: 'red', weight: 80})),
+                repository.store(new TestDocument({color: 'red', weight: 15})),
+                repository.store(new TestDocument({color: 'blue', weight: 50})),
+                repository.store(new TestDocument({color: 'blue', weight: 150})),
+                repository.store(new TestDocument({color: 'blue', weight: 380})),
+            ]).then(() => {
+                let query = (new Query)
+                    .where('color', 'red')
+                    .where('size', 'small');
+                return repository.search(query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 2);
+                let query = (new Query)
+                    .where('size', Assert.GT, 'small');
+                return repository.search(query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 3);
+                let query = (new Query)
+                    .where((cond) => {
+                        cond.eq('color', 'blue')
+                            .and((cond) => {
+                                cond.eq('size', 'big')
+                                    .or()
+                                    .eq('size', 'small')
+                            });
+                    });
+                return repository.search(query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 2);
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
+        it('Sort on virtual attributes should go ptoperly', function(done) {
+            let repository = new TestRepository(TestDocument);
+            Promise.all([
+                repository.store(new TestDocument({color: 'blue', weight: 200})),
+                repository.store(new TestDocument({color: 'red', weight: 80})),
+                repository.store(new TestDocument({color: 'red', weight: 15})),
+                repository.store(new TestDocument({color: 'blue', weight: 50})),
+                repository.store(new TestDocument({color: 'red', weight: 150})),
+                repository.store(new TestDocument({color: 'blue', weight: 380})),
+            ]).then(() => {
+                let query = (new Query)
+                    .where('color', 'blue')
+                    .ascendingBy('size');
+                return repository.search(query);
+            }).then((result) => {
+                assert.strictEqual(result.get(0).weight, 50);
                 done();
             }).catch((err) => {
                 done(err);

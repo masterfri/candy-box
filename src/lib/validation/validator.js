@@ -1,6 +1,11 @@
 import validate from 'validate.js';
-import { Mixture } from '../mixture.js';
 import App from '../app.js';
+import { is,
+    assign, 
+    isArray,
+    isObject,
+    isString,
+    forEach } from '../helpers.js';
 
 const parseDate = (date) => {
     return new Date(date);
@@ -24,12 +29,25 @@ validate.extend(validate.validators.datetime, {
 
 class Rule
 {
+    /**
+     * @protected
+     * @var {Object}
+     */
     _options = {};
 
+    /**
+     * @param {String} name 
+     * @param {any} options 
+     */
     constructor(name, options = true) {
         this._options[name] = options;
     }
 
+    /**
+     * @param {String} attribute 
+     * @param {Object} data 
+     * @returns {any}
+     */
     validate(attribute, data) {
         let constraints = {};
         constraints[attribute] = this._options;
@@ -37,13 +55,155 @@ class Rule
     }
 }
 
+class CustomRule
+{
+    /**
+     * @protected
+     * @var {Function}
+     */
+    _checker;
+
+    /**
+     * @protected
+     * @var {any}
+     */
+    _options;
+
+    /**
+     * @param {Function} checker 
+     * @param {any} options 
+     */
+    constructor(checker, options) {
+        this._checker = checker;
+        this._options = options;
+    }
+
+    /**
+     * @param {String} attribute 
+     * @param {Object} data 
+     * @returns {any}
+     */
+    validate(attribute, data) {
+        let result = this._checker(data[attribute], this._options, attribute, data);
+        if (is(result, Promise)) {
+            return result.then((res) => {
+                return this._formatError(attribute, res);
+            });
+        }
+        return this._formatError(attribute, result);
+    }
+
+    /**
+     * @param {String} attribute 
+     * @param {any} error 
+     * @returns {any}
+     */
+    _formatError(attribute, error) {
+        if (isArray(error)) {
+            return assign(attribute, error);
+        }
+        if (isObject(error)) {
+            return error;
+        }
+        if (isString(error)) {
+            return assign(attribute, [error]);
+        }
+    }
+}
+
+class IterativeRule
+{
+    /**
+     * @protected
+     * @var {Validator}
+     */
+    _chain;
+
+    /**
+     * @param {Validator} chain 
+     */
+    constructor(chain) {
+        this._chain = chain;
+    }
+
+    /**
+     * @param {String} attribute 
+     * @param {Object} data 
+     * @returns {any}
+     */
+    validate(attribute, data) {
+        let items = data[attribute];
+        if (isArray(items) && items.length !== 0) {
+            let errors = {};
+            return Promise.all(
+                items.map((item, index) => {
+                    let key = String(index);
+                    return this._chain
+                        .validate(key, assign(key, item))
+                        .catch((err) => {
+                            Object.keys(err).map((key) => {
+                                errors[`${attribute}.${key}`] = err[key];
+                            });
+                        });
+                })
+            ).then(() => {
+                if (Object.keys(errors).length !== 0) {
+                    return errors;
+                }
+            });
+        }
+    }
+}
+
+class NestedRule
+{
+    /**
+     * @protected
+     * @var {Object}
+     */
+    _map;
+
+    /**
+     * @param {Object} map 
+     */
+    constructor(map) {
+        this._map = map;
+    }
+
+    /**
+     * @param {String} attribute 
+     * @param {Object} data 
+     * @returns {any}
+     */
+    validate(attribute, data) {
+        let object = data[attribute];
+        if (isObject(object)) {
+            let errors = {};
+            return Promise.all(
+                Object.keys(this._map).map((key) => {
+                    return this._map[key]
+                        .validate(key, object)
+                        .catch((err) => {
+                            Object.keys(err).map((key) => {
+                                errors[`${attribute}.${key}`] = err[key];
+                            });
+                        });
+                })
+            ).then(() => {
+                if (Object.keys(errors).length !== 0) {
+                    return errors;
+                }
+            });
+        }
+    }
+}
+
 /**
  * Class that runs validation
  * 
  * @class
- * @augments Mixture
  */
-class Validator extends Mixture
+class Validator
 {
     /**
      * @protected
@@ -63,7 +223,6 @@ class Validator extends Mixture
      * @param {Boolean} [every=true] When true, indicates that none of rules should fail 
      */
     constructor(every = true) {
-        super();
         this._every = every;
     }
 
@@ -78,7 +237,7 @@ class Validator extends Mixture
         let last = this._chain[this._chain.length - 1];
         for (let rule of this._chain) {
             let result = rule.validate(attribute, data);
-            if (result instanceof Promise) {
+            if (is(result, Promise)) {
                 try {
                     result = await result;
                 } catch (err) {
@@ -150,21 +309,6 @@ class Validator extends Mixture
      */
     when(condition, callback, every = true) {
         let chain = this.newConditionalValidator(condition, every);
-        callback(chain);
-        this._chain.push(chain);
-        return this;
-    }
-
-    /**
-     * Join nested validation chain
-     * 
-     * @protected
-     * @param {Boolean} every 
-     * @param {Function} callback 
-     * @returns {Validator}
-     */
-    _join(every, callback) {
-        let chain = this.newValidator(every);
         callback(chain);
         this._chain.push(chain);
         return this;
@@ -420,6 +564,65 @@ class Validator extends Mixture
      */
     url(options = true) {
         this._chain.push(new Rule('url', options));
+        return this;
+    }
+
+    /**
+     * Append custom rule to the validation chain
+     * 
+     * @param {Function} checker 
+     * @param {any} options 
+     * @returns {Validator}
+     */
+    custom(checker, options = null) {
+        this._chain.push(new CustomRule(checker, options));
+        return this;
+    }
+
+    /**
+     * Append rules to validate each element of a collection
+     * 
+     * @param {Function} callback
+     * @param {Boolean} [every=true] 
+     * @returns {Validator}
+     */
+    each(callback, every = true) {
+        let chain = this.newValidator(every);
+        callback(chain);
+        this._chain.push(new IterativeRule(chain));
+        return this;
+    }
+
+    /**
+     * Append rules to validate nested object
+     * 
+     * @param {Object} map
+     * @param {Boolean} [every=true] 
+     * @returns {Validator}
+     */
+    nested(map, every = true) {
+        let chains = {};
+        forEach(map, (callback, attribute) => {
+            let chain = this.newValidator(every);
+            callback(chain);
+            chains[attribute] = chain;
+        });
+        this._chain.push(new NestedRule(chains));
+        return this;
+    }
+
+    /**
+     * Join nested validation chain
+     * 
+     * @protected
+     * @param {Boolean} every 
+     * @param {Function} callback 
+     * @returns {Validator}
+     */
+    _join(every, callback) {
+        let chain = this.newValidator(every);
+        callback(chain);
+        this._chain.push(chain);
         return this;
     }
 }

@@ -1,3 +1,4 @@
+import assert from 'assert';
 import Validator from '../src/lib/validation/validator.js';
 
 describe('Validation', function() {
@@ -167,6 +168,179 @@ describe('Validation', function() {
             }).catch((err) => {
                 done();
             });
+        });
+    });
+    describe('#custom', function() {
+        it('Validation should pass', function(done) {
+            let chain = new Validator();
+            chain.custom((val, options) => {
+                return val.indexOf(options.letter) !== -1 ? undefined : `Where is '${options.letter}'?`;
+            }, {
+                letter: 'X',
+            });
+            chain.validate('name', {name: 'JackX'}).then(() => {
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
+        it('Validation should fail', function(done) {
+            let chain = new Validator();
+            chain.custom((val) => {
+                return val.indexOf('X') !== -1 ? undefined : 'Where is X?';
+            });
+            chain.validate('name', {name: 'Jack'}).then(() => {
+                done('Validation passed');
+            }).catch((err) => {
+                assert.ok(err.name !== undefined);
+                assert.strictEqual(err.name.length, 1);
+                assert.strictEqual(err.name[0], 'Where is X?');
+                done();
+            }).catch(done);
+        });
+    });
+    describe('#each', function() {
+        it('Validation should pass', function(done) {
+            let chain = new Validator();
+            chain.each((chain) => {
+                chain.between(5, 10);
+            });
+            chain.validate('numbers', {numbers: [5, 7, 10]}).then(() => {
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
+        it('Validation should fail', function(done) {
+            let chain = new Validator();
+            chain.each((chain) => {
+                chain.between(5, 10);
+            });
+            chain.validate('numbers', {numbers: [5, 15, 10]}).then(() => {
+                done('Validation passed');
+            }).catch((err) => {
+                assert.ok(err['numbers.1'] !== undefined);
+                done();
+            }).catch(done);
+        });
+    });
+    describe('#nested', function() {
+        it('Validation should pass', function(done) {
+            let chain = new Validator();
+            chain.nested({
+                date(chain) {
+                    chain
+                        .required()
+                        .date();
+                },
+                numbers(chain) {
+                    chain
+                        .required()
+                        .each((chain) => {
+                            chain.between(5, 10);
+                        });
+                },
+            });
+            chain.validate('object', {object: {
+                date: '2021-05-01',
+                numbers: [5, 7, 10],
+            }}).then(() => {
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
+        it('Validation should fail', function(done) {
+            let chain = new Validator();
+            chain.nested({
+                date(chain) {
+                    chain
+                        .required()
+                        .date();
+                },
+                numbers(chain) {
+                    chain
+                        .required()
+                        .each((chain) => {
+                            chain.between(5, 10);
+                        });
+                },
+            });
+            chain.validate('object', {object: {
+                date: '',
+                numbers: [5, 7, 10],
+            }}).then(() => {
+                done('Validation passed');
+            }).catch(() => {
+                return chain.validate('object', {object: {
+                    date: '2021-05-01',
+                    numbers: [],
+                }});
+            }).then(() => {
+                done('Validation passed');
+            }).catch(() => {
+                done();
+            });
+        });
+    });
+    describe('#each + nested', function() {
+        it('Validation should pass', function(done) {
+            let chain = new Validator();
+            chain.each((chain) => {
+                chain.nested({
+                    date(chain) {
+                        chain
+                            .required()
+                            .date();
+                    },
+                    age(chain) {
+                        chain
+                            .required()
+                            .between(5, 10);
+                    },
+                });
+            });
+            chain.validate('array', {array: [{
+                date: '2021-05-01',
+                age: 5,
+            }, {
+                date: '2021-07-01',
+                age: 10,
+            }]}).then(() => {
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
+        it('Validation should fail', function(done) {
+            let chain = new Validator();
+            chain.each((chain) => {
+                chain.nested({
+                    date(chain) {
+                        chain
+                            .required()
+                            .date();
+                    },
+                    age(chain) {
+                        chain
+                            .required()
+                            .between(5, 10);
+                    },
+                });
+            });
+            chain.validate('array', {array: [{
+                date: '',
+                age: 5,
+            }, {
+                date: '2021-07-01',
+                age: 15,
+            }]}).then(() => {
+                done('Validation passed');
+            }).catch((err) => {
+                assert.ok(err['array.0.date'] !== undefined);
+                assert.ok(err['array.1.age'] !== undefined);
+                done();
+            }).catch(done);
         });
     });
     describe('#or', function() {

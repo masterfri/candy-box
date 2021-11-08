@@ -1,9 +1,13 @@
-import { Mixture } from '../mixture.js';
 import {
     is,
     isObject, 
-    isFunction } from '../helpers.js';
-import Query from '../query/query.js';
+    isFunction,
+    forEach,
+    abstractMethodError } from '../helpers.js';
+import Query, {
+    Condition,
+    Assertion,
+    Negation } from '../query/query.js';
 import TypedCollection from '../structures/typed-collection.js';
 
 /**
@@ -11,9 +15,8 @@ import TypedCollection from '../structures/typed-collection.js';
  * 
  * @class
  * @abstract
- * @augments Mixture
  */
-class AbstractRepository extends Mixture
+class AbstractRepository
 {
     /**
      * Document class
@@ -35,7 +38,6 @@ class AbstractRepository extends Mixture
      * @param {any} type 
      */
     constructor(type) {
-        super();
         this._type = type;
         this._keyName = type.prototype.getKeyName();
     }
@@ -61,142 +63,170 @@ class AbstractRepository extends Mixture
     }
 
     /**
-     * Make query object from provided argument
+     * Defines filters for virtual attributes
+     * 
+     * @returns {Object|false}
+     */
+    virtualFilters() {
+        return false;
+    }
+
+    /**
+     * Defines sorters for virtual attributes
+     * 
+     * @returns {Object|false}
+     */
+    virtualSorters() {
+        return false;
+    }
+
+    /**
+     * Transform argument into complete query
      * 
      * @param {any} query 
      * @returns {Query}
      */
-    normalizeQuery(query) {
-        if (query === null) {
-            return new Query();
-        }
-        if (is(query, Query)) {
-            return query;
-        }
-        if (isObject(query) || isFunction(query)) {
-            return (new Query).where(query);
-        }
-        if (is(query, Array)) {
-            return (new Query).where((condition) => {
-                condition.in(this._keyName, query);
-            });
-        }
-        return (new Query).where(this._keyName, query);
+    finalizeQuery(query) {
+        return this._devirtualizeQuery(
+            this._normalizeQuery(query)
+        );
     }
 
     /**
      * Find document by its key in repository
      * 
-     * @abstract
      * @param {Number} key Document key value
      * @returns {Promise}
      */
-    get() {
-        throw new Error('Method "get" must be implemented is subclass');
+    get(key) {
+        return this._getInternal(key).then((result) => {
+            if (result === null) {
+                throw new NotExistsError(`Element with key '${key}' does not exists`);
+            }
+            return this._makeDocument(result);
+        });
     }
-    
+
     /**
      * Search documents that match the given query
      * 
-     * @abstract
      * @param {any} query 
      * @returns {Promise}
      */
-    search() {
-        throw new Error('Method "search" must be implemented is subclass');
+    search(query) {
+        let finalized = this.finalizeQuery(query);
+        return this._searchInternal(finalized)
+            .then((results) => {
+                return this._makeCollection(results);
+            });
     }
-    
+
     /**
      * Put document in repository. If repository already has document 
      * with the same key value that document is being replaced
      * 
-     * @abstract
      * @param {Document} document 
      * @returns {Promise}
      */
-    store() {
-        throw new Error('Method "store" must be implemented is subclass');
+    store(document) {
+        let data = this._consumeDocument(document);
+        return this._storeInternal(document.getKey(), data)
+            .then((updates) => {
+                this._updateDocument(document, updates);
+                return document;
+            });
     }
-    
+
     /**
      * Remove document from repository
      * 
-     * @abstract
      * @param {Number} key 
      * @returns {Promise}
      */
-    delete() {
-        throw new Error('Method "delete" must be implemented is subclass');
+    delete(key) {
+        return this._deleteInternal(key)
+            .then((result) => {
+                if (result === false) {
+                    throw new NotExistsError(`Element with key '${key}' does not exists`);
+                }
+                return true;
+            });
     }
-    
+
     /**
      * Check if repository has documents that match the given query
      * 
-     * @abstract
      * @param {any} query 
      * @returns {Promise}
      */
-    exists() {
-        throw new Error('Method "exists" must be implemented is subclass');
+    exists(query) {
+        let finalized = this.finalizeQuery(query);
+        return this._existsInternal(finalized)
+            .then((result) => Boolean(result));
     }
-    
+
     /**
      * Count documents that match the given query
      * 
-     * @abstract
      * @param {any} [query=null] 
      * @returns {Promise}
      */
-    count() {
-        throw new Error('Method "count" must be implemented is subclass');
+    count(query = null) {
+        let finalized = this.finalizeQuery(query);
+        return this._countInternal(finalized)
+            .then((result) => Number(result));
     }
-    
+
     /**
-     * Get total value of attribute of documents that match the given query
+     * Get total value of attributes across documents that match the given query
      * 
-     * @abstract
      * @param {String} attribute 
      * @param {any} [query=null] 
      * @returns {Promise}
      */
-    sum() {
-        throw new Error('Method "sum" must be implemented is subclass');
+    sum(attribute, query = null) {
+        let finalized = this.finalizeQuery(query);
+        return this._sumInternal(attribute, finalized)
+            .then((result) => Number(result));
     }
-    
+
     /**
-     * Get average value of attribute of documents that match the given query
+     * Get average value of attributes across documents that match the given query
      * 
-     * @abstract
      * @param {String} attribute 
      * @param {any} [query=null] 
      * @returns {Promise}
      */
-    avg() {
-        throw new Error('Method "avg" must be implemented is subclass');
+    avg(attribute, query = null) {
+        let finalized = this.finalizeQuery(query);
+        return this._avgInternal(attribute, finalized)
+            .then((result) => Number(result));
     }
-    
+
     /**
-     * Get minimal value of attribute of documents that match the given query
+     * Get minimal value of attributes across documents that match the given query
      * 
-     * @abstract
      * @param {String} attribute 
      * @param {any} [query=null] 
      * @returns {Promise}
      */
-    min() {
-        throw new Error('Method "min" must be implemented is subclass');
+    min(attribute, query = null) {
+        let finalized = this.finalizeQuery(query);
+        return this._minInternal(attribute, finalized)
+            .then((result) => Number(result));
     }
     
     /**
-     * Get maximal value of attribute of documents that match the given query
+     * Get maximal value of attributes across documents that match the given query
      * 
-     * @abstract
      * @param {String} attribute 
      * @param {any} [query=null] 
      * @returns {Promise}
      */
-    max() {
-        throw new Error('Method "max" must be implemented is subclass');
+    max(attribute, query = null) {
+        let finalized = this.finalizeQuery(query);
+        return this._maxInternal(attribute, finalized)
+            .then((result) => Number(result));
     }
 
     /**
@@ -215,6 +245,229 @@ class AbstractRepository extends Mixture
      */
     get keyName() {
         return this._keyName;
+    }
+
+    /**
+     * Internal search of document by its key in repository
+     * 
+     * @protected
+     * @abstract
+     * @param {Number} key Document key value
+     * @returns {Promise}
+     */
+    _getInternal() {
+        abstractMethodError('_getInternal');
+    }
+    
+    /**
+     * Internal search of documents that match the given query
+     * 
+     * @protected
+     * @abstract
+     * @param {Query} query 
+     * @returns {Promise}
+     */
+    _searchInternal() {
+        abstractMethodError('_searchInternal');
+    }
+    
+    /**
+     * Internal method of storing document data
+     * 
+     * @protected
+     * @abstract
+     * @param {Number} key Document key value
+     * @param {Object} document 
+     * @returns {Promise}
+     */
+    _storeInternal() {
+        abstractMethodError('_storeInternal');
+    }
+    
+    /**
+     * Internal method of deleting document
+     * 
+     * @protected
+     * @abstract
+     * @param {Number} key Document key value
+     * @returns {Promise}
+     */
+    _deleteInternal() {
+        abstractMethodError('_deleteInternal');
+    }
+    
+    /**
+     * Internal search of documents that match the given query
+     * 
+     * @protected
+     * @abstract
+     * @param {Query} query 
+     * @returns {Promise}
+     */
+    _existsInternal() {
+        abstractMethodError('_existsInternal');
+    }
+    
+    /**
+     * Internal count of documents that match the given query
+     * 
+     * @protected
+     * @abstract
+     * @param {Query} query 
+     * @returns {Promise}
+     */
+    _countInternal() {
+        abstractMethodError('_countInternal');
+    }
+    
+    /**
+     * Internal sum of attribute values across documents that match the given query
+     * 
+     * @protected
+     * @abstract
+     * @param {String} attribute 
+     * @param {Query} query 
+     * @returns {Promise}
+     */
+    _sumInternal() {
+        abstractMethodError('_sumInternal');
+    }
+    
+    /**
+     * Internal average of attribute values across documents that match the given query
+     * 
+     * @protected
+     * @abstract
+     * @param {String} attribute 
+     * @param {Query} query 
+     * @returns {Promise}
+     */
+    _avgInternal() {
+        abstractMethodError('_avgInternal');
+    }
+   
+    /**
+     * Internal minimum of attribute values across documents that match the given query
+     * 
+     * @protected
+     * @abstract
+     * @param {String} attribute 
+     * @param {Query} query 
+     * @returns {Promise}
+     */
+    _minInternal() {
+        abstractMethodError('_minInternal');
+    }
+
+    /**
+     * Internal maximum of attribute values across documents that match the given query
+     * 
+     * @protected
+     * @abstract
+     * @param {String} attribute 
+     * @param {Query} query 
+     * @returns {Promise}
+     */
+    _maxInternal() {
+        abstractMethodError('_maxInternal');
+    }
+
+    /**
+     * Make query object from provided argument
+     * 
+     * @param {any} query 
+     * @returns {Query}
+     */
+    _normalizeQuery(query) {
+        if (query === null) {
+            return new Query();
+        }
+        if (is(query, Query)) {
+            return query;
+        }
+        if (isObject(query) || isFunction(query)) {
+            return (new Query).where(query);
+        }
+        if (is(query, Array)) {
+            return (new Query).where((condition) => {
+                condition.in(this._keyName, query);
+            });
+        }
+        return (new Query).where(this._keyName, query);
+    }
+
+    /**
+     * Resolve virtual fields for the given query
+     * 
+     * @param {Query} query 
+     * @returns {Query}
+     */
+    _devirtualizeQuery(query) {
+        let filters = this.virtualFilters();
+        let sorters = this.virtualSorters();
+        if (filters === false && sorters === false) {
+            return query;
+        }
+        let result = new Query();
+        this._devirtualizeCondition(result.condition, query.condition, filters || {});
+        this._devirtualizeOrder(result, query, sorters || {});
+        if (query.group.length !== 0) {
+            result.groupBy(...query.group);
+        }
+        result.startFrom(query.start);
+        result.limitTo(query.limit);
+        return result;
+    }
+
+    /**
+     * Resolve virtual fields for the given condition
+     * 
+     * @param {Condition} dest 
+     * @param {Assertion|Condition|Negation} assertion 
+     * @param {Object} filters 
+     */
+     _devirtualizeCondition(dest, assertion, filters) {
+        if (is(assertion, Assertion)) {
+            let filter = filters[assertion.property];
+            if (filter !== undefined) {
+                filter(dest, assertion.operator, assertion.argument);
+            } else {
+                dest.where(assertion.clone());
+            }
+        } else if (is(assertion, Negation)) {
+            dest.not((cond) => {
+                this._devirtualizeCondition(cond, assertion.subject, filters);
+            });
+        } else if (is(assertion, Condition)) {
+            dest.where((cond) => {
+                assertion.wheres.forEach((or) => {
+                    cond.or();
+                    or.forEach((and) => {
+                        this._devirtualizeCondition(cond, and, filters);
+                    });
+                });
+            });
+        } else {
+            throw new TypeError('Illegal assertion type');
+        }
+    }
+
+    /**
+     * Resolve virtual sort fields for the given query
+     * 
+     * @param {Query} dest 
+     * @param {Query} source 
+     * @param {Object|false} sorters 
+     */
+    _devirtualizeOrder(dest, source, sorters) {
+        source.order.forEach((order) => {
+            let sorter = sorters === false ? undefined : sorters[order.prop];
+            if (sorter !== undefined) {
+                sorter(dest, order.direction);
+            } else {
+                dest.orderBy(order.prop, order.direction);
+            }
+        });
     }
 
     /**
@@ -259,16 +512,6 @@ class AbstractRepository extends Mixture
         if (isObject(data)) {
             document.assign(data);
         }
-    }
-
-    /**
-     * Generate "element not exists" error
-     * 
-     * @param {any} key 
-     * @returns {NotExistsError}
-     */
-    _notExistsError(key) {
-        return new NotExistsError(`Element with key '${key}' does not exists`);
     }
 }
 

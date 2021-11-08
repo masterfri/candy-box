@@ -28,56 +28,67 @@ class SqlRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    get(key) {
+    _getInternal(key) {
         let sql = this._client.newQuery()
             .table(this._table)
             .where(this._keyName, '=', key)
             .select(1);
-        return this._client.fetchRow(sql)
-            .then((result) => {
-                if (result !== null) {
-                    return this._makeDocument(result);
-                }
-                throw this._notExistsError(key);
-            });
+        return this._client.fetchRow(sql);
     }
 
     /**
      * @override
      * @inheritdoc
      */
-    search(query) {
-        let normQuery = this.normalizeQuery(query);
-        let sql = this._toSqlBuilder(normQuery)
-            .select(normQuery.limit, normQuery.start);
-        return this._client.fetch(sql)
-            .then((results) => {
-                return this._makeCollection(results);
-            });
+    _searchInternal(query) {
+        let sql = this._toSqlBuilder(query)
+            .select(query.limit, query.start);
+        return this._client.fetch(sql);
     }
 
     /**
      * @override
      * @inheritdoc
      */
-    store(document) {
-        if (!document.hasKey()) {
-            let sql = this._client.newQuery()
-                .table(this._table)
-                .insert(this._consumeDocument(document));
-            return this._client.insert(sql)
-                .then((insertId) => {
-                    document.setKey(insertId);
-                    return document;
-                });
+    _storeInternal(key, data) {
+        if (key === null) {
+            return this._performInsert(data);
         }
+        return this._performUpdate(key, data);
+    }
+
+    /**
+     * Perform SQL insert
+     * 
+     * @param {Object} data
+     * @returns {Promise}
+     */
+    _performInsert(data) {
         let sql = this._client.newQuery()
             .table(this._table)
-            .where(this._keyName, '=', document.getKey())
-            .update(this._consumeDocument(document), 1);
+            .insert(this._toSqlInput(data));
+        return this._client.insert(sql)
+            .then((insertId) => {
+                data[this._keyName] = insertId;
+                return data;
+            });
+    }
+
+    /**
+     * Perform SQL update
+     * 
+     * @param {Number} key
+     * @param {Object} data
+     * @returns {Promise}
+     */
+    _performUpdate(key, data) {
+        let sql = this._client.newQuery()
+            .table(this._table)
+            .where(this._keyName, '=', key)
+            .update(this._toSqlInput(data), 1);
         return this._client.update(sql)
             .then(() => {
-                return document;
+                return data;
             });
     }
 
@@ -85,17 +96,14 @@ class SqlRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    delete(key) {
+    _deleteInternal(key) {
         let sql = this._client.newQuery()
             .table(this._table)
             .where(this._keyName, '=', key)
             .delete(1);
         return this._client.delete(sql)
             .then((deleted) => {
-                if (deleted === 0) {
-                    throw this._notExistsError(key);
-                }
-                return true;
+                return deleted !== 0;
             });
     }
     
@@ -103,9 +111,8 @@ class SqlRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    exists(query) {
-        let normQuery = this.normalizeQuery(query);
-        let sql = this._toSqlBuilder(normQuery, true, true)
+    _existsInternal(query) {
+        let sql = this._toSqlBuilder(query, true, true)
             .column(this._keyName)
             .select(1);
         return this._client.fetch(sql)
@@ -118,15 +125,15 @@ class SqlRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    count(query = null) {
-        return this._aggregate('count(*)', query || {});
+    _countInternal(query) {
+        return this._aggregate('count(*)', query);
     }
     
     /**
      * @override
      * @inheritdoc
      */
-    sum(attribute, query = null) {
+    _sumInternal(attribute, query) {
         return this._aggregate((builder) => `sum(${builder.quote(attribute)})`, query);
     }
     
@@ -134,7 +141,7 @@ class SqlRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    avg(attribute, query = null) {
+    _avgInternal(attribute, query) {
         return this._aggregate((builder) => `avg(${builder.quote(attribute)})`, query);
     }
     
@@ -142,7 +149,7 @@ class SqlRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    min(attribute, query = null) {
+    _minInternal(attribute, query) {
         return this._aggregate((builder) => `min(${builder.quote(attribute)})`, query);
     }
     
@@ -150,16 +157,19 @@ class SqlRepository extends AbstractRepository
      * @override
      * @inheritdoc
      */
-    max(attribute, query = null) {
+    _maxInternal(attribute, query) {
         return this._aggregate((builder) => `max(${builder.quote(attribute)})`, query);
     }
 
     /**
-     * @inheritdoc
+     * Convert data to SQL input
+     * 
+     * @param {Object} data
+     * @returns {Object}
      */
-    _consumeDocument(document) {
+    _toSqlInput(data) {
         let result = {};
-        forEach(document.export(), (val, key) => {
+        forEach(data, (val, key) => {
             result[key] = this._client.toSqlValue(val);
         });
         return result;
@@ -280,8 +290,7 @@ class SqlRepository extends AbstractRepository
      * @returns {Promise}
      */
     _aggregate(select, query) {
-        let normQuery = this.normalizeQuery(query);
-        let builder = this._toSqlBuilder(normQuery, true, true);
+        let builder = this._toSqlBuilder(query, true, true);
         let sql = builder.columnRaw(isFunction(select) ? select(builder) : select)
             .select();
         return this._client.fetchValue(sql);

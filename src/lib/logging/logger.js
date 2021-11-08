@@ -1,5 +1,4 @@
 import winston from 'winston';
-import { Mixture } from '../mixture.js';
 import App from '../app.js';
 import { is, 
     isString } from '../helpers.js';
@@ -18,7 +17,7 @@ const SILLY = 'silly';
 const PLAIN = 'plain';
 const OBJECT = 'object';
 
-class Logger extends Mixture 
+class Logger
 {
     /**
      * @protected
@@ -36,7 +35,6 @@ class Logger extends Mixture
      * @param {Object} [config={}]
      */
     constructor(config = {}) {
-        super();
         this._log = winston.createLogger({
             level: config.level || ERROR,
             transports: (config.transports || [{type: CONSOLE}]).map((transport) => {

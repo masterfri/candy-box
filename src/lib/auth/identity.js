@@ -1,8 +1,7 @@
 import {
     isFunction,
-    withoutProps,
+    skipProps,
     abstractMethodError } from '../helpers.js';
-import { Mixture } from '../mixture.js';
 import { CryptoSymbol } from '../security/crypto.js';
 import App from '../app.js';
 
@@ -71,9 +70,8 @@ class Identity
  * 
  * @class
  * @abstract
- * @augments Mixture
  */
-class AbstractIdentitySource extends Mixture
+class AbstractIdentitySource
 {
     /**
      * Get identity by its ID
@@ -100,7 +98,7 @@ class AbstractIdentitySource extends Mixture
      * @returns {Promise}
      */
     getByCredentials(credentials, pwdAttribute = 'password') {
-        let attributes = withoutProps(credentials, [pwdAttribute]);
+        let attributes = skipProps(credentials, [pwdAttribute]);
         return this._findByAttributes(attributes)
             .then((instance) => {
                 if (instance !== null) {
@@ -168,7 +166,7 @@ class AbstractIdentitySource extends Mixture
     }
 }
 
-class AbstractIdentityResolver extends Mixture
+class AbstractIdentityResolver
 {
     /**
      * Attempt to resolve identity from request
@@ -182,7 +180,7 @@ class AbstractIdentityResolver extends Mixture
     }
 }
 
-class AbstractIdentityTrace extends Mixture
+class AbstractIdentityTrace
 {
     /**
      * Put trace to response

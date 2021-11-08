@@ -1,7 +1,5 @@
 import Collection from './collection.js';
-import {
-    makeMutator, 
-    argsToArray } from '../helpers.js';
+import { makeMutator } from '../helpers.js';
 
 /**
  * Collection with strict type of elements
@@ -47,7 +45,10 @@ class TypedCollection extends Collection
      * @inheritdoc
      */
     push(...args) {
-        return this._items.push(...argsToArray(args).map(this._mutator));
+        return this._items.push(
+            ...Array.from(args)
+                .map(this._mutator)
+        );
     }
     
     /**
@@ -55,7 +56,10 @@ class TypedCollection extends Collection
      * @inheritdoc
      */
     unshift(...args) {
-        return this._items.unshift(...argsToArray(args).map(this._mutator));
+        return this._items.unshift(
+            ...Array.from(args)
+                .map(this._mutator)
+        );
     }
     
     /**
@@ -64,8 +68,12 @@ class TypedCollection extends Collection
      */
     splice(...args) {
         return this._items.splice(
-            ...argsToArray(args, 0, 2)
-            .concat(argsToArray(args, 2).map(this._mutator))
+            ...Array.from(args).slice(0, 2)
+                .concat(
+                    Array.from(args)
+                        .slice(2)
+                        .map(this._mutator)
+                )
         );
     }
 }

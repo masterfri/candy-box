@@ -1,4 +1,3 @@
-import { Mixture } from '../mixture.js';
 import {
     is,
     getProp, 
@@ -20,9 +19,8 @@ const toMysqlDate = (d) => {
  * 
  * @abstract
  * @class
- * @augments Mixture
  */
-class AbstractSqlClient extends Mixture
+class AbstractSqlClient
 {
     /**
      * Run sql query
