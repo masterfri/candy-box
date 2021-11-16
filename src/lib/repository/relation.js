@@ -146,7 +146,7 @@ class Relation
      */
     export(callback = null) {
         if (this._value !== undefined) {
-            return this._value.all().map((item) => {
+            return this._value.map((item) => {
                 return callback === null ? item.export() : callback(item);
             });
         }
