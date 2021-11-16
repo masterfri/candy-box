@@ -212,4 +212,24 @@ describe('Relations', function() {
             }).catch(done);
         });
     });
+    describe('#Assigning relation values', function() {
+        it('Has one relation should be assignable', function() {
+            let bob = new HumanDocument();
+            bob.parent = {id: 999, name: 'Fiodor'};
+            assert.ok(bob.parent.$ instanceof HumanDocument);
+            assert.strictEqual(bob.parent_id, 999);
+        });
+        it('Has many relation should be assignable', function() {
+            let bob = new HumanDocument({id: 999});
+            let vik = new HumanDocument({name: 'Viktoria'});
+            bob.children = [
+                vik,
+                {name: 'Fiodor'},
+            ];
+            assert.strictEqual(bob.children.$.length, 2);
+            assert.ok(bob.children.$[0] instanceof HumanDocument);
+            assert.ok(bob.children.$[1] instanceof HumanDocument);
+            assert.strictEqual(vik.parent_id, 999);
+        });
+    });
 });

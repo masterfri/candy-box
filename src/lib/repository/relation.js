@@ -1,9 +1,9 @@
 import {
     is, 
     isArray,
-    isObject,
     isFunction,
-    isNil } from '../helpers.js';
+    isNil,
+    dedupe } from '../helpers.js';
 import Query, {
     Assert,
     Sort } from '../query/query.js';
@@ -284,7 +284,7 @@ class Relation
         if (keys.length === 0) {
             return Promise.resolve([]);
         }
-        let query = this._newQuery(keys);
+        let query = this._newQuery(dedupe(keys));
         relationQuery.applyTo(query);
         return this._repository
             .search(query)
@@ -323,9 +323,7 @@ class Relation
             }
         });
         // TODO: use function dedupe
-        return result.filter((value, index) => {
-            return result.indexOf(value) === index;
-        });
+        return dedupe(result);
     }
 
     /**
@@ -348,9 +346,25 @@ class Relation
      */
     _normalizeValue(value) {
         if (isArray(value)) {
-            return [...value];
+            return value.map((doc) => this._toDocument(doc));
         }
-        return [value];
+        if (isNil(value)) {
+            return [];
+        }
+        return [this._toDocument(value)];
+    }
+
+    /**
+     * Conver value to a document
+     * 
+     * @param {any} value 
+     * @returns {Document}
+     */
+    _toDocument(value) {
+        if (is(value, Document)) {
+            return value;
+        }
+        return this._repository.newDocument(value);
     }
  
     /**
@@ -561,13 +575,10 @@ class OneToOne extends Relation
      * @override
      */
     _normalizeValue(value) {
-        if (value === null || is(value, this._repository.type)) {
-            return value;
+        if (isNil(value)) {
+            return null;
         }
-        if (isObject(value)) {
-            return this._repository.newDocument(value);
-        }
-        throw new TypeError('Invalid value has been supplied');
+        return this._toDocument(value);
     }
 
     /**
