@@ -1,8 +1,8 @@
 import assert from 'assert';
+import { isIterable } from '../src/lib/helpers.js';
 import Document, {
     Attribute,
 } from '../src/lib/structures/document.js';
-import Collection from '../src/lib/structures/collection.js';
 
 class TestDocument extends Document
 {
@@ -32,12 +32,20 @@ describe('Document', function() {
         });
         it('Collection attribute should be initiated as empty collection', function() {
             let document = new TestDocument();
-            assert.ok(document.collection instanceof Collection);
+            assert.ok(isIterable(document.collection));
         });
         it('Collection items should always has type as defined', function() {
             let document = new TestDocument();
-            document.collection.push({});
-            assert.ok(document.collection.first() instanceof TestDocument);
+            document.collection.push({color: 'red'});
+            document.collection.push({color: 'red'});
+            document.collection[1] = {color: 'green'}
+            document.collection[0].weight = 100;
+            assert.ok(document.collection[0] instanceof TestDocument);
+            assert.strictEqual(document.collection[0].color, 'red');
+            assert.strictEqual(document.collection.length, 2);
+            delete document.collection[0];
+            assert.strictEqual(document.collection[0].color, 'green');
+            assert.strictEqual(document.collection.length, 1);
         });
     });
 });

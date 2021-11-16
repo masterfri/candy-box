@@ -27,7 +27,7 @@ class WebtokenResolver extends AbstractIdentityResolver
     /**
      * Check if request has auth token
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {String|null}
      */
     _detectToken(request) {

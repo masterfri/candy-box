@@ -1,4 +1,3 @@
-import Collection from '../structures/collection.js';
 import {
     Assertion,
     Negation,
@@ -106,9 +105,6 @@ const strEndsWith = (a, b) => {
 }
 
 const objectHas = (object, condition) => {
-    if (is(object, Collection)) {
-        return object.some((item) => testSubcondition(condition, item));
-    }
     if (isArray(object)) {
         return object.some((item) => testSubcondition(condition, item));
     }
@@ -119,9 +115,6 @@ const objectHas = (object, condition) => {
 }
 
 const objectNotHas = (object, condition) => {
-    if (is(object, Collection)) {
-        return object.every((item) => !testSubcondition(condition, item));
-    }
     if (isArray(object)) {
         return object.every((item) => !testSubcondition(condition, item));
     }

@@ -7,7 +7,8 @@ import ResidentRepository from '../src/lib/repository/resident.js';
 import RestRepository from '../src/lib/repository/rest.js';
 import RepositoryProxy from '../src/lib/repository/proxy.js';
 import RepositoryRequestMap from '../src/lib/repository/request-map.js';
-import Request, {
+import {
+    BaseRequest,
     Method } from '../src/lib/transport/request.js';
 import { ValidationError } from '../src/lib/validation/validator.js';
 import Query from '../src/lib/query/query.js';
@@ -24,7 +25,7 @@ class TestDocument extends Document
     }
 }
 
-class StoreDocumentRequest extends Request
+class StoreDocumentRequest extends BaseRequest
 {
     method() {
         return Method.PUT;
@@ -42,7 +43,7 @@ class StoreDocumentRequest extends Request
     }
 }
 
-class SearchDocumentRequest extends Request
+class SearchDocumentRequest extends BaseRequest
 {
     method() {
         return Method.GET;
@@ -141,7 +142,7 @@ describe('Rest repository', function() {
                 return repo.search(query);
             }).then((results) => {
                 assert.strictEqual(results.length, 1);
-                assert.strictEqual(results.first().weight, 10);
+                assert.strictEqual(results[0].weight, 10);
                 done();
             }).catch(done);
         });
@@ -173,7 +174,7 @@ describe('Rest repository', function() {
                 return repo.search(query);
             }).then((result) => {
                 assert.strictEqual(result.length, 1);
-                assert.strictEqual(result.first().weight, 60);
+                assert.strictEqual(result[0].weight, 60);
                 let query = (new Query).where((cond) => {
                     cond.lte('weight', 100);
                 });
@@ -349,8 +350,8 @@ describe('Rest repository', function() {
                 return repo.search(query);
             }).then((result) => {
                 assert.strictEqual(result.length, 3);
-                assert.ok(result.get(0).weight <= result.get(1).weight);
-                assert.ok(result.get(1).weight <= result.get(2).weight);
+                assert.ok(result[0].weight <= result[1].weight);
+                assert.ok(result[1].weight <= result[2].weight);
                 done();
             }).catch((err) => {
                 done(err);

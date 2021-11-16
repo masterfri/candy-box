@@ -40,7 +40,7 @@ class Message
      * 
      * @param {String} name 
      * @param {String} value 
-     * @returns {Request}
+     * @returns {BaseRequest}
      */
     setHeader(name, value) {
         this._headers[name.toLowerCase()] = value;

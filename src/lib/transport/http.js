@@ -1,19 +1,13 @@
 import axios from 'axios';
 import { safeCall } from '../helpers.js';
-import AbstractTransport, {
-    AbstractTransportRequest } from './base.js';
-import { ValidationError } from '../validation/validator.js';
-import Response, {
-    Status,
-    isErrorCode } from './response.js';
+import AbstractTransport from './base.js';
 
 /**
- * Request for HTTP transport
+ * BaseRequest for HTTP transport
  * 
  * @class
- * @augments AbstractTransportRequest
  */
-class HttpRequest extends AbstractTransportRequest
+class HttpRequest
 {
     /**
      * @protected
@@ -56,7 +50,6 @@ class HttpRequest extends AbstractTransportRequest
      * @param {Object} config 
      */
     constructor(client, config = {}) {
-        super();
         this._source = axios.CancelToken.source();
         this._promise = client.request({
             ...config,
@@ -74,14 +67,6 @@ class HttpRequest extends AbstractTransportRequest
         });
     }
     
-    /**
-     * @inheritdoc
-     * @override
-     */
-    isCancellable() {
-        return true;
-    }
-
     /**
      * @inheritdoc
      * @override
@@ -161,6 +146,15 @@ class HttpRequest extends AbstractTransportRequest
     get downloadPercent() {
         return this._downloadSize > 0 ? (100 * this._downloaded / this._downloadSize) : 0;
     }
+
+    /**
+     * Tells the request is cancellable
+     * 
+     * @var {Boolean}
+     */
+    get isCancellable() {
+        return true;
+    }
 }
 
 /**
@@ -211,26 +205,11 @@ class HttpTransport extends AbstractTransport
      * @override
      * @inheritdoc
      */
-    send(request, options = {}) {
+    _sendInternal(request, options) {
         return this._makeRequest({
             ...this._buildOptions(request),
             ...options,
             validateStatus: () => true,
-        }).then((result) => {
-            if (result.status === Status.UNPROCESSABLE_ENTITY) {
-                throw new ValidationError(result.data);
-            }
-            let response = new Response(
-                result.data,
-                result.status, 
-                result.statusText,
-                result.headers
-            );
-            if (isErrorCode(result.status)) {
-                throw response;
-            } else {
-                return response;
-            }
         });
     }
 }

@@ -2,13 +2,11 @@ import {
     is,
     isObject, 
     isFunction,
-    forEach,
     abstractMethodError } from '../helpers.js';
 import Query, {
     Condition,
     Assertion,
     Negation } from '../query/query.js';
-import TypedCollection from '../structures/typed-collection.js';
 
 /**
  * Base class for all repositories
@@ -50,16 +48,6 @@ class AbstractRepository
      */
     newDocument(data = {}) {
         return new this._type(data);
-    }
-
-    /**
-     * Create new collection of documents
-     * 
-     * @param {Array} [items=[]] 
-     * @returns {TypedCollection}
-     */
-    newCollection(items = []) {
-        return new TypedCollection(this._type, items);
     }
 
     /**
@@ -493,13 +481,11 @@ class AbstractRepository
     /**
      * Create collection with data loaded from repository
      * 
-     * @param {Array|Collection} items
-     * @returns {TypedCollection}
+     * @param {Array} items
+     * @returns {Array}
      */
     _makeCollection(items) {
-        return this.newCollection(
-            items.map((item) => this._makeDocument(item))
-        );
+        return items.map((item) => this._makeDocument(item));
     }
 
     /**

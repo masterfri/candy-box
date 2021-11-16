@@ -171,7 +171,7 @@ class AbstractIdentityResolver
     /**
      * Attempt to resolve identity from request
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @param {AbstractIdentitySource} source 
      * @returns {Promise|Identity|false}
      */

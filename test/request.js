@@ -1,12 +1,15 @@
 import assert from 'assert';
 import express from 'express';
 import './_boot.js';
-import Request, {Method} from '../src/lib/transport/request.js';
+import {
+    BaseRequest,
+    Method } from '../src/lib/transport/request.js';
 import {ValidationError} from '../src/lib/validation/validator.js';
+import Response from '../src/lib/transport/response.js';
 
 let server = null;
 
-class TestRequest extends Request
+class TestRequest extends BaseRequest
 {
     route() {
     }
@@ -20,14 +23,14 @@ class TestRequest extends Request
     }
 }
 
-class GetRequest extends Request
+class GetRequest extends BaseRequest
 {
     route() {
         return '/item/:id';
     }
 }
 
-class PostRequest extends Request
+class PostRequest extends BaseRequest
 {
     method() {
         return Method.POST;
@@ -38,17 +41,24 @@ class PostRequest extends Request
     }
 }
 
-class Err404Request extends Request
+class Err404Request extends BaseRequest
 {
     route() {
         return '/404';
     }
 }
 
-class InvalidRequest extends Request
+class InvalidRequest extends BaseRequest
 {
     route() {
         return '/invalid';
+    }
+}
+
+class CustomResponse extends Response
+{
+    getID() {
+        return Number(this.body.id);
     }
 }
 
@@ -136,7 +146,15 @@ describe('Request', function() {
             let request = new GetRequest({id: 123});
             request.send().then((response) => {
                 assert.ok(response.body.get);
-                assert.equal(response.body.id, 123);
+                assert.strictEqual(response.body.id, '123');
+                done();
+            }).catch(done);
+        });
+        it('Get request should be instance of CustomResponse', function(done) {
+            let request = new GetRequest({id: 123});
+            request.send(CustomResponse).then((response) => {
+                assert.ok(response instanceof CustomResponse);
+                assert.strictEqual(response.getID(), 123);
                 done();
             }).catch(done);
         });
@@ -144,8 +162,8 @@ describe('Request', function() {
             let request = new PostRequest({id: 123, value: 100});
             request.send().then((response) => {
                 assert.ok(response.body.post);
-                assert.equal(response.body.id, 123);
-                assert.equal(response.body.value, 100);
+                assert.strictEqual(response.body.id, '123');
+                assert.strictEqual(response.body.value, 100);
                 done();
             }).catch(done);
         });
@@ -167,7 +185,7 @@ describe('Request', function() {
             })
             .catch((response) => {
                 assert.ok(response instanceof ValidationError);
-                assert.equal(response.getErrors('value')[0], 'Invalid value');
+                assert.strictEqual(response.getErrors('value')[0], 'Invalid value');
                 done();
             })
             .catch(done);

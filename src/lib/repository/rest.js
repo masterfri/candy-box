@@ -133,7 +133,7 @@ class RestRepository extends AbstractRepository
      * @protected
      * @param {String} method 
      * @param {Object} data 
-     * @returns {Request}
+     * @returns {BaseRequest}
      */
     _request(method, data) {
         return this._mapping.create(method, data)

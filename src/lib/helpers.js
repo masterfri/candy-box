@@ -21,8 +21,8 @@ const makeMutator = (type, nullable = false) => {
     }
     if (type === Array) {
         return nullable
-            ? (v) => isNil(v) ? null : (isArray(v) ? v : [])
-            : (v) => isArray(v) ? v : [];
+            ? (v) => isNil(v) ? null : toArray(v)
+            : (v) => toArray(v)
     }
     if (isFunction(type)) {
         return nullable
@@ -32,6 +32,19 @@ const makeMutator = (type, nullable = false) => {
     return nullable
         ? (v) => isNil(v) ? null : v
         : (v) => v;
+}
+
+const toArray = (v) => {
+    if (isArray(v)) {
+        return v;
+    }
+    if (isIterable(v)) {
+        return [...v];
+    }
+    if (isNil(v)) {
+        return [];
+    }
+    return [v];
 }
 
 const pickProps = (source, props) => {
@@ -194,13 +207,71 @@ function* filter (iterable, test) {
     }
 }
 
-function* pick (iterable, prop) {
+function* map (iterable, prop) {
     if (isIterable(iterable)) {
         let getter = isFunction(prop) ? prop : (v) => get(v, prop);
         for (let val of iterable) {
             yield getter(val);
         }
     }
+}
+
+const intersect = (...args) => {
+    let arrays = Array.from(args);
+    let base = arrays.shift();
+    return base.filter((item) => {
+        return arrays.every((array) => array.indexOf(item) !== -1);
+    });
+}
+
+const difference = (...args) => {
+    let arrays = Array.from(args);
+    let base = arrays.shift();
+    return base.filter((item) => {
+        return arrays.every((array) => array.indexOf(item) === -1);
+    });
+}
+
+const dedupe = (array) => {
+    return Array.from(new Set(array));
+}
+
+const group = (array, ...args) => {
+    let groups = new Map();
+    let tree = new Map();
+    let keys = Array.from(args);
+    let [first] = keys;
+    let makeKey = isFunction(first)
+        ? first
+        : (keys.length === 1 
+            ? (item) => item[first]
+            : (item) => keys.map((key) => item[key]));
+    const putItem = (map, item, keys, i) => {
+        let key = keys[i];
+        if (i === keys.length - 1) {
+            if (map.has(key)) {
+                map.get(key).push(item);
+            } else {
+                let leaf = [item];
+                groups.set(i === 0 ? key : keys, leaf);
+                map.set(key, leaf);
+            }
+        } else {
+            let branch;
+            if (map.has(key)) {
+                branch = map.get(key);
+            } else {
+                branch = new Map();
+                map.set(key, branch);
+            }
+            putItem(branch, item, keys, i + 1);
+        }
+    }
+    array.forEach((item) => {
+        let key = makeKey(item);
+        putItem(tree, item, isArray(key) ? key : [key], 0);
+    });
+    return groups;
 }
 
 const isScalar = (v) => {
@@ -362,6 +433,7 @@ const nop = () => {}
 
 export {
     makeMutator,
+    toArray,
     getProps,
     getProp,
     pickProps,
@@ -377,7 +449,11 @@ export {
     max,
     forEach,
     filter,
-    pick,
+    map,
+    intersect,
+    difference,
+    dedupe,
+    group,
     isScalar,
     objectsEqual,
     arraysEqual,

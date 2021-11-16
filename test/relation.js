@@ -100,7 +100,7 @@ describe('Relations', function() {
         it('Relation should load', function(done) {
             humans.search({name: 'Bob'}).then((result) => {
                 assert.strictEqual(result.length, 1);
-                return result.first();
+                return result[0];
             }).then((bob) => {
                 return bob.parent.get();
             }).then((jack) => {
@@ -108,7 +108,7 @@ describe('Relations', function() {
                 return pets.search({name: 'Petty'});
             }).then((result) => {
                 assert.strictEqual(result.length, 1);
-                return result.first();
+                return result[0];
             }).then((petty) => {
                 return petty.owner.get().then((lina) => {
                     assert.strictEqual(lina.name, 'Lina');
@@ -120,7 +120,7 @@ describe('Relations', function() {
         it('Relation value should be null when nothing is related', function(done) {
             humans.search({name: 'Jack'}).then((result) => {
                 assert.strictEqual(result.length, 1);
-                return result.first();
+                return result[0];
             }).then((jack) => {
                 return jack.parent.get();
             }).then((nothing) => {
@@ -133,7 +133,7 @@ describe('Relations', function() {
         it('Relation should load', function(done) {
             humans.search({name: 'Jack'}).then((result) => {
                 assert.strictEqual(result.length, 1);
-                return result.first();
+                return result[0];
             }).then((jack) => {
                 return jack.children.get();
             }).then((children) => {
@@ -141,11 +141,11 @@ describe('Relations', function() {
                 return humans.search({name: 'Lina'});
             }).then((result) => {
                 assert.strictEqual(result.length, 1);
-                return result.first();
+                return result[0];
             }).then((lina) => {
                 return lina.pets.get().then((pets) => {
                     assert.strictEqual(pets.length, 1);
-                    assert.strictEqual(pets.first().name, 'Petty');
+                    assert.strictEqual(pets[0].name, 'Petty');
                     assert.strictEqual(lina.pets.value.length, 1);
                     done();
                 });
@@ -154,18 +154,18 @@ describe('Relations', function() {
         it('Relation should load considering conditions and order', function(done) {
             humans.search({name: 'Jack'}).then((result) => {
                 assert.strictEqual(result.length, 1);
-                return result.first();
+                return result[0];
             }).then((jack) => {
                 return jack.boys.get();
             }).then((boys) => {
-                assert.deepStrictEqual(boys.all().map(boy => boy.name), ['Andy', 'Bob']);
+                assert.deepStrictEqual(boys.map(boy => boy.name), ['Andy', 'Bob']);
                 done();
             }).catch(done);
         });
         it('Relation value should be empty collection when nothing is related', function(done) {
             humans.search({name: 'Eva'}).then((result) => {
                 assert.strictEqual(result.length, 1);
-                return result.first();
+                return result[0];
             }).then((eva) => {
                 return eva.children.get();
             }).then((nothing) => {
@@ -178,13 +178,13 @@ describe('Relations', function() {
         it('Relation value should be loaded with liked relations', function(done) {
             pets.search({name: 'Larry'}).then((result) => {
                 assert.strictEqual(result.length, 1);
-                return result.first();
+                return result[0];
             }).then((larry) => {
                 return larry.owner_with_girls.get();
             }).then((jack) => {
                 assert.strictEqual(jack.name, 'Jack');
                 assert.strictEqual(jack.children.value.length, 1);
-                assert.strictEqual(jack.children.value.first().name, 'Eva');
+                assert.strictEqual(jack.children.value[0].name, 'Eva');
                 done();
             }).catch(done);
         });
@@ -206,7 +206,7 @@ describe('Relations', function() {
                     assert.strictEqual(pets.length, 2);
                     jack = humans.find((human) => human.name === 'Jack');
                     let boys = jack.children.value;
-                    assert.deepStrictEqual(boys.all().map(boy => boy.name), ['Andy', 'Bob']);
+                    assert.deepStrictEqual(boys.map(boy => boy.name), ['Andy', 'Bob']);
                     done();
                 });
             }).catch(done);

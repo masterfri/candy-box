@@ -42,7 +42,7 @@ class IdentityRepository extends AbstractIdentitySource
         query.limitTo(1);
         return this._repository.search(query)
             .then((results) => {
-                return results.first();
+                return results.length !== 0 ? results[0] : null;
             });
     }
 }

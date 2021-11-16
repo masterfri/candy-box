@@ -102,14 +102,14 @@ describe('Resident repository', function() {
                 let query = (new Query).where('color', 'blue');
                 return repository.search(query);
             }).then((result) => {
-                assert.equal(result.length, 1);
-                assert.equal(result.first().weight, 60);
+                assert.strictEqual(result.length, 1);
+                assert.strictEqual(result[0].weight, 60);
                 let query = (new Query).where((cond) => {
                     cond.lte('weight', 100);
                 });
                 return repository.search(query);
             }).then((result) => {
-                assert.equal(result.length, 2);
+                assert.strictEqual(result.length, 2);
                 done();
             }).catch((err) => {
                 done(err);
@@ -167,13 +167,13 @@ describe('Resident repository', function() {
             ]).then(() => {
                 return repository.count({color: 'blue'});
             }).then((result) => {
-                assert.equal(result, 1);
+                assert.strictEqual(result, 1);
                 let query = (new Query).where((cond) => {
                     cond.lte('weight', 100);
                 });
                 return repository.count(query);
             }).then((result) => {
-                assert.equal(result, 2);
+                assert.strictEqual(result, 2);
                 done();
             }).catch((err) => {
                 done(err);
@@ -190,10 +190,10 @@ describe('Resident repository', function() {
             ]).then(() => {
                 return repository.sum('weight', {color: 'red'});
             }).then((result) => {
-                assert.equal(result, 250);
+                assert.strictEqual(result, 250);
                 return repository.sum('weight');
             }).then((result) => {
-                assert.equal(result, 310);
+                assert.strictEqual(result, 310);
                 done();
             }).catch((err) => {
                 done(err);
@@ -210,10 +210,10 @@ describe('Resident repository', function() {
             ]).then(() => {
                 return repository.avg('weight', {color: 'red'});
             }).then((result) => {
-                assert.equal(result, 150);
+                assert.strictEqual(result, 150);
                 return repository.avg('weight');
             }).then((result) => {
-                assert.equal(result, 200);
+                assert.strictEqual(result, 200);
                 done();
             }).catch((err) => {
                 done(err);
@@ -230,10 +230,10 @@ describe('Resident repository', function() {
             ]).then(() => {
                 return repository.min('weight', {color: 'blue'});
             }).then((result) => {
-                assert.equal(result, 300);
+                assert.strictEqual(result, 300);
                 return repository.min('weight');
             }).then((result) => {
-                assert.equal(result, 100);
+                assert.strictEqual(result, 100);
                 done();
             }).catch((err) => {
                 done(err);
@@ -250,10 +250,10 @@ describe('Resident repository', function() {
             ]).then(() => {
                 return repository.max('weight', {color: 'red'});
             }).then((result) => {
-                assert.equal(result, 200);
+                assert.strictEqual(result, 200);
                 return repository.max('weight');
             }).then((result) => {
-                assert.equal(result, 300);
+                assert.strictEqual(result, 300);
                 done();
             }).catch((err) => {
                 done(err);
@@ -274,9 +274,29 @@ describe('Resident repository', function() {
                     .ascendingBy('weight');
                 return repository.search(query);
             }).then((result) => {
-                assert.equal(result.length, 3);
-                assert.ok(result.get(0).weight <= result.get(1).weight);
-                assert.ok(result.get(1).weight <= result.get(2).weight);
+                assert.strictEqual(result.length, 3);
+                assert.ok(result[0].weight <= result[1].weight);
+                assert.ok(result[1].weight <= result[2].weight);
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
+    });
+    describe('#group', function() {
+        it('Search results should be grouped', function(done) {
+            let repository = new ResidentRepository(TestDocument);
+            Promise.all([
+                repository.store(new TestDocument({color: 'red', weight: 200})),
+                repository.store(new TestDocument({color: 'red', weight: 80})),
+                repository.store(new TestDocument({color: 'blue', weight: 150})),
+                repository.store(new TestDocument({color: 'red', weight: 80})),
+            ]).then(() => {
+                let query = (new Query)
+                    .groupBy('weight', 'color');
+                return repository.search(query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 3);
                 done();
             }).catch((err) => {
                 done(err);
@@ -337,7 +357,7 @@ describe('Resident repository', function() {
                     .ascendingBy('size');
                 return repository.search(query);
             }).then((result) => {
-                assert.strictEqual(result.get(0).weight, 50);
+                assert.strictEqual(result[0].weight, 50);
                 done();
             }).catch((err) => {
                 done(err);

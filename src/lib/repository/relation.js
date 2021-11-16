@@ -7,7 +7,6 @@ import {
 import Query, {
     Assert,
     Sort } from '../query/query.js';
-import Collection from '../structures/collection.js';
 import Document, {
     Attribute } from '../structures/document.js';
 
@@ -98,7 +97,7 @@ class Relation
      * 
      * @param {Number} start 
      * @param {Number} count 
-     * @returns {Collection}
+     * @returns {Promise}
      */
     slice(start, count) {
         let key = this._holder.get(this._localKey);
@@ -135,7 +134,7 @@ class Relation
      * @returns {any}
      */
     init() {
-        this.set(this._repository.newCollection());
+        this.set([]);
         return this._value;
     }
 
@@ -157,15 +156,13 @@ class Relation
     /**
      * Load relations on specified target
      * 
-     * @param {Document|Array|Collection} target
+     * @param {Document|Array} target
      * @param {String|Array|Function|QueryCollection} relation
      * @param {Boolean} [skipResolved=true]
      * @returns {Promise}
      */
     static resolve(target, relation, skipResolved = true) {
-        if (is(target, Collection)) {
-            target = target.all();
-        } else if (is(target, Document)) {
+        if (is(target, Document)) {
             target = [target];
         } else if (!isArray(target)) {
             throw new Error('Invalid target to load relations on');
@@ -285,7 +282,7 @@ class Relation
             .map((holder) => holder.get(this._localKey))
             .filter((key) => key !== null);
         if (keys.length === 0) {
-            return Promise.resolve(this._repository.newCollection());
+            return Promise.resolve([]);
         }
         let query = this._newQuery(keys);
         relationQuery.applyTo(query);
@@ -319,12 +316,13 @@ class Relation
         let result = [];
         holders.forEach((holder) => {
             let value = holder[attr].value;
-            if (is(value, Collection)) {
-                result.push(...value.all());
+            if (isArray(value)) {
+                result.push(...value);
             } else if (is(value, Document)) {
                 result.push(value);
             }
         });
+        // TODO: use function dedupe
         return result.filter((value, index) => {
             return result.indexOf(value) === index;
         });
@@ -334,7 +332,7 @@ class Relation
      * Create related value from queried result
      * 
      * @protected
-     * @param {Collection} result 
+     * @param {Array} result 
      * @returns {any}
      */
     _consumeResult(result) {
@@ -349,13 +347,10 @@ class Relation
      * @returns {any}
      */
     _normalizeValue(value) {
-        if (is(value, Collection)) {
-            return value;
-        }
         if (isArray(value)) {
-            return this._repository.newCollection(value);
+            return [...value];
         }
-        throw new TypeError('Invalid value has been supplied');
+        return [value];
     }
  
     /**
@@ -558,7 +553,7 @@ class OneToOne extends Relation
      * @override
      */
     _consumeResult(result) {
-        return result.first();
+        return result.length !== 0 ? result[0] : null;
     }
 
     /**

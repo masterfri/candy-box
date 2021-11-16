@@ -43,7 +43,7 @@ class Authenticator
     /**
      * Resolve identity from request
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Promise}
      */
     resolveIdentity(request) {
@@ -61,7 +61,7 @@ class Authenticator
     /**
      * Resolve request identity
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @param {AbstractIdentityResolver} resolver 
      * @returns {Promise}
      */
@@ -89,7 +89,7 @@ class Authenticator
     /**
      * Attempt to resolve request identity
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @param {AbstractIdentityResolver} resolver 
      * @returns {Promise|false}
      */
@@ -150,7 +150,7 @@ class Gate
      * Attempt to pass a gatekeeper
      * 
      * @param {String} name 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @param  {...any} args 
      * @returns {Promise}
      */

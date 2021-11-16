@@ -1,54 +1,10 @@
 import { abstractMethodError } from '../helpers.js';
 import qs from 'qs';
 import App from '../app.js';
-
-/**
- * Abstract class for transport requests
- * 
- * @abstract
- * @class
- */
-class AbstractTransportRequest
-{
-    /**
-     * Check if this request can be cancelled
-     * 
-     * @returns {Boolean}
-     */
-    isCancellable() {
-        return false;
-    }
-
-    /**
-     * Cancel this request 
-     * 
-     * @abstract
-     * @param {String} message 
-     */
-    cancel() {
-        abstractMethodError('cancel');
-    }
-    
-    /**
-     * Add post-request handler
-     * 
-     * @param {Function} callback 
-     * @returns {AbstractTransportRequest}
-     */
-    then() {
-        abstractMethodError('then');
-    }
-
-    /**
-     * Add error handler
-     * 
-     * @param {Function} callback 
-     * @returns {AbstractTransportRequest}
-     */
-    catch() {
-        abstractMethodError('catch');
-    }
-}
+import { ValidationError } from '../validation/validator.js';
+import Response, {
+    Status,
+    isErrorCode } from './response.js';
 
 /**
  * Abstract class for transports
@@ -130,20 +86,42 @@ class AbstractTransport
     /**
      * Send request
      * 
-     * @abstract
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @param {Object} [options={}] 
-     * @returns {AbstractTransportRequest}
+     * @param {Function} [expectation=Response]
+     * @returns {any}
      */
-    send() {
-        abstractMethodError('send');
+    send(request, options = {}, expectation = Response) {
+        return this._sendInternal(request, options)
+            .then((result) => {
+                let {data, status, statusText, headers} = result;
+                if (status === Status.UNPROCESSABLE_ENTITY) {
+                    throw new ValidationError(data);
+                }
+                let response = new expectation(data, status, statusText, headers);
+                if (isErrorCode(status)) {
+                    throw response;
+                }
+                return response;
+            });
+    }
+
+    /**
+     * Send request internally
+     * 
+     * @abstract
+     * @param {BaseRequest} request 
+     * @param {Object} options 
+     */
+    _sendInternal() {
+        abstractMethodError('_sendInternal');
     }
 
     /**
      * Build request options
      * 
      * @protected
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Object}
      */
     _buildOptions(request) {
@@ -161,7 +139,7 @@ class AbstractTransport
     /**
      * Build request URL
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {String}
      */
     _buildUrl(request) {
@@ -205,7 +183,6 @@ const transport = () => App.make(TransportSymbol);
 export default AbstractTransport;
 
 export {
-    AbstractTransportRequest,
     TransportSymbol,
     transport,
 };

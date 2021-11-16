@@ -1,8 +1,8 @@
-import Collection from '../structures/collection.js';
 import { 
     assertType,
     filter,
-    pick,
+    map,
+    group,
     sum,
     avg,
     min,
@@ -42,31 +42,30 @@ class ResidentRepository extends AbstractRepository
 
     /**
      * @protected
-     * @var {Collection}
+     * @var {Array}
      */
     _items;
 
     /**
      * @param {any} type 
-     * @param {Collection} collection 
+     * @param {Array} container 
      */
-    constructor(type, collection = null) {
+    constructor(type, container = null) {
         super(type);
-        this.attachTo(collection !== null ? collection : new Collection());
+        this.attachTo(container !== null ? container : []);
     }
     
     /**
      * Set collection as repository source
      * 
-     * @param {Collection} collection 
+     * @param {Array} container 
      */
-    attachTo(collection) {
-        assertType(collection, Collection);
-        collection.forEach((document) => {
+    attachTo(container) {
+        container.forEach((document) => {
             assertType(document, this._type);
             this._updateNextKey(document.getKey());
         });
-        this._items = collection;
+        this._items = container;
     }
     
     /**
@@ -105,23 +104,12 @@ class ResidentRepository extends AbstractRepository
     _findIndex(key) {
         return this._items.findIndex((item) => item[this._keyName] == key);
     }
-    
-    /**
-     * Get document by its index
-     * 
-     * @protected
-     * @param {Number} index 
-     * @returns {Document}
-     */
-    _getIndex(index) {
-        return this._items.get(index);
-    }
 
     /**
      * Make repository empty
      */
     purge() {
-        this._items.clear();
+        this._items.splice(0);
     }
     
     /**
@@ -132,7 +120,7 @@ class ResidentRepository extends AbstractRepository
         return new Promise((resolve) => {
             let index = this._findIndex(key);
             if (index !== -1) {
-                resolve(this._getIndex(index));
+                resolve(this._items[index]);
             } else {
                 resolve(null);
             }
@@ -146,13 +134,16 @@ class ResidentRepository extends AbstractRepository
     _searchInternal(query) {
         return new Promise((resolve) => {
             let condition = query.condition;
-            let results = this._items.filter((item) => testCondition(condition, item));
+            let results = condition.isEmpty 
+                ? [...this._items]
+                : this._items.filter((item) => testCondition(condition, item));
             if (query.order.length !== 0) {
                 results = results.sort(makeSorter(query.order));
             }
             if (query.group.length !== 0) {
-                let groups = results.group(query.group);
-                results = new Collection(groups.map((g) => g.items[0]));
+                results = [
+                    ...map(group(results, ...query.group).values(), (v) => v[0]),
+                ];
             }
             if (query.limit !== false) {
                 results = results.slice(query.start, query.start + query.limit);
@@ -177,7 +168,7 @@ class ResidentRepository extends AbstractRepository
                 if (index === -1) {
                     this._items.push(data);
                 } else {
-                    this._items.set(index, data);
+                    this._items[index] = data;
                 }
                 this._updateNextKey(key);
             }
@@ -193,7 +184,7 @@ class ResidentRepository extends AbstractRepository
         return new Promise((resolve) => {
             let index = this._findIndex(key);
             if (index !== -1) {
-                this._items.removeIndex(index);
+                this._items.splice(index, 1);
                 resolve(true);
             } else {
                 resolve(false);
@@ -279,9 +270,10 @@ class ResidentRepository extends AbstractRepository
      * @param {Condition} condition 
      */
     _pickValues(attribute, condition) {
-        return condition.isEmpty 
-            ? pick(this._items, attribute)
-            : pick(filter(this._items, (v) => testCondition(condition, v)), attribute);
+        let items = condition.isEmpty 
+            ? this._items
+            : filter(this._items, (v) => testCondition(condition, v));
+        return map(items, attribute);
     }
 }
 

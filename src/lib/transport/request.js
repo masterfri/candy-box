@@ -5,11 +5,15 @@ import {
     isObject,
     isString,
     get,
-    forEach } from '../helpers.js';
+    forEach,
+    valueOf, 
+    isFunction,
+    pickProps } from '../helpers.js';
 import {
     ValidationError,
     ValidatorSymbol } from '../validation/validator.js';
 import App from '../app.js';
+import Response from './response.js';
 
 const GET = 'GET';
 const POST = 'POST';
@@ -29,7 +33,7 @@ const Method = {
  * @class
  * @augments Message
  */
-class Request extends Message
+class BaseRequest extends Message
 {
     /**
      * @protected
@@ -127,12 +131,13 @@ class Request extends Message
     /**
      * Send this request to its destination
      * 
+     * @param {Function} [expectation=Response]
      * @returns {Promise}
      */
-    send() {
+    send(expectation = Response) {
         return this.validate().then(() => {
             return new Promise((resolve, reject) => {
-                this.transport().send(this, this.options())
+                this.transport().send(this, this.options(), expectation)
                     .then((response) => {
                         resolve(response);
                     }).catch((error) => {
@@ -174,7 +179,7 @@ class Request extends Message
     }
 
     /**
-     * Request query
+     * BaseRequest query
      * 
      * @var {Object}
      */
@@ -183,7 +188,7 @@ class Request extends Message
     }
 
     /**
-     * Request errors
+     * BaseRequest errors
      * 
      * @var {Object}
      */
@@ -196,9 +201,9 @@ class Request extends Message
  * Class for simple request
  * 
  * @class
- * @augments Request
+ * @augments BaseRequest
  */
-class PlainRequest extends Request
+class Request extends BaseRequest
 {
     /**
      * @protected
@@ -213,6 +218,18 @@ class PlainRequest extends Request
     _route;
 
     /**
+     * @protected
+     * @var {any}
+     */
+    _validation = null;
+
+    /**
+     * @protected
+     * @var {Object}
+     */
+    _options = {};
+
+    /**
      * @param {String} route 
      * @param {String} [method=GET]
      * @param {Object} [body={}]
@@ -221,8 +238,52 @@ class PlainRequest extends Request
      */
     constructor(route, method = GET, body = {}, query = {}, headers = {}) {
         super(body, query, headers);
-        this._method = method;
+        this.usingMethod(method)
+            .routeTo(route);
+    }
+
+    /**
+     * Change request route
+     * 
+     * @param {String} route 
+     * @returns {Request}
+     */
+    routeTo(route) {
         this._route = route;
+        return this;
+    }
+
+    /**
+     * Change request method
+     * 
+     * @param {String} method 
+     * @returns {Request}
+     */
+    usingMethod(method) {
+        this._method = method;
+        return this;
+    }
+
+    /**
+     * Setup request validation
+     * 
+     * @param {Function|Object} validation 
+     * @returns {Request}
+     */
+    withValidation(validation) {
+        this._validation = validation;
+        return this;
+    }
+
+    /**
+     * Setup request options
+     * 
+     * @param {Function|Object} options
+     * @returns {Request}
+     */
+    withValidation(options) {
+        this._options = options;
+        return this;
     }
 
     /**
@@ -239,6 +300,22 @@ class PlainRequest extends Request
      */
     route() {
         return this._route;
+    }
+
+    /**
+     * @inheritdoc
+     * @override
+     */
+    validation() {
+        return valueOf(this._validation);
+    }
+
+    /**
+     * @inheritdoc
+     * @override
+     */
+    options() {
+        return valueOf(this._options);
     }
 }
 
@@ -258,68 +335,153 @@ class RequestMap
     /**
      * Map method to request
      * 
-     * @param {String} method 
+     * @param {String} name
      * @param {any} request 
+     * @returns {RequestMap}
      */
-    map(method, request) {
-        if (isSubclass(request, Request)) {
-            this._map[method] = {
+    map(name, request) {
+        if (isSubclass(request, BaseRequest)) {
+            this._configure(name, {
                 method: request.prototype.method.call({}),
                 route: request.prototype.route.call({}),
                 factory: (data, query, headers) => new request(data, query, headers),
-            };
+                configurable: false,
+            }, true);
         } else if (isObject(request)) {
-            let route = request.route;
-            let requestMethod = request.method || GET;
-            let factory = request.factory || ((data, query, headers) => new PlainRequest(route, requestMethod, data, query, headers));
-            this._map[method] = {
-                method: requestMethod,
-                route,
-                factory,
-            };
+            this._configure(name, pickProps(request, [
+                'method', 'route', 'validation',
+            ]), true);
         } else if (isString(request)) {
-            this._map[method] = {
-                method: GET,
+            this._configure(name, {
                 route: request,
-                factory: (data, query, headers) => new PlainRequest(request, GET, data, query, headers),
-            };
+            }, true);
         } else {
             throw new Error('Invalid request mapping');
         }
+        return this;
+    }
+
+    /**
+     * Configure method route
+     * 
+     * @param {String} name 
+     * @param {String} route
+     * @returns {RequestMap}
+     */
+    route(name, route) {
+        this._configure(name, {route});
+        return this;
+    }
+
+    /**
+     * Configure method route
+     * 
+     * @param {String} name 
+     * @param {String} method
+     * @returns {RequestMap}
+     */
+    method(name, method) {
+        this._configure(name, {method});
+        return this;
+    }
+
+    /**
+     * Configure method validation
+     * 
+     * @param {String} name 
+     * @param {Function|Object} validation
+     * @returns {RequestMap}
+     */
+    validation(name, validation) {
+        this._configure(name, {validation});
+        return this;
     }
 
     /**
      * Create new request instance for certain method
      * 
-     * @param {String} method 
+     * @param {String} name 
      * @param {Object} [data={}]
      * @param {Object} [query={}]
      * @param {Object} [headers={}]
-     * @returns {Request}
+     * @returns {BaseRequest}
      */
-    create(method, data = {}, query = {}, headers = {}) {
-        if (this._map[method] === undefined) {
-            throw new Error(`Nothing is mapped to ${method}`);
+    create(name, data = {}, query = {}, headers = {}) {
+        let factory = this.factory(name);
+        return factory(data, query, headers);
+    }
+
+    /**
+     * Create factory for for certain method
+     * 
+     * @param {String} name 
+     * @returns {Function}
+     */
+    factory(name) {
+        let options = this._map[name];
+        if (options === undefined) {
+            throw new Error(`Nothing is mapped to ${name}`);
         }
-        return this._map[method].factory(data, query, headers);
+        if (isFunction(options.factory)) {
+            return options.factory;
+        }
+        let {route, method, validation} = options;
+        return requestFactory(route, method, validation);
     }
 
     /**
      * Execute a function with all mappings
      * 
-     * @param {Function} callback 
+     * @param {Function} callback
+     * @returns {RequestMap}
      */
     forEach(callback) {
-        forEach(this._map, (factory, method) => {
-            callback(factory, method);
+        forEach(this._map, (options, name) => {
+            callback(options, name);
         });
+        return this;
+    }
+
+    /**
+     * Configure request method
+     * 
+     * @protected
+     * @param {String} name 
+     * @param {Object} options 
+     * @param {Boolean} [replace=false]
+     */
+    _configure(name, options, replace = false) {
+        let current = this._map[name];
+        if (current === undefined || replace) {
+            this._map[name] = {
+                method: GET,
+                route: '',
+                ...options,
+            };
+        } else {
+            if (current.configurable === false) {
+                throw new Error(`Mapping ${name} is not configurable`);
+            }
+            this._map[name] = {
+                ...current,
+                ...options,
+            };
+        }
+    }
+}
+
+const requestFactory = (route, method = GET, validation = null) => {
+    return (data, query, headers) => {
+        let request = new Request(route, method, data, query, headers);
+        return request.withValidation(validation);
     }
 }
 
 export default Request;
 
 export {
-    PlainRequest,
+    BaseRequest,
     RequestMap,
     Method,
+    requestFactory,
 };

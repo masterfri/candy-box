@@ -39,7 +39,7 @@ class RepositoryProxy
     /**
      * Forwarding to "get" method of repository
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Promise}
      * @see AbstractRepository
      */
@@ -57,7 +57,7 @@ class RepositoryProxy
     /**
      * Forwarding to "search" method of repository
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Promise}
      * @see AbstractRepository
      */
@@ -75,7 +75,7 @@ class RepositoryProxy
     /**
      * Forwarding to "store" method of repository
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Promise}
      * @see AbstractRepository
      */
@@ -94,7 +94,7 @@ class RepositoryProxy
     /**
      * Forwarding to "delete" method of repository
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Promise}
      * @see AbstractRepository
      */
@@ -112,7 +112,7 @@ class RepositoryProxy
     /**
      * Forwarding to "exists" method of repository
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Promise}
      * @see AbstractRepository
      */
@@ -129,7 +129,7 @@ class RepositoryProxy
     /**
      * Forwarding to "count" method of repository
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Promise}
      * @see AbstractRepository
      */
@@ -146,7 +146,7 @@ class RepositoryProxy
     /**
      * Forwarding to "sum" method of repository
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Promise}
      * @see AbstractRepository
      */
@@ -164,7 +164,7 @@ class RepositoryProxy
     /**
      * Forwarding to "avg" method of repository
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Promise}
      * @see AbstractRepository
      */
@@ -182,7 +182,7 @@ class RepositoryProxy
     /**
      * Forwarding to "min" method of repository
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Promise}
      * @see AbstractRepository
      */
@@ -200,7 +200,7 @@ class RepositoryProxy
     /**
      * Forwarding to "max" method of repository
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Promise}
      * @see AbstractRepository
      */
@@ -282,7 +282,7 @@ class RepositoryProxy
     /**
      * Get parameter from request
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @param {String} param 
      * @param {Boolean} [allowNull=false] 
      * @returns {any}
@@ -299,7 +299,7 @@ class RepositoryProxy
      * Get key value from request
      * 
      * @protected
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Number}
      */
     _pullDocumentKey(request) {
@@ -310,7 +310,7 @@ class RepositoryProxy
      * Get query from request
      * 
      * @protected
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Query}
      */
     _pullQuery(request) {
@@ -322,7 +322,7 @@ class RepositoryProxy
      * Get document from request
      * 
      * @protected
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Document}
      */
     _pullDocument(request) {
@@ -333,7 +333,7 @@ class RepositoryProxy
      * Forward request to a certain method
      * 
      * @protected
-     * @param {Request} request
+     * @param {BaseRequest} request
      * @param {String} method 
      * @param {Object} params
      * @param {Function} [transformer=null]
@@ -369,7 +369,7 @@ class RepositoryProxy
     /**
      * Check if request is allowed
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @param {String} method 
      * @param {Array} args 
      * @returns {Promise}
@@ -395,11 +395,11 @@ class RepositoryProxy
     /**
      * Serialize collection
      * 
-     * @param {Collection} collection 
+     * @param {Array} collection 
      * @returns {Array}
      */
     _serializeCollection(collection) {
-        return collection.all().map((item) => this._serializeDocument(item));
+        return collection.map((item) => this._serializeDocument(item));
     }
 }
 

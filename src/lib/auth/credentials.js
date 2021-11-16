@@ -51,7 +51,7 @@ class CredentialsResolver extends AbstractIdentityResolver
     /**
      * Check if request has credentials
      * 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Object|null}
      */
     _detectCredentials(request) {

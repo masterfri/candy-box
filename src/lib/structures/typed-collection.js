@@ -1,81 +1,52 @@
-import Collection from './collection.js';
-import { makeMutator } from '../helpers.js';
+import { makeMutator,
+    map } from '../helpers.js';
 
-/**
- * Collection with strict type of elements
- * 
- * @class
- * @augments Collection
- */
-class TypedCollection extends Collection
-{
-    /**
-     * @protected
-     * @var {Function}
-     */
-    _mutator;
-
-    /**
-     * @protected
-     * @var {any}
-     */
-    _type;
-
-    /**
-     * @param {any} type Type of elements being stored into collection
-     * @param {Array} [items=[]] Initial set of elements 
-     */
-    constructor(type, items = []) {
-        let mutator = makeMutator(type);
-        super(items.map(mutator));
-        this._mutator = mutator;
-        this._type = type;
-    }
-    
-    /**
-     * @override
-     * @inheritdoc
-     */
-    newCollection(items = []) {
-        return new this.constructor(this._type, items);
-    }
-    
-    /**
-     * @override
-     * @inheritdoc
-     */
-    push(...args) {
-        return this._items.push(
-            ...Array.from(args)
-                .map(this._mutator)
-        );
-    }
-    
-    /**
-     * @override
-     * @inheritdoc
-     */
-    unshift(...args) {
-        return this._items.unshift(
-            ...Array.from(args)
-                .map(this._mutator)
-        );
-    }
-    
-    /**
-     * @override
-     * @inheritdoc
-     */
-    splice(...args) {
-        return this._items.splice(
-            ...Array.from(args).slice(0, 2)
-                .concat(
-                    Array.from(args)
-                        .slice(2)
-                        .map(this._mutator)
-                )
-        );
-    }
+const isValidIndex = (target, key) => {
+    return key >= 0 && key <= target.length;
 }
 
-export default TypedCollection;
+const collect = (values = [], type = undefined) => {
+    let mutator = makeMutator(type);
+    let col = Object.create({
+        constructor: Array.prototype.constructor,
+        slice: Array.prototype.slice,
+        keys: Array.prototype.keys,
+        length: Array.prototype.length,
+        [Symbol.iterator]: Array.prototype[Symbol.iterator],
+    }, {
+        push: {
+            enumerable: false,
+            configurable: false,
+            writable: false,
+            value (...args) {
+                Array.prototype.push.call(this, ...map(args, mutator));
+            }
+        }, 
+        remove: {
+            enumerable: false,
+            configurable: false,
+            writable: false,
+            value (index, count = 1) {
+                Array.prototype.splice.call(this, index, count);
+            }
+        },
+    });
+    col.push(...values);
+    return new Proxy(col, {
+        set(target, key, val, receiver) {
+            if (isValidIndex(target, key)) {
+                return Reflect.set(target, key, mutator(val), receiver);
+            }
+            return Reflect.set(target, key, val, receiver);
+        },
+        deleteProperty(target, key) {
+            if (isValidIndex(target, key)) {
+                target.remove(key);
+                return true;
+            }
+            return false;
+        },
+    });
+}
+
+export default collect;

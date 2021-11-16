@@ -3,7 +3,7 @@ import {
     Method } from '../transport/request.js';
 
 /**
- * Request mapping for repositories
+ * BaseRequest mapping for repositories
  * 
  * @class
  * @augments RequestMap
@@ -45,7 +45,7 @@ class RepositoryRequestMap extends RequestMap
     /**
      * Create request for "get" method of repository
      * 
-     * @returns {Request}
+     * @returns {BaseRequest}
      * @see RestRepository
      */
     createGetRequest() {
@@ -58,7 +58,7 @@ class RepositoryRequestMap extends RequestMap
     /**
      * Create request for "search" method of repository
      * 
-     * @returns {Request}
+     * @returns {BaseRequest}
      * @see RestRepository
      */
     createSearchRequest() {
@@ -71,7 +71,7 @@ class RepositoryRequestMap extends RequestMap
     /**
      * Create request for "srore" method of repository
      * 
-     * @returns {Request}
+     * @returns {BaseRequest}
      * @see RestRepository
      */
     createStoreRequest() {
@@ -84,7 +84,7 @@ class RepositoryRequestMap extends RequestMap
     /**
      * Create request for "delete" method of repository
      * 
-     * @returns {Request}
+     * @returns {BaseRequest}
      * @see RestRepository
      */
     createDeleteRequest() {
@@ -97,7 +97,7 @@ class RepositoryRequestMap extends RequestMap
     /**
      * Create request for "exists" method of repository
      * 
-     * @returns {Request}
+     * @returns {BaseRequest}
      * @see RestRepository
      */
     createExistsRequest() {
@@ -110,7 +110,7 @@ class RepositoryRequestMap extends RequestMap
     /**
      * Create request for "count" method of repository
      * 
-     * @returns {Request}
+     * @returns {BaseRequest}
      * @see RestRepository
      */
     createCountRequest() {
@@ -123,7 +123,7 @@ class RepositoryRequestMap extends RequestMap
     /**
      * Create request for "sum" method of repository
      * 
-     * @returns {Request}
+     * @returns {BaseRequest}
      * @see RestRepository
      */
     createSumRequest() {
@@ -136,7 +136,7 @@ class RepositoryRequestMap extends RequestMap
     /**
      * Create request for "avg" method of repository
      * 
-     * @returns {Request}
+     * @returns {BaseRequest}
      * @see RestRepository
      */
     createAvgRequest() {
@@ -149,7 +149,7 @@ class RepositoryRequestMap extends RequestMap
     /**
      * Create request for "min" method of repository
      * 
-     * @returns {Request}
+     * @returns {BaseRequest}
      * @see RestRepository
      */
     createMinRequest() {
@@ -162,7 +162,7 @@ class RepositoryRequestMap extends RequestMap
     /**
      * Create request for "max" method of repository
      * 
-     * @returns {Request}
+     * @returns {BaseRequest}
      * @see RestRepository
      */
     createMaxRequest() {

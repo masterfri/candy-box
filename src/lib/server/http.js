@@ -99,31 +99,39 @@ class HttpServer extends AbstractServer
      * @override
      */
     register(method, path, requestFactory, target) {
-        this._router[method](path, (req, res) => {
+        this._router[method.toLowerCase()](path, (req, res) => {
             let request = requestFactory(req.body, {
                 ...(is(req.params, Array) ? {params: req.params} : req.params),
                 ...req.query,
             }, req.headers);
-            request.validate().then(() => {
-                return this._delegate(target, request);
-            }).then((response) => {
-                this._respond(res, response);
-            }).catch((error) => {
-                if (is(error, ValidationError)) {
-                    res.status(Status.UNPROCESSABLE_ENTITY).send(error.getErrors());
-                } else if (is(error, AuthorizationError)) {
-                    if (error.reason === DenyReason.FORBIDDEN) {
-                        res.status(Status.FORBIDDEN).send('Forbidden');
+            request.validate()
+                .then(() => {
+                    return this._delegate(target, request);
+                })
+                .then((response) => {
+                    this._respond(res, response);
+                })
+                .catch((error) => {
+                    if (is(error, ValidationError)) {
+                        res.status(Status.UNPROCESSABLE_ENTITY)
+                            .send(error.getErrors());
+                    } else if (is(error, AuthorizationError)) {
+                        if (error.reason === DenyReason.FORBIDDEN) {
+                            res.status(Status.FORBIDDEN)
+                                .send('Forbidden');
+                        } else {
+                            res.status(Status.UNAUTHORIZED)
+                                .send('Unauthorized');
+                        }
+                    } else if (is(error, HttpError)) {
+                        res.status(error.code)
+                            .send(error.message);
                     } else {
-                        res.status(Status.UNAUTHORIZED).send('Unauthorized');
+                        this._logger.error(error);
+                        res.status(Status.INTERNAL_SERVER_ERROR)
+                            .send('Server error: ' + error);
                     }
-                } else if (is(error, HttpError)) {
-                    res.status(error.code).send(error.message);
-                } else {
-                    this._logger.error(error);
-                    res.status(Status.INTERNAL_SERVER_ERROR).send('Server error: ' + error);
-                }
-            });
+                });
         });
     }
 
@@ -132,7 +140,7 @@ class HttpServer extends AbstractServer
      * 
      * @protected
      * @param {Function} target 
-     * @param {Request} request 
+     * @param {BaseRequest} request 
      * @returns {Promise}
      */
     _delegate(target, request) {

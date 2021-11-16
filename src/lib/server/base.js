@@ -1,5 +1,5 @@
 import {
-    PlainRequest,
+    requestFactory,
     Method } from '../transport/request.js';
 import { abstractMethodError } from '../helpers.js';
 import App from '../app.js';
@@ -54,7 +54,7 @@ class AbstractServer
      */
     route(request, target) {
         this.register(
-            request.prototype.method.call({}).toLowerCase(),
+            request.prototype.method.call({}),
             request.prototype.route.call({}),
             (data, query, headers) => new request(data, query, headers),
             target
@@ -70,11 +70,8 @@ class AbstractServer
      * @returns {AbstractServer}
      */
     map(mapping, target) {
-        mapping.forEach((request, method) => {
-            this.register(
-                request.method.toLowerCase(), request.route, 
-                request.factory, target[method].bind(target)
-            );
+        mapping.forEach(({method, route}, name) => {
+            this.register(method, route, mapping.factory(name), target[name].bind(target));
         });
         return this;
     }
@@ -87,11 +84,7 @@ class AbstractServer
      * @returns {AbstractServer}
      */
     get(path, target) {
-        this.register(
-            'get', path, 
-            (data, query, headers) => new PlainRequest(path, Method.GET, data, query, headers),
-            target
-        );
+        this.register(Method.GET, path, requestFactory(path, Method.GET), target);
         return this;
     }
 
@@ -103,11 +96,7 @@ class AbstractServer
      * @returns {AbstractServer}
      */
     post(path, target) {
-        this.register(
-            'post', path, 
-            (data, query, headers) => new PlainRequest(path, Method.POST, data, query, headers),
-            target
-        );
+        this.register(Method.POST, path, requestFactory(path, Method.POST), target);
         return this;
     }
 
@@ -119,11 +108,7 @@ class AbstractServer
      * @returns {AbstractServer}
      */
     put(path, target) {
-        this.register(
-            'put', path, 
-            (data, query, headers) => new PlainRequest(path, Method.PUT, data, query, headers),
-            target
-        );
+        this.register(Method.PUT, path, requestFactory(path, Method.PUT), target);
         return this;
     }
 
@@ -135,11 +120,7 @@ class AbstractServer
      * @returns {AbstractServer}
      */
     delete(path, target) {
-        this.register(
-            'delete', path, 
-            (data, query, headers) => new PlainRequest(path, Method.DELETE, data, query, headers),
-            target
-        );
+        this.register(Method.DELETE, path, requestFactory(path, Method.DELETE), target);
         return this;
     }
 }

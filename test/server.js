@@ -1,12 +1,13 @@
 import assert from 'assert';
 import './_boot.js';
-import Request, {
+import {
+    BaseRequest,
     Method } from '../src/lib/transport/request.js';
 import Response from '../src/lib/transport/response.js';
 import { server } from '../src/lib/server/base.js';
 import { ValidationError } from '../src/lib/validation/validator.js';
 
-class TestRequestClient extends Request
+class TestRequestClient extends BaseRequest
 {
     route() {
         return '/';
@@ -24,14 +25,14 @@ class TestRequest extends TestRequestClient
     }
 }
 
-class GetRequest extends Request
+class GetRequest extends BaseRequest
 {
     route() {
         return '/entity/:id';
     }
 }
 
-class PostRequest extends Request
+class PostRequest extends BaseRequest
 {
     method() {
         return Method.POST;
@@ -42,7 +43,7 @@ class PostRequest extends Request
     }
 }
 
-class Err404Request extends Request
+class Err404Request extends BaseRequest
 {
     route() {
         return '/404';

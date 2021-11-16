@@ -1,6 +1,7 @@
 import assert from 'assert';
 import './_boot.js';
-import Request, { 
+import { 
+    BaseRequest,
     Method } from '../src/lib/transport/request.js';
 import Response from '../src/lib/transport/response.js';
 import { server } from '../src/lib/server/base.js';
@@ -20,7 +21,7 @@ import RestRepository from '../src/lib/repository/rest.js';
 import RepositoryProxy from '../src/lib/repository/proxy.js';
 import RepositoryRequestMap from '../src/lib/repository/request-map.js';
 
-class LoginRequest extends Request
+class LoginRequest extends BaseRequest
 {
     method() {
         return Method.POST;
@@ -31,21 +32,21 @@ class LoginRequest extends Request
     }
 }
 
-class AdminRequest extends Request
+class AdminRequest extends BaseRequest
 {
     route() {
         return '/admin';
     }
 }
 
-class ManagerRequest extends Request
+class ManagerRequest extends BaseRequest
 {
     route() {
         return '/manager';
     }
 }
 
-class ArgumentRequest extends Request
+class ArgumentRequest extends BaseRequest
 {
     route() {
         return '/argument';
@@ -222,7 +223,7 @@ describe('Http server', function() {
             let managerReq = new ManagerRequest();
             let transport = managerReq.transport();
             transport.unstickHeader('authorization');
-            managerReq.send(() => {
+            managerReq.send().then(() => {
                 done('Request without authorization should be denied');
             }).catch((error) => {
                 assert.strictEqual(error.status, 401);
@@ -247,7 +248,7 @@ describe('Http server', function() {
                         });
                     });
                 }).catch(done);
-            });
+            }).catch(done);
         });
         it('Proxy gate should deny unauthorized requests', function(done) {
             let repo = new RestRepository(User, mapping);

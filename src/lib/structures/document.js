@@ -1,10 +1,10 @@
-import Collection from './collection.js';
-import TypedCollection from './typed-collection.js';
 import {
     makeMutator,
+    toArray,
     is,
-    isFunction,
-    isArray } from '../helpers.js';
+    valueOf,
+    isNil } from '../helpers.js';
+import collect from './typed-collection.js';
 
 class Attribute
 {
@@ -37,11 +37,7 @@ class Attribute
             },
         });
         if (this._defaults !== undefined) {
-            if (isFunction(this._defaults)) {
-                target.set(name, this._defaults());
-            } else {
-                target.set(name, this._defaults);
-            }
+            target.set(name, valueOf(this._defaults));
         }
     }
 
@@ -113,13 +109,26 @@ class Attribute
     }
 
     /**
-     * Make collection attribute
+     * Make array attribute
      * 
-     * @param {Function} [type=undefined]
-     * @returns {CollectionAttribute}
+     * @param {Array} [defaults=[]]
+     * @param {Boolean} [nullable=true]
+     * @returns {TypedAttribute}
      */
-    static collection(type = undefined) {
-        return new CollectionAttribute(type);
+    static array(defaults = [], nullable = true) {
+        return new TypedAttribute(Array, defaults, nullable);
+    }
+
+    /**
+     * Make array attribute
+     * 
+     * @param {Function} type
+     * @param {Array} [defaults=[]]
+     * @param {Boolean} [nullable=true]
+     * @returns {TypedAttribute}
+     */
+    static collection(type, defaults = [], nullable = true) {
+        return new CollectionAttribute(type, defaults, nullable);
     }
 }
 
@@ -166,23 +175,24 @@ class TypedAttribute extends Attribute
 
 class CollectionAttribute extends TypedAttribute
 {
-    /**
-     * @param {Function} [type=null] 
+     /**
+     * @param {Function} type
+     * @param {any} [defaults=[]]
+     * @param {Boolean} [nullable=true]
      */
-    constructor(type = null) {
-        super(type, type === null 
-            ? (() => new Collection()) 
-            : (() => new TypedCollection(type)));
+    constructor(type, defaults = [], nullable = true) {
+        super(type, () => this._mutator(defaults), nullable);
+        this._mutator = this._makeMutator(type, nullable);
     }
 
     /**
      * @inheritdoc
      */
-    _makeMutator(type) {
-        if (type === undefined) {
-            return (v) => new Collection(isArray(v) ? v : []);
+    _makeMutator(type, nullable) {
+        if (nullable) {
+            return (v) => isNil(v) ? null : collect(toArray(v), type)
         }
-        return (v) => new TypedCollection(type, isArray(v) ? v : []);
+        return (v) => collect(toArray(v), type)
     }
 }
 
