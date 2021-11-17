@@ -92,7 +92,6 @@ class AbstractIdentitySource
     /**
      * Get identity by its credentials
      * 
-     * @abstract
      * @param {Object} credentials
      * @param {String} [pwdAttribute='password']
      * @returns {Promise}
@@ -136,6 +135,7 @@ class AbstractIdentitySource
     /**
      * Get ID from identity instance
      * 
+     * @abstract
      * @param {any} instance
      * @returns {any}
      */

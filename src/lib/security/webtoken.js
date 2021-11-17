@@ -62,7 +62,7 @@ class Webtoken
      * Decode and verify token
      * 
      * @param {String} token 
-     * @returns 
+     * @returns {Promise}
      */
     verify(token) {
         if (this._keyPair !== null) {

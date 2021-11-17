@@ -276,7 +276,7 @@ class Document
      * @returns {Object}
      */
     export() {
-        return {...this._attributes};
+        return Object.assign({}, this._attributes);
     }
     
     /**
@@ -321,7 +321,7 @@ class Document
      * @returns {Document}
      */
     clone() {
-        return new this.constructor({...this._attributes});
+        return new this.constructor(this._attributes);
     }
 
     /**

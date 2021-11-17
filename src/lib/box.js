@@ -42,7 +42,7 @@ class Box
      * 
      * @param {String|Function|Symbol} name 
      * @param  {...any} params 
-     * @returns 
+     * @returns {any}
      */
     make(name, ...params) {
         if (!this._candies.has(name)) {
