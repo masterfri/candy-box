@@ -1,0 +1,4323 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Source: lib/query/validator.js</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jaguar.css">
+    
+    
+    <script>
+    var config = {"monospaceLinks":false,"cleverLinks":false,"default":{"outputSourceFiles":true}};
+    </script>
+    
+
+    
+</head>
+<body>
+<div id="wrap" class="clearfix">
+    
+<div class="navigation">
+    <h3 class="applicationName"><a href="index.html"></a></h3>
+
+    <div class="search">
+        <input id="search" type="text" class="form-control input-sm" placeholder="Search Documentations">
+    </div>
+    <ul class="list">
+    
+        <li class="item" data-name="AbstractIdentitySource">
+            <span class="title">
+                <a href="AbstractIdentitySource.html">AbstractIdentitySource</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="AbstractIdentitySource#_findByAttributes"><a href="AbstractIdentitySource.html#_findByAttributes">_findByAttributes</a></li>
+            
+                <li data-name="AbstractIdentitySource#_findById"><a href="AbstractIdentitySource.html#_findById">_findById</a></li>
+            
+                <li data-name="AbstractIdentitySource#_getId"><a href="AbstractIdentitySource.html#_getId">_getId</a></li>
+            
+                <li data-name="AbstractIdentitySource#getByCredentials"><a href="AbstractIdentitySource.html#getByCredentials">getByCredentials</a></li>
+            
+                <li data-name="AbstractIdentitySource#getById"><a href="AbstractIdentitySource.html#getById">getById</a></li>
+            
+                <li data-name="AbstractIdentitySource#getInstance"><a href="AbstractIdentitySource.html#getInstance">getInstance</a></li>
+            
+                <li data-name="AbstractIdentitySource#validatePassword"><a href="AbstractIdentitySource.html#validatePassword">validatePassword</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="AbstractRepository">
+            <span class="title">
+                <a href="AbstractRepository.html">AbstractRepository</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="AbstractRepository#_keyName"><a href="AbstractRepository.html#_keyName">_keyName</a></li>
+            
+                <li data-name="AbstractRepository#_type"><a href="AbstractRepository.html#_type">_type</a></li>
+            
+                <li data-name="AbstractRepository#keyName"><a href="AbstractRepository.html#keyName">keyName</a></li>
+            
+                <li data-name="AbstractRepository#type"><a href="AbstractRepository.html#type">type</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="AbstractRepository#_avgInternal"><a href="AbstractRepository.html#_avgInternal">_avgInternal</a></li>
+            
+                <li data-name="AbstractRepository#_consumeDocument"><a href="AbstractRepository.html#_consumeDocument">_consumeDocument</a></li>
+            
+                <li data-name="AbstractRepository#_countInternal"><a href="AbstractRepository.html#_countInternal">_countInternal</a></li>
+            
+                <li data-name="AbstractRepository#_deleteInternal"><a href="AbstractRepository.html#_deleteInternal">_deleteInternal</a></li>
+            
+                <li data-name="AbstractRepository#_devirtualizeCondition"><a href="AbstractRepository.html#_devirtualizeCondition">_devirtualizeCondition</a></li>
+            
+                <li data-name="AbstractRepository#_devirtualizeOrder"><a href="AbstractRepository.html#_devirtualizeOrder">_devirtualizeOrder</a></li>
+            
+                <li data-name="AbstractRepository#_devirtualizeQuery"><a href="AbstractRepository.html#_devirtualizeQuery">_devirtualizeQuery</a></li>
+            
+                <li data-name="AbstractRepository#_existsInternal"><a href="AbstractRepository.html#_existsInternal">_existsInternal</a></li>
+            
+                <li data-name="AbstractRepository#_getInternal"><a href="AbstractRepository.html#_getInternal">_getInternal</a></li>
+            
+                <li data-name="AbstractRepository#_makeCollection"><a href="AbstractRepository.html#_makeCollection">_makeCollection</a></li>
+            
+                <li data-name="AbstractRepository#_makeDocument"><a href="AbstractRepository.html#_makeDocument">_makeDocument</a></li>
+            
+                <li data-name="AbstractRepository#_maxInternal"><a href="AbstractRepository.html#_maxInternal">_maxInternal</a></li>
+            
+                <li data-name="AbstractRepository#_minInternal"><a href="AbstractRepository.html#_minInternal">_minInternal</a></li>
+            
+                <li data-name="AbstractRepository#_normalizeQuery"><a href="AbstractRepository.html#_normalizeQuery">_normalizeQuery</a></li>
+            
+                <li data-name="AbstractRepository#_searchInternal"><a href="AbstractRepository.html#_searchInternal">_searchInternal</a></li>
+            
+                <li data-name="AbstractRepository#_storeInternal"><a href="AbstractRepository.html#_storeInternal">_storeInternal</a></li>
+            
+                <li data-name="AbstractRepository#_sumInternal"><a href="AbstractRepository.html#_sumInternal">_sumInternal</a></li>
+            
+                <li data-name="AbstractRepository#_updateDocument"><a href="AbstractRepository.html#_updateDocument">_updateDocument</a></li>
+            
+                <li data-name="AbstractRepository#avg"><a href="AbstractRepository.html#avg">avg</a></li>
+            
+                <li data-name="AbstractRepository#count"><a href="AbstractRepository.html#count">count</a></li>
+            
+                <li data-name="AbstractRepository#delete"><a href="AbstractRepository.html#delete">delete</a></li>
+            
+                <li data-name="AbstractRepository#exists"><a href="AbstractRepository.html#exists">exists</a></li>
+            
+                <li data-name="AbstractRepository#finalizeQuery"><a href="AbstractRepository.html#finalizeQuery">finalizeQuery</a></li>
+            
+                <li data-name="AbstractRepository#get"><a href="AbstractRepository.html#get">get</a></li>
+            
+                <li data-name="AbstractRepository#max"><a href="AbstractRepository.html#max">max</a></li>
+            
+                <li data-name="AbstractRepository#min"><a href="AbstractRepository.html#min">min</a></li>
+            
+                <li data-name="AbstractRepository#newDocument"><a href="AbstractRepository.html#newDocument">newDocument</a></li>
+            
+                <li data-name="AbstractRepository#search"><a href="AbstractRepository.html#search">search</a></li>
+            
+                <li data-name="AbstractRepository#store"><a href="AbstractRepository.html#store">store</a></li>
+            
+                <li data-name="AbstractRepository#sum"><a href="AbstractRepository.html#sum">sum</a></li>
+            
+                <li data-name="AbstractRepository#virtualFilters"><a href="AbstractRepository.html#virtualFilters">virtualFilters</a></li>
+            
+                <li data-name="AbstractRepository#virtualSorters"><a href="AbstractRepository.html#virtualSorters">virtualSorters</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="AbstractServer">
+            <span class="title">
+                <a href="AbstractServer.html">AbstractServer</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="AbstractServer#delete"><a href="AbstractServer.html#delete">delete</a></li>
+            
+                <li data-name="AbstractServer#get"><a href="AbstractServer.html#get">get</a></li>
+            
+                <li data-name="AbstractServer#map"><a href="AbstractServer.html#map">map</a></li>
+            
+                <li data-name="AbstractServer#post"><a href="AbstractServer.html#post">post</a></li>
+            
+                <li data-name="AbstractServer#put"><a href="AbstractServer.html#put">put</a></li>
+            
+                <li data-name="AbstractServer#register"><a href="AbstractServer.html#register">register</a></li>
+            
+                <li data-name="AbstractServer#route"><a href="AbstractServer.html#route">route</a></li>
+            
+                <li data-name="AbstractServer#start"><a href="AbstractServer.html#start">start</a></li>
+            
+                <li data-name="AbstractServer#stop"><a href="AbstractServer.html#stop">stop</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="AbstractSqlClient">
+            <span class="title">
+                <a href="AbstractSqlClient.html">AbstractSqlClient</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="AbstractSqlClient#_deleteInternal"><a href="AbstractSqlClient.html#_deleteInternal">_deleteInternal</a></li>
+            
+                <li data-name="AbstractSqlClient#_executeInternal"><a href="AbstractSqlClient.html#_executeInternal">_executeInternal</a></li>
+            
+                <li data-name="AbstractSqlClient#_insertInternal"><a href="AbstractSqlClient.html#_insertInternal">_insertInternal</a></li>
+            
+                <li data-name="AbstractSqlClient#_updateInternal"><a href="AbstractSqlClient.html#_updateInternal">_updateInternal</a></li>
+            
+                <li data-name="AbstractSqlClient#delete"><a href="AbstractSqlClient.html#delete">delete</a></li>
+            
+                <li data-name="AbstractSqlClient#end"><a href="AbstractSqlClient.html#end">end</a></li>
+            
+                <li data-name="AbstractSqlClient#execute"><a href="AbstractSqlClient.html#execute">execute</a></li>
+            
+                <li data-name="AbstractSqlClient#fetch"><a href="AbstractSqlClient.html#fetch">fetch</a></li>
+            
+                <li data-name="AbstractSqlClient#fetchColumn"><a href="AbstractSqlClient.html#fetchColumn">fetchColumn</a></li>
+            
+                <li data-name="AbstractSqlClient#fetchRow"><a href="AbstractSqlClient.html#fetchRow">fetchRow</a></li>
+            
+                <li data-name="AbstractSqlClient#fetchValue"><a href="AbstractSqlClient.html#fetchValue">fetchValue</a></li>
+            
+                <li data-name="AbstractSqlClient#insert"><a href="AbstractSqlClient.html#insert">insert</a></li>
+            
+                <li data-name="AbstractSqlClient#newQuery"><a href="AbstractSqlClient.html#newQuery">newQuery</a></li>
+            
+                <li data-name="AbstractSqlClient#toSqlValue"><a href="AbstractSqlClient.html#toSqlValue">toSqlValue</a></li>
+            
+                <li data-name="AbstractSqlClient#update"><a href="AbstractSqlClient.html#update">update</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="AbstractTransport">
+            <span class="title">
+                <a href="AbstractTransport.html">AbstractTransport</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="AbstractTransport#_stickyHeaders"><a href="AbstractTransport.html#_stickyHeaders">_stickyHeaders</a></li>
+            
+                <li data-name="AbstractTransport#_stickyQuery"><a href="AbstractTransport.html#_stickyQuery">_stickyQuery</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="AbstractTransport#_buildOptions"><a href="AbstractTransport.html#_buildOptions">_buildOptions</a></li>
+            
+                <li data-name="AbstractTransport#_buildUrl"><a href="AbstractTransport.html#_buildUrl">_buildUrl</a></li>
+            
+                <li data-name="AbstractTransport#_sendInternal"><a href="AbstractTransport.html#_sendInternal">_sendInternal</a></li>
+            
+                <li data-name="AbstractTransport#send"><a href="AbstractTransport.html#send">send</a></li>
+            
+                <li data-name="AbstractTransport#setAuthorization"><a href="AbstractTransport.html#setAuthorization">setAuthorization</a></li>
+            
+                <li data-name="AbstractTransport#stickHeader"><a href="AbstractTransport.html#stickHeader">stickHeader</a></li>
+            
+                <li data-name="AbstractTransport#stickQueryParam"><a href="AbstractTransport.html#stickQueryParam">stickQueryParam</a></li>
+            
+                <li data-name="AbstractTransport#unstickHeader"><a href="AbstractTransport.html#unstickHeader">unstickHeader</a></li>
+            
+                <li data-name="AbstractTransport#unstickQueryParam"><a href="AbstractTransport.html#unstickQueryParam">unstickQueryParam</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Alias">
+            <span class="title">
+                <a href="Alias.html">Alias</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Alias#_alias"><a href="Alias.html#_alias">_alias</a></li>
+            
+                <li data-name="Alias#_expr"><a href="Alias.html#_expr">_expr</a></li>
+            
+                <li data-name="Alias#alias"><a href="Alias.html#alias">alias</a></li>
+            
+                <li data-name="Alias#expr"><a href="Alias.html#expr">expr</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Assertion">
+            <span class="title">
+                <a href="Assertion.html">Assertion</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Assertion#_argument"><a href="Assertion.html#_argument">_argument</a></li>
+            
+                <li data-name="Assertion#_argument"><a href="Assertion.html#_argument">_argument</a></li>
+            
+                <li data-name="Assertion#_operator"><a href="Assertion.html#_operator">_operator</a></li>
+            
+                <li data-name="Assertion#_operator"><a href="Assertion.html#_operator">_operator</a></li>
+            
+                <li data-name="Assertion#_prop"><a href="Assertion.html#_prop">_prop</a></li>
+            
+                <li data-name="Assertion#_prop"><a href="Assertion.html#_prop">_prop</a></li>
+            
+                <li data-name="Assertion#argument"><a href="Assertion.html#argument">argument</a></li>
+            
+                <li data-name="Assertion#argument"><a href="Assertion.html#argument">argument</a></li>
+            
+                <li data-name="Assertion#operator"><a href="Assertion.html#operator">operator</a></li>
+            
+                <li data-name="Assertion#operator"><a href="Assertion.html#operator">operator</a></li>
+            
+                <li data-name="Assertion#property"><a href="Assertion.html#property">property</a></li>
+            
+                <li data-name="Assertion#property"><a href="Assertion.html#property">property</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Assertion#clone"><a href="Assertion.html#clone">clone</a></li>
+            
+                <li data-name="Assertion#copy"><a href="Assertion.html#copy">copy</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Assertion">
+            <span class="title">
+                <a href="Assertion.html">Assertion</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Assertion#_argument"><a href="Assertion.html#_argument">_argument</a></li>
+            
+                <li data-name="Assertion#_argument"><a href="Assertion.html#_argument">_argument</a></li>
+            
+                <li data-name="Assertion#_operator"><a href="Assertion.html#_operator">_operator</a></li>
+            
+                <li data-name="Assertion#_operator"><a href="Assertion.html#_operator">_operator</a></li>
+            
+                <li data-name="Assertion#_prop"><a href="Assertion.html#_prop">_prop</a></li>
+            
+                <li data-name="Assertion#_prop"><a href="Assertion.html#_prop">_prop</a></li>
+            
+                <li data-name="Assertion#argument"><a href="Assertion.html#argument">argument</a></li>
+            
+                <li data-name="Assertion#argument"><a href="Assertion.html#argument">argument</a></li>
+            
+                <li data-name="Assertion#operator"><a href="Assertion.html#operator">operator</a></li>
+            
+                <li data-name="Assertion#operator"><a href="Assertion.html#operator">operator</a></li>
+            
+                <li data-name="Assertion#property"><a href="Assertion.html#property">property</a></li>
+            
+                <li data-name="Assertion#property"><a href="Assertion.html#property">property</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Assertion#clone"><a href="Assertion.html#clone">clone</a></li>
+            
+                <li data-name="Assertion#copy"><a href="Assertion.html#copy">copy</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Attribute">
+            <span class="title">
+                <a href="Attribute.html">Attribute</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Attribute#_defaults"><a href="Attribute.html#_defaults">_defaults</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Attribute.array"><a href="Attribute.html#.array">array</a></li>
+            
+                <li data-name="Attribute.boolean"><a href="Attribute.html#.boolean">boolean</a></li>
+            
+                <li data-name="Attribute.collection"><a href="Attribute.html#.collection">collection</a></li>
+            
+                <li data-name="Attribute.number"><a href="Attribute.html#.number">number</a></li>
+            
+                <li data-name="Attribute.object"><a href="Attribute.html#.object">object</a></li>
+            
+                <li data-name="Attribute.string"><a href="Attribute.html#.string">string</a></li>
+            
+                <li data-name="Attribute#get"><a href="Attribute.html#get">get</a></li>
+            
+                <li data-name="Attribute#init"><a href="Attribute.html#init">init</a></li>
+            
+                <li data-name="Attribute#set"><a href="Attribute.html#set">set</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Authenticator">
+            <span class="title">
+                <a href="Authenticator.html">Authenticator</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Authenticator#_resolvers"><a href="Authenticator.html#_resolvers">_resolvers</a></li>
+            
+                <li data-name="Authenticator#_source"><a href="Authenticator.html#_source">_source</a></li>
+            
+                <li data-name="Authenticator#_trace"><a href="Authenticator.html#_trace">_trace</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Authenticator#_tryResolver"><a href="Authenticator.html#_tryResolver">_tryResolver</a></li>
+            
+                <li data-name="Authenticator#putTrace"><a href="Authenticator.html#putTrace">putTrace</a></li>
+            
+                <li data-name="Authenticator#resolveIdentity"><a href="Authenticator.html#resolveIdentity">resolveIdentity</a></li>
+            
+                <li data-name="Authenticator#resolveWith"><a href="Authenticator.html#resolveWith">resolveWith</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="AuthorizationError">
+            <span class="title">
+                <a href="AuthorizationError.html">AuthorizationError</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="AuthorizationError#_reason"><a href="AuthorizationError.html#_reason">_reason</a></li>
+            
+                <li data-name="AuthorizationError#reason"><a href="AuthorizationError.html#reason">reason</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="BaseRequest">
+            <span class="title">
+                <a href="BaseRequest.html">BaseRequest</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="BaseRequest#_body"><a href="BaseRequest.html#_body">_body</a></li>
+            
+                <li data-name="BaseRequest#_errors"><a href="BaseRequest.html#_errors">_errors</a></li>
+            
+                <li data-name="BaseRequest#_headers"><a href="BaseRequest.html#_headers">_headers</a></li>
+            
+                <li data-name="BaseRequest#_query"><a href="BaseRequest.html#_query">_query</a></li>
+            
+                <li data-name="BaseRequest#_validated"><a href="BaseRequest.html#_validated">_validated</a></li>
+            
+                <li data-name="BaseRequest#body"><a href="BaseRequest.html#body">body</a></li>
+            
+                <li data-name="BaseRequest#errors"><a href="BaseRequest.html#errors">errors</a></li>
+            
+                <li data-name="BaseRequest#headers"><a href="BaseRequest.html#headers">headers</a></li>
+            
+                <li data-name="BaseRequest#query"><a href="BaseRequest.html#query">query</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="BaseRequest#get"><a href="BaseRequest.html#get">get</a></li>
+            
+                <li data-name="BaseRequest#getHeader"><a href="BaseRequest.html#getHeader">getHeader</a></li>
+            
+                <li data-name="BaseRequest#method"><a href="BaseRequest.html#method">method</a></li>
+            
+                <li data-name="BaseRequest#options"><a href="BaseRequest.html#options">options</a></li>
+            
+                <li data-name="BaseRequest#route"><a href="BaseRequest.html#route">route</a></li>
+            
+                <li data-name="BaseRequest#send"><a href="BaseRequest.html#send">send</a></li>
+            
+                <li data-name="BaseRequest#setHeader"><a href="BaseRequest.html#setHeader">setHeader</a></li>
+            
+                <li data-name="BaseRequest#transport"><a href="BaseRequest.html#transport">transport</a></li>
+            
+                <li data-name="BaseRequest#validate"><a href="BaseRequest.html#validate">validate</a></li>
+            
+                <li data-name="BaseRequest#validation"><a href="BaseRequest.html#validation">validation</a></li>
+            
+                <li data-name="BaseRequest#validator"><a href="BaseRequest.html#validator">validator</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Candy">
+            <span class="title">
+                <a href="Candy.html">Candy</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Candy#instance"><a href="Candy.html#instance">instance</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="CandySingleton">
+            <span class="title">
+                <a href="CandySingleton.html">CandySingleton</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="CandySingleton#instance"><a href="CandySingleton.html#instance">instance</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Collection">
+            <span class="title">
+                <a href="Collection.html">Collection</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Collection#_items"><a href="Collection.html#_items">_items</a></li>
+            
+                <li data-name="Collection#length"><a href="Collection.html#length">length</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Collection#all"><a href="Collection.html#all">all</a></li>
+            
+                <li data-name="Collection#clear"><a href="Collection.html#clear">clear</a></li>
+            
+                <li data-name="Collection#clone"><a href="Collection.html#clone">clone</a></li>
+            
+                <li data-name="Collection#concat"><a href="Collection.html#concat">concat</a></li>
+            
+                <li data-name="Collection#difference"><a href="Collection.html#difference">difference</a></li>
+            
+                <li data-name="Collection#distinct"><a href="Collection.html#distinct">distinct</a></li>
+            
+                <li data-name="Collection#every"><a href="Collection.html#every">every</a></li>
+            
+                <li data-name="Collection#filter"><a href="Collection.html#filter">filter</a></li>
+            
+                <li data-name="Collection#find"><a href="Collection.html#find">find</a></li>
+            
+                <li data-name="Collection#findIndex"><a href="Collection.html#findIndex">findIndex</a></li>
+            
+                <li data-name="Collection#first"><a href="Collection.html#first">first</a></li>
+            
+                <li data-name="Collection#forEach"><a href="Collection.html#forEach">forEach</a></li>
+            
+                <li data-name="Collection#get"><a href="Collection.html#get">get</a></li>
+            
+                <li data-name="Collection#group"><a href="Collection.html#group">group</a></li>
+            
+                <li data-name="Collection#indexOf"><a href="Collection.html#indexOf">indexOf</a></li>
+            
+                <li data-name="Collection#intersect"><a href="Collection.html#intersect">intersect</a></li>
+            
+                <li data-name="Collection#last"><a href="Collection.html#last">last</a></li>
+            
+                <li data-name="Collection#map"><a href="Collection.html#map">map</a></li>
+            
+                <li data-name="Collection#newCollection"><a href="Collection.html#newCollection">newCollection</a></li>
+            
+                <li data-name="Collection#pop"><a href="Collection.html#pop">pop</a></li>
+            
+                <li data-name="Collection#push"><a href="Collection.html#push">push</a></li>
+            
+                <li data-name="Collection#reduce"><a href="Collection.html#reduce">reduce</a></li>
+            
+                <li data-name="Collection#reduceRight"><a href="Collection.html#reduceRight">reduceRight</a></li>
+            
+                <li data-name="Collection#remove"><a href="Collection.html#remove">remove</a></li>
+            
+                <li data-name="Collection#removeIndex"><a href="Collection.html#removeIndex">removeIndex</a></li>
+            
+                <li data-name="Collection#set"><a href="Collection.html#set">set</a></li>
+            
+                <li data-name="Collection#shift"><a href="Collection.html#shift">shift</a></li>
+            
+                <li data-name="Collection#slice"><a href="Collection.html#slice">slice</a></li>
+            
+                <li data-name="Collection#some"><a href="Collection.html#some">some</a></li>
+            
+                <li data-name="Collection#sort"><a href="Collection.html#sort">sort</a></li>
+            
+                <li data-name="Collection#splice"><a href="Collection.html#splice">splice</a></li>
+            
+                <li data-name="Collection#unshift"><a href="Collection.html#unshift">unshift</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="CollectionAttribute">
+            <span class="title">
+                <a href="CollectionAttribute.html">CollectionAttribute</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="CollectionAttribute#_makeMutator"><a href="CollectionAttribute.html#_makeMutator">_makeMutator</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Condition">
+            <span class="title">
+                <a href="Condition.html">Condition</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Condition#_builder"><a href="Condition.html#_builder">_builder</a></li>
+            
+                <li data-name="Condition#_fragment"><a href="Condition.html#_fragment">_fragment</a></li>
+            
+                <li data-name="Condition#_logic"><a href="Condition.html#_logic">_logic</a></li>
+            
+                <li data-name="Condition#_negation"><a href="Condition.html#_negation">_negation</a></li>
+            
+                <li data-name="Condition#_wheres"><a href="Condition.html#_wheres">_wheres</a></li>
+            
+                <li data-name="Condition#_wheres"><a href="Condition.html#_wheres">_wheres</a></li>
+            
+                <li data-name="Condition#isEmpty"><a href="Condition.html#isEmpty">isEmpty</a></li>
+            
+                <li data-name="Condition#isEmpty"><a href="Condition.html#isEmpty">isEmpty</a></li>
+            
+                <li data-name="Condition#wheres"><a href="Condition.html#wheres">wheres</a></li>
+            
+                <li data-name="Condition#wheres"><a href="Condition.html#wheres">wheres</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Condition#_addOrCase"><a href="Condition.html#_addOrCase">_addOrCase</a></li>
+            
+                <li data-name="Condition#_addOrCase"><a href="Condition.html#_addOrCase">_addOrCase</a></li>
+            
+                <li data-name="Condition#_and"><a href="Condition.html#_and">_and</a></li>
+            
+                <li data-name="Condition#_append"><a href="Condition.html#_append">_append</a></li>
+            
+                <li data-name="Condition#_appendExpr"><a href="Condition.html#_appendExpr">_appendExpr</a></li>
+            
+                <li data-name="Condition#_chain"><a href="Condition.html#_chain">_chain</a></li>
+            
+                <li data-name="Condition#_enclose"><a href="Condition.html#_enclose">_enclose</a></li>
+            
+                <li data-name="Condition#_lastOr"><a href="Condition.html#_lastOr">_lastOr</a></li>
+            
+                <li data-name="Condition#_lastOr"><a href="Condition.html#_lastOr">_lastOr</a></li>
+            
+                <li data-name="Condition#_makeAssertion"><a href="Condition.html#_makeAssertion">_makeAssertion</a></li>
+            
+                <li data-name="Condition#_makeAssertion"><a href="Condition.html#_makeAssertion">_makeAssertion</a></li>
+            
+                <li data-name="Condition#_not"><a href="Condition.html#_not">_not</a></li>
+            
+                <li data-name="Condition#_or"><a href="Condition.html#_or">_or</a></li>
+            
+                <li data-name="Condition#_pushAssertion"><a href="Condition.html#_pushAssertion">_pushAssertion</a></li>
+            
+                <li data-name="Condition#_pushAssertion"><a href="Condition.html#_pushAssertion">_pushAssertion</a></li>
+            
+                <li data-name="Condition#and"><a href="Condition.html#and">and</a></li>
+            
+                <li data-name="Condition#and"><a href="Condition.html#and">and</a></li>
+            
+                <li data-name="Condition#and"><a href="Condition.html#and">and</a></li>
+            
+                <li data-name="Condition#between"><a href="Condition.html#between">between</a></li>
+            
+                <li data-name="Condition#clone"><a href="Condition.html#clone">clone</a></li>
+            
+                <li data-name="Condition#contains"><a href="Condition.html#contains">contains</a></li>
+            
+                <li data-name="Condition#contains"><a href="Condition.html#contains">contains</a></li>
+            
+                <li data-name="Condition#contains"><a href="Condition.html#contains">contains</a></li>
+            
+                <li data-name="Condition#copy"><a href="Condition.html#copy">copy</a></li>
+            
+                <li data-name="Condition#doesntHave"><a href="Condition.html#doesntHave">doesntHave</a></li>
+            
+                <li data-name="Condition#eq"><a href="Condition.html#eq">eq</a></li>
+            
+                <li data-name="Condition#eq"><a href="Condition.html#eq">eq</a></li>
+            
+                <li data-name="Condition#eq"><a href="Condition.html#eq">eq</a></li>
+            
+                <li data-name="Condition#exists"><a href="Condition.html#exists">exists</a></li>
+            
+                <li data-name="Condition#gt"><a href="Condition.html#gt">gt</a></li>
+            
+                <li data-name="Condition#gt"><a href="Condition.html#gt">gt</a></li>
+            
+                <li data-name="Condition#gt"><a href="Condition.html#gt">gt</a></li>
+            
+                <li data-name="Condition#gte"><a href="Condition.html#gte">gte</a></li>
+            
+                <li data-name="Condition#gte"><a href="Condition.html#gte">gte</a></li>
+            
+                <li data-name="Condition#gte"><a href="Condition.html#gte">gte</a></li>
+            
+                <li data-name="Condition#has"><a href="Condition.html#has">has</a></li>
+            
+                <li data-name="Condition#in"><a href="Condition.html#in">in</a></li>
+            
+                <li data-name="Condition#in"><a href="Condition.html#in">in</a></li>
+            
+                <li data-name="Condition#in"><a href="Condition.html#in">in</a></li>
+            
+                <li data-name="Condition#isNotNull"><a href="Condition.html#isNotNull">isNotNull</a></li>
+            
+                <li data-name="Condition#isNull"><a href="Condition.html#isNull">isNull</a></li>
+            
+                <li data-name="Condition#json"><a href="Condition.html#json">json</a></li>
+            
+                <li data-name="Condition#lt"><a href="Condition.html#lt">lt</a></li>
+            
+                <li data-name="Condition#lt"><a href="Condition.html#lt">lt</a></li>
+            
+                <li data-name="Condition#lt"><a href="Condition.html#lt">lt</a></li>
+            
+                <li data-name="Condition#lte"><a href="Condition.html#lte">lte</a></li>
+            
+                <li data-name="Condition#lte"><a href="Condition.html#lte">lte</a></li>
+            
+                <li data-name="Condition#lte"><a href="Condition.html#lte">lte</a></li>
+            
+                <li data-name="Condition#neq"><a href="Condition.html#neq">neq</a></li>
+            
+                <li data-name="Condition#neq"><a href="Condition.html#neq">neq</a></li>
+            
+                <li data-name="Condition#neq"><a href="Condition.html#neq">neq</a></li>
+            
+                <li data-name="Condition#not"><a href="Condition.html#not">not</a></li>
+            
+                <li data-name="Condition#not"><a href="Condition.html#not">not</a></li>
+            
+                <li data-name="Condition#not"><a href="Condition.html#not">not</a></li>
+            
+                <li data-name="Condition#notBetween"><a href="Condition.html#notBetween">notBetween</a></li>
+            
+                <li data-name="Condition#notExists"><a href="Condition.html#notExists">notExists</a></li>
+            
+                <li data-name="Condition#notIn"><a href="Condition.html#notIn">notIn</a></li>
+            
+                <li data-name="Condition#notIn"><a href="Condition.html#notIn">notIn</a></li>
+            
+                <li data-name="Condition#notIn"><a href="Condition.html#notIn">notIn</a></li>
+            
+                <li data-name="Condition#or"><a href="Condition.html#or">or</a></li>
+            
+                <li data-name="Condition#or"><a href="Condition.html#or">or</a></li>
+            
+                <li data-name="Condition#or"><a href="Condition.html#or">or</a></li>
+            
+                <li data-name="Condition#quote"><a href="Condition.html#quote">quote</a></li>
+            
+                <li data-name="Condition#raw"><a href="Condition.html#raw">raw</a></li>
+            
+                <li data-name="Condition#startsWith"><a href="Condition.html#startsWith">startsWith</a></li>
+            
+                <li data-name="Condition#startsWith"><a href="Condition.html#startsWith">startsWith</a></li>
+            
+                <li data-name="Condition#startsWith"><a href="Condition.html#startsWith">startsWith</a></li>
+            
+                <li data-name="Condition#where"><a href="Condition.html#where">where</a></li>
+            
+                <li data-name="Condition#where"><a href="Condition.html#where">where</a></li>
+            
+                <li data-name="Condition#where"><a href="Condition.html#where">where</a></li>
+            
+                <li data-name="Condition#whereColumn"><a href="Condition.html#whereColumn">whereColumn</a></li>
+            
+                <li data-name="Condition#whereJson"><a href="Condition.html#whereJson">whereJson</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Condition">
+            <span class="title">
+                <a href="Condition.html">Condition</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Condition#_builder"><a href="Condition.html#_builder">_builder</a></li>
+            
+                <li data-name="Condition#_fragment"><a href="Condition.html#_fragment">_fragment</a></li>
+            
+                <li data-name="Condition#_logic"><a href="Condition.html#_logic">_logic</a></li>
+            
+                <li data-name="Condition#_negation"><a href="Condition.html#_negation">_negation</a></li>
+            
+                <li data-name="Condition#_wheres"><a href="Condition.html#_wheres">_wheres</a></li>
+            
+                <li data-name="Condition#_wheres"><a href="Condition.html#_wheres">_wheres</a></li>
+            
+                <li data-name="Condition#isEmpty"><a href="Condition.html#isEmpty">isEmpty</a></li>
+            
+                <li data-name="Condition#isEmpty"><a href="Condition.html#isEmpty">isEmpty</a></li>
+            
+                <li data-name="Condition#wheres"><a href="Condition.html#wheres">wheres</a></li>
+            
+                <li data-name="Condition#wheres"><a href="Condition.html#wheres">wheres</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Condition#_addOrCase"><a href="Condition.html#_addOrCase">_addOrCase</a></li>
+            
+                <li data-name="Condition#_addOrCase"><a href="Condition.html#_addOrCase">_addOrCase</a></li>
+            
+                <li data-name="Condition#_and"><a href="Condition.html#_and">_and</a></li>
+            
+                <li data-name="Condition#_append"><a href="Condition.html#_append">_append</a></li>
+            
+                <li data-name="Condition#_appendExpr"><a href="Condition.html#_appendExpr">_appendExpr</a></li>
+            
+                <li data-name="Condition#_chain"><a href="Condition.html#_chain">_chain</a></li>
+            
+                <li data-name="Condition#_enclose"><a href="Condition.html#_enclose">_enclose</a></li>
+            
+                <li data-name="Condition#_lastOr"><a href="Condition.html#_lastOr">_lastOr</a></li>
+            
+                <li data-name="Condition#_lastOr"><a href="Condition.html#_lastOr">_lastOr</a></li>
+            
+                <li data-name="Condition#_makeAssertion"><a href="Condition.html#_makeAssertion">_makeAssertion</a></li>
+            
+                <li data-name="Condition#_makeAssertion"><a href="Condition.html#_makeAssertion">_makeAssertion</a></li>
+            
+                <li data-name="Condition#_not"><a href="Condition.html#_not">_not</a></li>
+            
+                <li data-name="Condition#_or"><a href="Condition.html#_or">_or</a></li>
+            
+                <li data-name="Condition#_pushAssertion"><a href="Condition.html#_pushAssertion">_pushAssertion</a></li>
+            
+                <li data-name="Condition#_pushAssertion"><a href="Condition.html#_pushAssertion">_pushAssertion</a></li>
+            
+                <li data-name="Condition#and"><a href="Condition.html#and">and</a></li>
+            
+                <li data-name="Condition#and"><a href="Condition.html#and">and</a></li>
+            
+                <li data-name="Condition#and"><a href="Condition.html#and">and</a></li>
+            
+                <li data-name="Condition#between"><a href="Condition.html#between">between</a></li>
+            
+                <li data-name="Condition#clone"><a href="Condition.html#clone">clone</a></li>
+            
+                <li data-name="Condition#contains"><a href="Condition.html#contains">contains</a></li>
+            
+                <li data-name="Condition#contains"><a href="Condition.html#contains">contains</a></li>
+            
+                <li data-name="Condition#contains"><a href="Condition.html#contains">contains</a></li>
+            
+                <li data-name="Condition#copy"><a href="Condition.html#copy">copy</a></li>
+            
+                <li data-name="Condition#doesntHave"><a href="Condition.html#doesntHave">doesntHave</a></li>
+            
+                <li data-name="Condition#eq"><a href="Condition.html#eq">eq</a></li>
+            
+                <li data-name="Condition#eq"><a href="Condition.html#eq">eq</a></li>
+            
+                <li data-name="Condition#eq"><a href="Condition.html#eq">eq</a></li>
+            
+                <li data-name="Condition#exists"><a href="Condition.html#exists">exists</a></li>
+            
+                <li data-name="Condition#gt"><a href="Condition.html#gt">gt</a></li>
+            
+                <li data-name="Condition#gt"><a href="Condition.html#gt">gt</a></li>
+            
+                <li data-name="Condition#gt"><a href="Condition.html#gt">gt</a></li>
+            
+                <li data-name="Condition#gte"><a href="Condition.html#gte">gte</a></li>
+            
+                <li data-name="Condition#gte"><a href="Condition.html#gte">gte</a></li>
+            
+                <li data-name="Condition#gte"><a href="Condition.html#gte">gte</a></li>
+            
+                <li data-name="Condition#has"><a href="Condition.html#has">has</a></li>
+            
+                <li data-name="Condition#in"><a href="Condition.html#in">in</a></li>
+            
+                <li data-name="Condition#in"><a href="Condition.html#in">in</a></li>
+            
+                <li data-name="Condition#in"><a href="Condition.html#in">in</a></li>
+            
+                <li data-name="Condition#isNotNull"><a href="Condition.html#isNotNull">isNotNull</a></li>
+            
+                <li data-name="Condition#isNull"><a href="Condition.html#isNull">isNull</a></li>
+            
+                <li data-name="Condition#json"><a href="Condition.html#json">json</a></li>
+            
+                <li data-name="Condition#lt"><a href="Condition.html#lt">lt</a></li>
+            
+                <li data-name="Condition#lt"><a href="Condition.html#lt">lt</a></li>
+            
+                <li data-name="Condition#lt"><a href="Condition.html#lt">lt</a></li>
+            
+                <li data-name="Condition#lte"><a href="Condition.html#lte">lte</a></li>
+            
+                <li data-name="Condition#lte"><a href="Condition.html#lte">lte</a></li>
+            
+                <li data-name="Condition#lte"><a href="Condition.html#lte">lte</a></li>
+            
+                <li data-name="Condition#neq"><a href="Condition.html#neq">neq</a></li>
+            
+                <li data-name="Condition#neq"><a href="Condition.html#neq">neq</a></li>
+            
+                <li data-name="Condition#neq"><a href="Condition.html#neq">neq</a></li>
+            
+                <li data-name="Condition#not"><a href="Condition.html#not">not</a></li>
+            
+                <li data-name="Condition#not"><a href="Condition.html#not">not</a></li>
+            
+                <li data-name="Condition#not"><a href="Condition.html#not">not</a></li>
+            
+                <li data-name="Condition#notBetween"><a href="Condition.html#notBetween">notBetween</a></li>
+            
+                <li data-name="Condition#notExists"><a href="Condition.html#notExists">notExists</a></li>
+            
+                <li data-name="Condition#notIn"><a href="Condition.html#notIn">notIn</a></li>
+            
+                <li data-name="Condition#notIn"><a href="Condition.html#notIn">notIn</a></li>
+            
+                <li data-name="Condition#notIn"><a href="Condition.html#notIn">notIn</a></li>
+            
+                <li data-name="Condition#or"><a href="Condition.html#or">or</a></li>
+            
+                <li data-name="Condition#or"><a href="Condition.html#or">or</a></li>
+            
+                <li data-name="Condition#or"><a href="Condition.html#or">or</a></li>
+            
+                <li data-name="Condition#quote"><a href="Condition.html#quote">quote</a></li>
+            
+                <li data-name="Condition#raw"><a href="Condition.html#raw">raw</a></li>
+            
+                <li data-name="Condition#startsWith"><a href="Condition.html#startsWith">startsWith</a></li>
+            
+                <li data-name="Condition#startsWith"><a href="Condition.html#startsWith">startsWith</a></li>
+            
+                <li data-name="Condition#startsWith"><a href="Condition.html#startsWith">startsWith</a></li>
+            
+                <li data-name="Condition#where"><a href="Condition.html#where">where</a></li>
+            
+                <li data-name="Condition#where"><a href="Condition.html#where">where</a></li>
+            
+                <li data-name="Condition#where"><a href="Condition.html#where">where</a></li>
+            
+                <li data-name="Condition#whereColumn"><a href="Condition.html#whereColumn">whereColumn</a></li>
+            
+                <li data-name="Condition#whereJson"><a href="Condition.html#whereJson">whereJson</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Condition">
+            <span class="title">
+                <a href="Condition.html">Condition</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Condition#_builder"><a href="Condition.html#_builder">_builder</a></li>
+            
+                <li data-name="Condition#_fragment"><a href="Condition.html#_fragment">_fragment</a></li>
+            
+                <li data-name="Condition#_logic"><a href="Condition.html#_logic">_logic</a></li>
+            
+                <li data-name="Condition#_negation"><a href="Condition.html#_negation">_negation</a></li>
+            
+                <li data-name="Condition#_wheres"><a href="Condition.html#_wheres">_wheres</a></li>
+            
+                <li data-name="Condition#_wheres"><a href="Condition.html#_wheres">_wheres</a></li>
+            
+                <li data-name="Condition#isEmpty"><a href="Condition.html#isEmpty">isEmpty</a></li>
+            
+                <li data-name="Condition#isEmpty"><a href="Condition.html#isEmpty">isEmpty</a></li>
+            
+                <li data-name="Condition#wheres"><a href="Condition.html#wheres">wheres</a></li>
+            
+                <li data-name="Condition#wheres"><a href="Condition.html#wheres">wheres</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Condition#_addOrCase"><a href="Condition.html#_addOrCase">_addOrCase</a></li>
+            
+                <li data-name="Condition#_addOrCase"><a href="Condition.html#_addOrCase">_addOrCase</a></li>
+            
+                <li data-name="Condition#_and"><a href="Condition.html#_and">_and</a></li>
+            
+                <li data-name="Condition#_append"><a href="Condition.html#_append">_append</a></li>
+            
+                <li data-name="Condition#_appendExpr"><a href="Condition.html#_appendExpr">_appendExpr</a></li>
+            
+                <li data-name="Condition#_chain"><a href="Condition.html#_chain">_chain</a></li>
+            
+                <li data-name="Condition#_enclose"><a href="Condition.html#_enclose">_enclose</a></li>
+            
+                <li data-name="Condition#_lastOr"><a href="Condition.html#_lastOr">_lastOr</a></li>
+            
+                <li data-name="Condition#_lastOr"><a href="Condition.html#_lastOr">_lastOr</a></li>
+            
+                <li data-name="Condition#_makeAssertion"><a href="Condition.html#_makeAssertion">_makeAssertion</a></li>
+            
+                <li data-name="Condition#_makeAssertion"><a href="Condition.html#_makeAssertion">_makeAssertion</a></li>
+            
+                <li data-name="Condition#_not"><a href="Condition.html#_not">_not</a></li>
+            
+                <li data-name="Condition#_or"><a href="Condition.html#_or">_or</a></li>
+            
+                <li data-name="Condition#_pushAssertion"><a href="Condition.html#_pushAssertion">_pushAssertion</a></li>
+            
+                <li data-name="Condition#_pushAssertion"><a href="Condition.html#_pushAssertion">_pushAssertion</a></li>
+            
+                <li data-name="Condition#and"><a href="Condition.html#and">and</a></li>
+            
+                <li data-name="Condition#and"><a href="Condition.html#and">and</a></li>
+            
+                <li data-name="Condition#and"><a href="Condition.html#and">and</a></li>
+            
+                <li data-name="Condition#between"><a href="Condition.html#between">between</a></li>
+            
+                <li data-name="Condition#clone"><a href="Condition.html#clone">clone</a></li>
+            
+                <li data-name="Condition#contains"><a href="Condition.html#contains">contains</a></li>
+            
+                <li data-name="Condition#contains"><a href="Condition.html#contains">contains</a></li>
+            
+                <li data-name="Condition#contains"><a href="Condition.html#contains">contains</a></li>
+            
+                <li data-name="Condition#copy"><a href="Condition.html#copy">copy</a></li>
+            
+                <li data-name="Condition#doesntHave"><a href="Condition.html#doesntHave">doesntHave</a></li>
+            
+                <li data-name="Condition#eq"><a href="Condition.html#eq">eq</a></li>
+            
+                <li data-name="Condition#eq"><a href="Condition.html#eq">eq</a></li>
+            
+                <li data-name="Condition#eq"><a href="Condition.html#eq">eq</a></li>
+            
+                <li data-name="Condition#exists"><a href="Condition.html#exists">exists</a></li>
+            
+                <li data-name="Condition#gt"><a href="Condition.html#gt">gt</a></li>
+            
+                <li data-name="Condition#gt"><a href="Condition.html#gt">gt</a></li>
+            
+                <li data-name="Condition#gt"><a href="Condition.html#gt">gt</a></li>
+            
+                <li data-name="Condition#gte"><a href="Condition.html#gte">gte</a></li>
+            
+                <li data-name="Condition#gte"><a href="Condition.html#gte">gte</a></li>
+            
+                <li data-name="Condition#gte"><a href="Condition.html#gte">gte</a></li>
+            
+                <li data-name="Condition#has"><a href="Condition.html#has">has</a></li>
+            
+                <li data-name="Condition#in"><a href="Condition.html#in">in</a></li>
+            
+                <li data-name="Condition#in"><a href="Condition.html#in">in</a></li>
+            
+                <li data-name="Condition#in"><a href="Condition.html#in">in</a></li>
+            
+                <li data-name="Condition#isNotNull"><a href="Condition.html#isNotNull">isNotNull</a></li>
+            
+                <li data-name="Condition#isNull"><a href="Condition.html#isNull">isNull</a></li>
+            
+                <li data-name="Condition#json"><a href="Condition.html#json">json</a></li>
+            
+                <li data-name="Condition#lt"><a href="Condition.html#lt">lt</a></li>
+            
+                <li data-name="Condition#lt"><a href="Condition.html#lt">lt</a></li>
+            
+                <li data-name="Condition#lt"><a href="Condition.html#lt">lt</a></li>
+            
+                <li data-name="Condition#lte"><a href="Condition.html#lte">lte</a></li>
+            
+                <li data-name="Condition#lte"><a href="Condition.html#lte">lte</a></li>
+            
+                <li data-name="Condition#lte"><a href="Condition.html#lte">lte</a></li>
+            
+                <li data-name="Condition#neq"><a href="Condition.html#neq">neq</a></li>
+            
+                <li data-name="Condition#neq"><a href="Condition.html#neq">neq</a></li>
+            
+                <li data-name="Condition#neq"><a href="Condition.html#neq">neq</a></li>
+            
+                <li data-name="Condition#not"><a href="Condition.html#not">not</a></li>
+            
+                <li data-name="Condition#not"><a href="Condition.html#not">not</a></li>
+            
+                <li data-name="Condition#not"><a href="Condition.html#not">not</a></li>
+            
+                <li data-name="Condition#notBetween"><a href="Condition.html#notBetween">notBetween</a></li>
+            
+                <li data-name="Condition#notExists"><a href="Condition.html#notExists">notExists</a></li>
+            
+                <li data-name="Condition#notIn"><a href="Condition.html#notIn">notIn</a></li>
+            
+                <li data-name="Condition#notIn"><a href="Condition.html#notIn">notIn</a></li>
+            
+                <li data-name="Condition#notIn"><a href="Condition.html#notIn">notIn</a></li>
+            
+                <li data-name="Condition#or"><a href="Condition.html#or">or</a></li>
+            
+                <li data-name="Condition#or"><a href="Condition.html#or">or</a></li>
+            
+                <li data-name="Condition#or"><a href="Condition.html#or">or</a></li>
+            
+                <li data-name="Condition#quote"><a href="Condition.html#quote">quote</a></li>
+            
+                <li data-name="Condition#raw"><a href="Condition.html#raw">raw</a></li>
+            
+                <li data-name="Condition#startsWith"><a href="Condition.html#startsWith">startsWith</a></li>
+            
+                <li data-name="Condition#startsWith"><a href="Condition.html#startsWith">startsWith</a></li>
+            
+                <li data-name="Condition#startsWith"><a href="Condition.html#startsWith">startsWith</a></li>
+            
+                <li data-name="Condition#where"><a href="Condition.html#where">where</a></li>
+            
+                <li data-name="Condition#where"><a href="Condition.html#where">where</a></li>
+            
+                <li data-name="Condition#where"><a href="Condition.html#where">where</a></li>
+            
+                <li data-name="Condition#whereColumn"><a href="Condition.html#whereColumn">whereColumn</a></li>
+            
+                <li data-name="Condition#whereJson"><a href="Condition.html#whereJson">whereJson</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="CredentialsResolver">
+            <span class="title">
+                <a href="CredentialsResolver.html">CredentialsResolver</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="CredentialsResolver#_attributes"><a href="CredentialsResolver.html#_attributes">_attributes</a></li>
+            
+                <li data-name="CredentialsResolver#_pwdAttribute"><a href="CredentialsResolver.html#_pwdAttribute">_pwdAttribute</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="CredentialsResolver#_detectCredentials"><a href="CredentialsResolver.html#_detectCredentials">_detectCredentials</a></li>
+            
+                <li data-name="CredentialsResolver#resolve"><a href="CredentialsResolver.html#resolve">resolve</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Crypto">
+            <span class="title">
+                <a href="Crypto.html">Crypto</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Crypto#_algo"><a href="Crypto.html#_algo">_algo</a></li>
+            
+                <li data-name="Crypto#_iv"><a href="Crypto.html#_iv">_iv</a></li>
+            
+                <li data-name="Crypto#_key"><a href="Crypto.html#_key">_key</a></li>
+            
+                <li data-name="Crypto#_keyBytes"><a href="Crypto.html#_keyBytes">_keyBytes</a></li>
+            
+                <li data-name="Crypto#_password"><a href="Crypto.html#_password">_password</a></li>
+            
+                <li data-name="Crypto#_salt"><a href="Crypto.html#_salt">_salt</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Crypto#_createIv"><a href="Crypto.html#_createIv">_createIv</a></li>
+            
+                <li data-name="Crypto#_generateKey"><a href="Crypto.html#_generateKey">_generateKey</a></li>
+            
+                <li data-name="Crypto#decrypt"><a href="Crypto.html#decrypt">decrypt</a></li>
+            
+                <li data-name="Crypto#encrypt"><a href="Crypto.html#encrypt">encrypt</a></li>
+            
+                <li data-name="Crypto#hash"><a href="Crypto.html#hash">hash</a></li>
+            
+                <li data-name="Crypto#hmac"><a href="Crypto.html#hmac">hmac</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="CustomRule">
+            <span class="title">
+                <a href="CustomRule.html">CustomRule</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="CustomRule#_checker"><a href="CustomRule.html#_checker">_checker</a></li>
+            
+                <li data-name="CustomRule#_options"><a href="CustomRule.html#_options">_options</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="CustomRule#_formatError"><a href="CustomRule.html#_formatError">_formatError</a></li>
+            
+                <li data-name="CustomRule#validate"><a href="CustomRule.html#validate">validate</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Document">
+            <span class="title">
+                <a href="Document.html">Document</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Document#_attributes"><a href="Document.html#_attributes">_attributes</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Document#_setupAttributes"><a href="Document.html#_setupAttributes">_setupAttributes</a></li>
+            
+                <li data-name="Document#assign"><a href="Document.html#assign">assign</a></li>
+            
+                <li data-name="Document#attributes"><a href="Document.html#attributes">attributes</a></li>
+            
+                <li data-name="Document#clone"><a href="Document.html#clone">clone</a></li>
+            
+                <li data-name="Document#export"><a href="Document.html#export">export</a></li>
+            
+                <li data-name="Document#get"><a href="Document.html#get">get</a></li>
+            
+                <li data-name="Document#getKey"><a href="Document.html#getKey">getKey</a></li>
+            
+                <li data-name="Document#getKeyName"><a href="Document.html#getKeyName">getKeyName</a></li>
+            
+                <li data-name="Document#hasKey"><a href="Document.html#hasKey">hasKey</a></li>
+            
+                <li data-name="Document#set"><a href="Document.html#set">set</a></li>
+            
+                <li data-name="Document#setKey"><a href="Document.html#setKey">setKey</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Gate">
+            <span class="title">
+                <a href="Gate.html">Gate</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Gate#_auth"><a href="Gate.html#_auth">_auth</a></li>
+            
+                <li data-name="Gate#_gatekeepers"><a href="Gate.html#_gatekeepers">_gatekeepers</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Gate#define"><a href="Gate.html#define">define</a></li>
+            
+                <li data-name="Gate#pass"><a href="Gate.html#pass">pass</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="HttpError">
+            <span class="title">
+                <a href="HttpError.html">HttpError</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="HttpError#_code"><a href="HttpError.html#_code">_code</a></li>
+            
+                <li data-name="HttpError#code"><a href="HttpError.html#code">code</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="HttpRequest">
+            <span class="title">
+                <a href="HttpRequest.html">HttpRequest</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="HttpRequest#_downloaded"><a href="HttpRequest.html#_downloaded">_downloaded</a></li>
+            
+                <li data-name="HttpRequest#_downloadSize"><a href="HttpRequest.html#_downloadSize">_downloadSize</a></li>
+            
+                <li data-name="HttpRequest#_promise"><a href="HttpRequest.html#_promise">_promise</a></li>
+            
+                <li data-name="HttpRequest#_source"><a href="HttpRequest.html#_source">_source</a></li>
+            
+                <li data-name="HttpRequest#_uploaded"><a href="HttpRequest.html#_uploaded">_uploaded</a></li>
+            
+                <li data-name="HttpRequest#_uploadSize"><a href="HttpRequest.html#_uploadSize">_uploadSize</a></li>
+            
+                <li data-name="HttpRequest#downloaded"><a href="HttpRequest.html#downloaded">downloaded</a></li>
+            
+                <li data-name="HttpRequest#downloadPercent"><a href="HttpRequest.html#downloadPercent">downloadPercent</a></li>
+            
+                <li data-name="HttpRequest#downloadSize"><a href="HttpRequest.html#downloadSize">downloadSize</a></li>
+            
+                <li data-name="HttpRequest#isCancellable"><a href="HttpRequest.html#isCancellable">isCancellable</a></li>
+            
+                <li data-name="HttpRequest#uploaded"><a href="HttpRequest.html#uploaded">uploaded</a></li>
+            
+                <li data-name="HttpRequest#uploadPercent"><a href="HttpRequest.html#uploadPercent">uploadPercent</a></li>
+            
+                <li data-name="HttpRequest#uploadSize"><a href="HttpRequest.html#uploadSize">uploadSize</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="HttpRequest#cancel"><a href="HttpRequest.html#cancel">cancel</a></li>
+            
+                <li data-name="HttpRequest#catch"><a href="HttpRequest.html#catch">catch</a></li>
+            
+                <li data-name="HttpRequest#then"><a href="HttpRequest.html#then">then</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="HttpServer">
+            <span class="title">
+                <a href="HttpServer.html">HttpServer</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="HttpServer#_config"><a href="HttpServer.html#_config">_config</a></li>
+            
+                <li data-name="HttpServer#_express"><a href="HttpServer.html#_express">_express</a></li>
+            
+                <li data-name="HttpServer#_logger"><a href="HttpServer.html#_logger">_logger</a></li>
+            
+                <li data-name="HttpServer#_router"><a href="HttpServer.html#_router">_router</a></li>
+            
+                <li data-name="HttpServer#_server"><a href="HttpServer.html#_server">_server</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="HttpServer#_delegate"><a href="HttpServer.html#_delegate">_delegate</a></li>
+            
+                <li data-name="HttpServer#_respond"><a href="HttpServer.html#_respond">_respond</a></li>
+            
+                <li data-name="HttpServer#delete"><a href="HttpServer.html#delete">delete</a></li>
+            
+                <li data-name="HttpServer#get"><a href="HttpServer.html#get">get</a></li>
+            
+                <li data-name="HttpServer#map"><a href="HttpServer.html#map">map</a></li>
+            
+                <li data-name="HttpServer#post"><a href="HttpServer.html#post">post</a></li>
+            
+                <li data-name="HttpServer#put"><a href="HttpServer.html#put">put</a></li>
+            
+                <li data-name="HttpServer#register"><a href="HttpServer.html#register">register</a></li>
+            
+                <li data-name="HttpServer#route"><a href="HttpServer.html#route">route</a></li>
+            
+                <li data-name="HttpServer#start"><a href="HttpServer.html#start">start</a></li>
+            
+                <li data-name="HttpServer#stop"><a href="HttpServer.html#stop">stop</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="HttpTransport">
+            <span class="title">
+                <a href="HttpTransport.html">HttpTransport</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="HttpTransport#_client"><a href="HttpTransport.html#_client">_client</a></li>
+            
+                <li data-name="HttpTransport#_stickyHeaders"><a href="HttpTransport.html#_stickyHeaders">_stickyHeaders</a></li>
+            
+                <li data-name="HttpTransport#_stickyQuery"><a href="HttpTransport.html#_stickyQuery">_stickyQuery</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="HttpTransport#_buildOptions"><a href="HttpTransport.html#_buildOptions">_buildOptions</a></li>
+            
+                <li data-name="HttpTransport#_buildUrl"><a href="HttpTransport.html#_buildUrl">_buildUrl</a></li>
+            
+                <li data-name="HttpTransport#_createClient"><a href="HttpTransport.html#_createClient">_createClient</a></li>
+            
+                <li data-name="HttpTransport#_makeRequest"><a href="HttpTransport.html#_makeRequest">_makeRequest</a></li>
+            
+                <li data-name="HttpTransport#_sendInternal"><a href="HttpTransport.html#_sendInternal">_sendInternal</a></li>
+            
+                <li data-name="HttpTransport#send"><a href="HttpTransport.html#send">send</a></li>
+            
+                <li data-name="HttpTransport#setAuthorization"><a href="HttpTransport.html#setAuthorization">setAuthorization</a></li>
+            
+                <li data-name="HttpTransport#stickHeader"><a href="HttpTransport.html#stickHeader">stickHeader</a></li>
+            
+                <li data-name="HttpTransport#stickQueryParam"><a href="HttpTransport.html#stickQueryParam">stickQueryParam</a></li>
+            
+                <li data-name="HttpTransport#unstickHeader"><a href="HttpTransport.html#unstickHeader">unstickHeader</a></li>
+            
+                <li data-name="HttpTransport#unstickQueryParam"><a href="HttpTransport.html#unstickQueryParam">unstickQueryParam</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Identity">
+            <span class="title">
+                <a href="Identity.html">Identity</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Identity#_id"><a href="Identity.html#_id">_id</a></li>
+            
+                <li data-name="Identity#_instance"><a href="Identity.html#_instance">_instance</a></li>
+            
+                <li data-name="Identity#_loader"><a href="Identity.html#_loader">_loader</a></li>
+            
+                <li data-name="Identity#id"><a href="Identity.html#id">id</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Identity#getInstance"><a href="Identity.html#getInstance">getInstance</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="IdentityRepository">
+            <span class="title">
+                <a href="IdentityRepository.html">IdentityRepository</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="IdentityRepository#_repository"><a href="IdentityRepository.html#_repository">_repository</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="IdentityRepository#_findByAttributes"><a href="IdentityRepository.html#_findByAttributes">_findByAttributes</a></li>
+            
+                <li data-name="IdentityRepository#_findById"><a href="IdentityRepository.html#_findById">_findById</a></li>
+            
+                <li data-name="IdentityRepository#_getId"><a href="IdentityRepository.html#_getId">_getId</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="IterativeRule">
+            <span class="title">
+                <a href="IterativeRule.html">IterativeRule</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="IterativeRule#_chain"><a href="IterativeRule.html#_chain">_chain</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="IterativeRule#validate"><a href="IterativeRule.html#validate">validate</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Join">
+            <span class="title">
+                <a href="Join.html">Join</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Join#_condition"><a href="Join.html#_condition">_condition</a></li>
+            
+                <li data-name="Join#_table"><a href="Join.html#_table">_table</a></li>
+            
+                <li data-name="Join#_type"><a href="Join.html#_type">_type</a></li>
+            
+                <li data-name="Join#condition"><a href="Join.html#condition">condition</a></li>
+            
+                <li data-name="Join#table"><a href="Join.html#table">table</a></li>
+            
+                <li data-name="Join#type"><a href="Join.html#type">type</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Join#_newCondition"><a href="Join.html#_newCondition">_newCondition</a></li>
+            
+                <li data-name="Join#and"><a href="Join.html#and">and</a></li>
+            
+                <li data-name="Join#eq"><a href="Join.html#eq">eq</a></li>
+            
+                <li data-name="Join#gt"><a href="Join.html#gt">gt</a></li>
+            
+                <li data-name="Join#gte"><a href="Join.html#gte">gte</a></li>
+            
+                <li data-name="Join#lt"><a href="Join.html#lt">lt</a></li>
+            
+                <li data-name="Join#lte"><a href="Join.html#lte">lte</a></li>
+            
+                <li data-name="Join#neq"><a href="Join.html#neq">neq</a></li>
+            
+                <li data-name="Join#not"><a href="Join.html#not">not</a></li>
+            
+                <li data-name="Join#on"><a href="Join.html#on">on</a></li>
+            
+                <li data-name="Join#or"><a href="Join.html#or">or</a></li>
+            
+                <li data-name="Join#where"><a href="Join.html#where">where</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="JoinCondition">
+            <span class="title">
+                <a href="JoinCondition.html">JoinCondition</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="JoinCondition#_builder"><a href="JoinCondition.html#_builder">_builder</a></li>
+            
+                <li data-name="JoinCondition#_fragment"><a href="JoinCondition.html#_fragment">_fragment</a></li>
+            
+                <li data-name="JoinCondition#_logic"><a href="JoinCondition.html#_logic">_logic</a></li>
+            
+                <li data-name="JoinCondition#_negation"><a href="JoinCondition.html#_negation">_negation</a></li>
+            
+                <li data-name="JoinCondition#_wheres"><a href="JoinCondition.html#_wheres">_wheres</a></li>
+            
+                <li data-name="JoinCondition#isEmpty"><a href="JoinCondition.html#isEmpty">isEmpty</a></li>
+            
+                <li data-name="JoinCondition#wheres"><a href="JoinCondition.html#wheres">wheres</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="JoinCondition#_addOrCase"><a href="JoinCondition.html#_addOrCase">_addOrCase</a></li>
+            
+                <li data-name="JoinCondition#_and"><a href="JoinCondition.html#_and">_and</a></li>
+            
+                <li data-name="JoinCondition#_append"><a href="JoinCondition.html#_append">_append</a></li>
+            
+                <li data-name="JoinCondition#_appendExpr"><a href="JoinCondition.html#_appendExpr">_appendExpr</a></li>
+            
+                <li data-name="JoinCondition#_chain"><a href="JoinCondition.html#_chain">_chain</a></li>
+            
+                <li data-name="JoinCondition#_enclose"><a href="JoinCondition.html#_enclose">_enclose</a></li>
+            
+                <li data-name="JoinCondition#_lastOr"><a href="JoinCondition.html#_lastOr">_lastOr</a></li>
+            
+                <li data-name="JoinCondition#_makeAssertion"><a href="JoinCondition.html#_makeAssertion">_makeAssertion</a></li>
+            
+                <li data-name="JoinCondition#_makeSubquery"><a href="JoinCondition.html#_makeSubquery">_makeSubquery</a></li>
+            
+                <li data-name="JoinCondition#_not"><a href="JoinCondition.html#_not">_not</a></li>
+            
+                <li data-name="JoinCondition#_or"><a href="JoinCondition.html#_or">_or</a></li>
+            
+                <li data-name="JoinCondition#_pushAssertion"><a href="JoinCondition.html#_pushAssertion">_pushAssertion</a></li>
+            
+                <li data-name="JoinCondition#and"><a href="JoinCondition.html#and">and</a></li>
+            
+                <li data-name="JoinCondition#between"><a href="JoinCondition.html#between">between</a></li>
+            
+                <li data-name="JoinCondition#clone"><a href="JoinCondition.html#clone">clone</a></li>
+            
+                <li data-name="JoinCondition#contains"><a href="JoinCondition.html#contains">contains</a></li>
+            
+                <li data-name="JoinCondition#copy"><a href="JoinCondition.html#copy">copy</a></li>
+            
+                <li data-name="JoinCondition#eq"><a href="JoinCondition.html#eq">eq</a></li>
+            
+                <li data-name="JoinCondition#exists"><a href="JoinCondition.html#exists">exists</a></li>
+            
+                <li data-name="JoinCondition#gt"><a href="JoinCondition.html#gt">gt</a></li>
+            
+                <li data-name="JoinCondition#gte"><a href="JoinCondition.html#gte">gte</a></li>
+            
+                <li data-name="JoinCondition#in"><a href="JoinCondition.html#in">in</a></li>
+            
+                <li data-name="JoinCondition#isNotNull"><a href="JoinCondition.html#isNotNull">isNotNull</a></li>
+            
+                <li data-name="JoinCondition#isNull"><a href="JoinCondition.html#isNull">isNull</a></li>
+            
+                <li data-name="JoinCondition#json"><a href="JoinCondition.html#json">json</a></li>
+            
+                <li data-name="JoinCondition#lt"><a href="JoinCondition.html#lt">lt</a></li>
+            
+                <li data-name="JoinCondition#lte"><a href="JoinCondition.html#lte">lte</a></li>
+            
+                <li data-name="JoinCondition#neq"><a href="JoinCondition.html#neq">neq</a></li>
+            
+                <li data-name="JoinCondition#not"><a href="JoinCondition.html#not">not</a></li>
+            
+                <li data-name="JoinCondition#notBetween"><a href="JoinCondition.html#notBetween">notBetween</a></li>
+            
+                <li data-name="JoinCondition#notExists"><a href="JoinCondition.html#notExists">notExists</a></li>
+            
+                <li data-name="JoinCondition#notIn"><a href="JoinCondition.html#notIn">notIn</a></li>
+            
+                <li data-name="JoinCondition#on"><a href="JoinCondition.html#on">on</a></li>
+            
+                <li data-name="JoinCondition#or"><a href="JoinCondition.html#or">or</a></li>
+            
+                <li data-name="JoinCondition#quote"><a href="JoinCondition.html#quote">quote</a></li>
+            
+                <li data-name="JoinCondition#raw"><a href="JoinCondition.html#raw">raw</a></li>
+            
+                <li data-name="JoinCondition#startsWith"><a href="JoinCondition.html#startsWith">startsWith</a></li>
+            
+                <li data-name="JoinCondition#whereColumn"><a href="JoinCondition.html#whereColumn">whereColumn</a></li>
+            
+                <li data-name="JoinCondition#whereJson"><a href="JoinCondition.html#whereJson">whereJson</a></li>
+            
+                <li data-name="JoinCondition#whereRaw"><a href="JoinCondition.html#whereRaw">whereRaw</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Logger">
+            <span class="title">
+                <a href="Logger.html">Logger</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Logger#_log"><a href="Logger.html#_log">_log</a></li>
+            
+                <li data-name="Logger#_timer"><a href="Logger.html#_timer">_timer</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Logger#debug"><a href="Logger.html#debug">debug</a></li>
+            
+                <li data-name="Logger#error"><a href="Logger.html#error">error</a></li>
+            
+                <li data-name="Logger#info"><a href="Logger.html#info">info</a></li>
+            
+                <li data-name="Logger#log"><a href="Logger.html#log">log</a></li>
+            
+                <li data-name="Logger#profileEnd"><a href="Logger.html#profileEnd">profileEnd</a></li>
+            
+                <li data-name="Logger#profileStart"><a href="Logger.html#profileStart">profileStart</a></li>
+            
+                <li data-name="Logger#silly"><a href="Logger.html#silly">silly</a></li>
+            
+                <li data-name="Logger#verbose"><a href="Logger.html#verbose">verbose</a></li>
+            
+                <li data-name="Logger#warn"><a href="Logger.html#warn">warn</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Message">
+            <span class="title">
+                <a href="Message.html">Message</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Message#_body"><a href="Message.html#_body">_body</a></li>
+            
+                <li data-name="Message#_headers"><a href="Message.html#_headers">_headers</a></li>
+            
+                <li data-name="Message#body"><a href="Message.html#body">body</a></li>
+            
+                <li data-name="Message#headers"><a href="Message.html#headers">headers</a></li>
+            
+                <li data-name="Message#headers"><a href="Message.html#headers">headers</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Message#get"><a href="Message.html#get">get</a></li>
+            
+                <li data-name="Message#getHeader"><a href="Message.html#getHeader">getHeader</a></li>
+            
+                <li data-name="Message#setHeader"><a href="Message.html#setHeader">setHeader</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="MysqlClient">
+            <span class="title">
+                <a href="MysqlClient.html">MysqlClient</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="MysqlClient#_endpoint"><a href="MysqlClient.html#_endpoint">_endpoint</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="MysqlClient#_deleteInternal"><a href="MysqlClient.html#_deleteInternal">_deleteInternal</a></li>
+            
+                <li data-name="MysqlClient#_executeInternal"><a href="MysqlClient.html#_executeInternal">_executeInternal</a></li>
+            
+                <li data-name="MysqlClient#_insertInternal"><a href="MysqlClient.html#_insertInternal">_insertInternal</a></li>
+            
+                <li data-name="MysqlClient#_updateInternal"><a href="MysqlClient.html#_updateInternal">_updateInternal</a></li>
+            
+                <li data-name="MysqlClient#end"><a href="MysqlClient.html#end">end</a></li>
+            
+                <li data-name="MysqlClient#newQuery"><a href="MysqlClient.html#newQuery">newQuery</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Negation">
+            <span class="title">
+                <a href="Negation.html">Negation</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Negation#_subject"><a href="Negation.html#_subject">_subject</a></li>
+            
+                <li data-name="Negation#_subject"><a href="Negation.html#_subject">_subject</a></li>
+            
+                <li data-name="Negation#subject"><a href="Negation.html#subject">subject</a></li>
+            
+                <li data-name="Negation#subject"><a href="Negation.html#subject">subject</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Negation#clone"><a href="Negation.html#clone">clone</a></li>
+            
+                <li data-name="Negation#copy"><a href="Negation.html#copy">copy</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Negation">
+            <span class="title">
+                <a href="Negation.html">Negation</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Negation#_subject"><a href="Negation.html#_subject">_subject</a></li>
+            
+                <li data-name="Negation#_subject"><a href="Negation.html#_subject">_subject</a></li>
+            
+                <li data-name="Negation#subject"><a href="Negation.html#subject">subject</a></li>
+            
+                <li data-name="Negation#subject"><a href="Negation.html#subject">subject</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Negation#clone"><a href="Negation.html#clone">clone</a></li>
+            
+                <li data-name="Negation#copy"><a href="Negation.html#copy">copy</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="NestedRule">
+            <span class="title">
+                <a href="NestedRule.html">NestedRule</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="NestedRule#_map"><a href="NestedRule.html#_map">_map</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="NestedRule#validate"><a href="NestedRule.html#validate">validate</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="NotExistsError">
+            <span class="title">
+                <a href="NotExistsError.html">NotExistsError</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="On">
+            <span class="title">
+                <a href="On.html">On</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="On#left"><a href="On.html#left">left</a></li>
+            
+                <li data-name="On#operator"><a href="On.html#operator">operator</a></li>
+            
+                <li data-name="On#right"><a href="On.html#right">right</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Query">
+            <span class="title">
+                <a href="Query.html">Query</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Query#_condition"><a href="Query.html#_condition">_condition</a></li>
+            
+                <li data-name="Query#_condition"><a href="Query.html#_condition">_condition</a></li>
+            
+                <li data-name="Query#_group"><a href="Query.html#_group">_group</a></li>
+            
+                <li data-name="Query#_group"><a href="Query.html#_group">_group</a></li>
+            
+                <li data-name="Query#_limit"><a href="Query.html#_limit">_limit</a></li>
+            
+                <li data-name="Query#_limit"><a href="Query.html#_limit">_limit</a></li>
+            
+                <li data-name="Query#_order"><a href="Query.html#_order">_order</a></li>
+            
+                <li data-name="Query#_order"><a href="Query.html#_order">_order</a></li>
+            
+                <li data-name="Query#_scopes"><a href="Query.html#_scopes">_scopes</a></li>
+            
+                <li data-name="Query#_start"><a href="Query.html#_start">_start</a></li>
+            
+                <li data-name="Query#_start"><a href="Query.html#_start">_start</a></li>
+            
+                <li data-name="Query#condition"><a href="Query.html#condition">condition</a></li>
+            
+                <li data-name="Query#condition"><a href="Query.html#condition">condition</a></li>
+            
+                <li data-name="Query#group"><a href="Query.html#group">group</a></li>
+            
+                <li data-name="Query#group"><a href="Query.html#group">group</a></li>
+            
+                <li data-name="Query#limit"><a href="Query.html#limit">limit</a></li>
+            
+                <li data-name="Query#limit"><a href="Query.html#limit">limit</a></li>
+            
+                <li data-name="Query#order"><a href="Query.html#order">order</a></li>
+            
+                <li data-name="Query#order"><a href="Query.html#order">order</a></li>
+            
+                <li data-name="Query#scopes"><a href="Query.html#scopes">scopes</a></li>
+            
+                <li data-name="Query#start"><a href="Query.html#start">start</a></li>
+            
+                <li data-name="Query#start"><a href="Query.html#start">start</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Query#ascendingBy"><a href="Query.html#ascendingBy">ascendingBy</a></li>
+            
+                <li data-name="Query#ascendingBy"><a href="Query.html#ascendingBy">ascendingBy</a></li>
+            
+                <li data-name="Query#clone"><a href="Query.html#clone">clone</a></li>
+            
+                <li data-name="Query#copy"><a href="Query.html#copy">copy</a></li>
+            
+                <li data-name="Query#descendingBy"><a href="Query.html#descendingBy">descendingBy</a></li>
+            
+                <li data-name="Query#descendingBy"><a href="Query.html#descendingBy">descendingBy</a></li>
+            
+                <li data-name="Query#groupBy"><a href="Query.html#groupBy">groupBy</a></li>
+            
+                <li data-name="Query#groupBy"><a href="Query.html#groupBy">groupBy</a></li>
+            
+                <li data-name="Query#limitTo"><a href="Query.html#limitTo">limitTo</a></li>
+            
+                <li data-name="Query#limitTo"><a href="Query.html#limitTo">limitTo</a></li>
+            
+                <li data-name="Query#newCondition"><a href="Query.html#newCondition">newCondition</a></li>
+            
+                <li data-name="Query#newCondition"><a href="Query.html#newCondition">newCondition</a></li>
+            
+                <li data-name="Query#orderBy"><a href="Query.html#orderBy">orderBy</a></li>
+            
+                <li data-name="Query#orderBy"><a href="Query.html#orderBy">orderBy</a></li>
+            
+                <li data-name="Query#setScope"><a href="Query.html#setScope">setScope</a></li>
+            
+                <li data-name="Query#startFrom"><a href="Query.html#startFrom">startFrom</a></li>
+            
+                <li data-name="Query#startFrom"><a href="Query.html#startFrom">startFrom</a></li>
+            
+                <li data-name="Query#unsetScope"><a href="Query.html#unsetScope">unsetScope</a></li>
+            
+                <li data-name="Query#where"><a href="Query.html#where">where</a></li>
+            
+                <li data-name="Query#where"><a href="Query.html#where">where</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Query">
+            <span class="title">
+                <a href="Query.html">Query</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Query#_condition"><a href="Query.html#_condition">_condition</a></li>
+            
+                <li data-name="Query#_condition"><a href="Query.html#_condition">_condition</a></li>
+            
+                <li data-name="Query#_group"><a href="Query.html#_group">_group</a></li>
+            
+                <li data-name="Query#_group"><a href="Query.html#_group">_group</a></li>
+            
+                <li data-name="Query#_limit"><a href="Query.html#_limit">_limit</a></li>
+            
+                <li data-name="Query#_limit"><a href="Query.html#_limit">_limit</a></li>
+            
+                <li data-name="Query#_order"><a href="Query.html#_order">_order</a></li>
+            
+                <li data-name="Query#_order"><a href="Query.html#_order">_order</a></li>
+            
+                <li data-name="Query#_scopes"><a href="Query.html#_scopes">_scopes</a></li>
+            
+                <li data-name="Query#_start"><a href="Query.html#_start">_start</a></li>
+            
+                <li data-name="Query#_start"><a href="Query.html#_start">_start</a></li>
+            
+                <li data-name="Query#condition"><a href="Query.html#condition">condition</a></li>
+            
+                <li data-name="Query#condition"><a href="Query.html#condition">condition</a></li>
+            
+                <li data-name="Query#group"><a href="Query.html#group">group</a></li>
+            
+                <li data-name="Query#group"><a href="Query.html#group">group</a></li>
+            
+                <li data-name="Query#limit"><a href="Query.html#limit">limit</a></li>
+            
+                <li data-name="Query#limit"><a href="Query.html#limit">limit</a></li>
+            
+                <li data-name="Query#order"><a href="Query.html#order">order</a></li>
+            
+                <li data-name="Query#order"><a href="Query.html#order">order</a></li>
+            
+                <li data-name="Query#scopes"><a href="Query.html#scopes">scopes</a></li>
+            
+                <li data-name="Query#start"><a href="Query.html#start">start</a></li>
+            
+                <li data-name="Query#start"><a href="Query.html#start">start</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Query#ascendingBy"><a href="Query.html#ascendingBy">ascendingBy</a></li>
+            
+                <li data-name="Query#ascendingBy"><a href="Query.html#ascendingBy">ascendingBy</a></li>
+            
+                <li data-name="Query#clone"><a href="Query.html#clone">clone</a></li>
+            
+                <li data-name="Query#copy"><a href="Query.html#copy">copy</a></li>
+            
+                <li data-name="Query#descendingBy"><a href="Query.html#descendingBy">descendingBy</a></li>
+            
+                <li data-name="Query#descendingBy"><a href="Query.html#descendingBy">descendingBy</a></li>
+            
+                <li data-name="Query#groupBy"><a href="Query.html#groupBy">groupBy</a></li>
+            
+                <li data-name="Query#groupBy"><a href="Query.html#groupBy">groupBy</a></li>
+            
+                <li data-name="Query#limitTo"><a href="Query.html#limitTo">limitTo</a></li>
+            
+                <li data-name="Query#limitTo"><a href="Query.html#limitTo">limitTo</a></li>
+            
+                <li data-name="Query#newCondition"><a href="Query.html#newCondition">newCondition</a></li>
+            
+                <li data-name="Query#newCondition"><a href="Query.html#newCondition">newCondition</a></li>
+            
+                <li data-name="Query#orderBy"><a href="Query.html#orderBy">orderBy</a></li>
+            
+                <li data-name="Query#orderBy"><a href="Query.html#orderBy">orderBy</a></li>
+            
+                <li data-name="Query#setScope"><a href="Query.html#setScope">setScope</a></li>
+            
+                <li data-name="Query#startFrom"><a href="Query.html#startFrom">startFrom</a></li>
+            
+                <li data-name="Query#startFrom"><a href="Query.html#startFrom">startFrom</a></li>
+            
+                <li data-name="Query#unsetScope"><a href="Query.html#unsetScope">unsetScope</a></li>
+            
+                <li data-name="Query#where"><a href="Query.html#where">where</a></li>
+            
+                <li data-name="Query#where"><a href="Query.html#where">where</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="QueryValidator">
+            <span class="title">
+                <a href="QueryValidator.html">QueryValidator</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="QueryValidator#_errors"><a href="QueryValidator.html#_errors">_errors</a></li>
+            
+                <li data-name="QueryValidator#_group"><a href="QueryValidator.html#_group">_group</a></li>
+            
+                <li data-name="QueryValidator#_limit"><a href="QueryValidator.html#_limit">_limit</a></li>
+            
+                <li data-name="QueryValidator#_offset"><a href="QueryValidator.html#_offset">_offset</a></li>
+            
+                <li data-name="QueryValidator#_sort"><a href="QueryValidator.html#_sort">_sort</a></li>
+            
+                <li data-name="QueryValidator#_where"><a href="QueryValidator.html#_where">_where</a></li>
+            
+                <li data-name="QueryValidator#errors"><a href="QueryValidator.html#errors">errors</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="QueryValidator#_addError"><a href="QueryValidator.html#_addError">_addError</a></li>
+            
+                <li data-name="QueryValidator#_decomposeAssertion"><a href="QueryValidator.html#_decomposeAssertion">_decomposeAssertion</a></li>
+            
+                <li data-name="QueryValidator#_decomposeCondition"><a href="QueryValidator.html#_decomposeCondition">_decomposeCondition</a></li>
+            
+                <li data-name="QueryValidator#_decomposeGroup"><a href="QueryValidator.html#_decomposeGroup">_decomposeGroup</a></li>
+            
+                <li data-name="QueryValidator#_decomposeSort"><a href="QueryValidator.html#_decomposeSort">_decomposeSort</a></li>
+            
+                <li data-name="QueryValidator#_validateAttribute"><a href="QueryValidator.html#_validateAttribute">_validateAttribute</a></li>
+            
+                <li data-name="QueryValidator#_validateCondition"><a href="QueryValidator.html#_validateCondition">_validateCondition</a></li>
+            
+                <li data-name="QueryValidator#_validateGroup"><a href="QueryValidator.html#_validateGroup">_validateGroup</a></li>
+            
+                <li data-name="QueryValidator#_validateLimit"><a href="QueryValidator.html#_validateLimit">_validateLimit</a></li>
+            
+                <li data-name="QueryValidator#_validateSort"><a href="QueryValidator.html#_validateSort">_validateSort</a></li>
+            
+                <li data-name="QueryValidator#validate"><a href="QueryValidator.html#validate">validate</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="RawSql">
+            <span class="title">
+                <a href="RawSql.html">RawSql</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="RawSql#_bindings"><a href="RawSql.html#_bindings">_bindings</a></li>
+            
+                <li data-name="RawSql#_sql"><a href="RawSql.html#_sql">_sql</a></li>
+            
+                <li data-name="RawSql#bindings"><a href="RawSql.html#bindings">bindings</a></li>
+            
+                <li data-name="RawSql#sql"><a href="RawSql.html#sql">sql</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Relation">
+            <span class="title">
+                <a href="Relation.html">Relation</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Relation#$"><a href="Relation.html#$">$</a></li>
+            
+                <li data-name="Relation#_foreignKey"><a href="Relation.html#_foreignKey">_foreignKey</a></li>
+            
+                <li data-name="Relation#_holder"><a href="Relation.html#_holder">_holder</a></li>
+            
+                <li data-name="Relation#_localKey"><a href="Relation.html#_localKey">_localKey</a></li>
+            
+                <li data-name="Relation#_promise"><a href="Relation.html#_promise">_promise</a></li>
+            
+                <li data-name="Relation#_query"><a href="Relation.html#_query">_query</a></li>
+            
+                <li data-name="Relation#_repository"><a href="Relation.html#_repository">_repository</a></li>
+            
+                <li data-name="Relation#_value"><a href="Relation.html#_value">_value</a></li>
+            
+                <li data-name="Relation#foreignKey"><a href="Relation.html#foreignKey">foreignKey</a></li>
+            
+                <li data-name="Relation#isResolved"><a href="Relation.html#isResolved">isResolved</a></li>
+            
+                <li data-name="Relation#localKey"><a href="Relation.html#localKey">localKey</a></li>
+            
+                <li data-name="Relation#repository"><a href="Relation.html#repository">repository</a></li>
+            
+                <li data-name="Relation#value"><a href="Relation.html#value">value</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Relation.resolve"><a href="Relation.html#.resolve">resolve</a></li>
+            
+                <li data-name="Relation#_collectFrom"><a href="Relation.html#_collectFrom">_collectFrom</a></li>
+            
+                <li data-name="Relation#_consumeResult"><a href="Relation.html#_consumeResult">_consumeResult</a></li>
+            
+                <li data-name="Relation#_newQuery"><a href="Relation.html#_newQuery">_newQuery</a></li>
+            
+                <li data-name="Relation#_normalizeValue"><a href="Relation.html#_normalizeValue">_normalizeValue</a></li>
+            
+                <li data-name="Relation#_resolve"><a href="Relation.html#_resolve">_resolve</a></li>
+            
+                <li data-name="Relation#_resolveFor"><a href="Relation.html#_resolveFor">_resolveFor</a></li>
+            
+                <li data-name="Relation#_toDocument"><a href="Relation.html#_toDocument">_toDocument</a></li>
+            
+                <li data-name="Relation#clear"><a href="Relation.html#clear">clear</a></li>
+            
+                <li data-name="Relation#export"><a href="Relation.html#export">export</a></li>
+            
+                <li data-name="Relation#fresh"><a href="Relation.html#fresh">fresh</a></li>
+            
+                <li data-name="Relation#get"><a href="Relation.html#get">get</a></li>
+            
+                <li data-name="Relation#init"><a href="Relation.html#init">init</a></li>
+            
+                <li data-name="Relation#set"><a href="Relation.html#set">set</a></li>
+            
+                <li data-name="Relation#slice"><a href="Relation.html#slice">slice</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="RelationAttribute">
+            <span class="title">
+                <a href="RelationAttribute.html">RelationAttribute</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="RelationAttribute#_foreignKey"><a href="RelationAttribute.html#_foreignKey">_foreignKey</a></li>
+            
+                <li data-name="RelationAttribute#_localKey"><a href="RelationAttribute.html#_localKey">_localKey</a></li>
+            
+                <li data-name="RelationAttribute#_query"><a href="RelationAttribute.html#_query">_query</a></li>
+            
+                <li data-name="RelationAttribute#_relation"><a href="RelationAttribute.html#_relation">_relation</a></li>
+            
+                <li data-name="RelationAttribute#_repository"><a href="RelationAttribute.html#_repository">_repository</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="RelationAttribute.oneToMany"><a href="RelationAttribute.html#.oneToMany">oneToMany</a></li>
+            
+                <li data-name="RelationAttribute.oneToOne"><a href="RelationAttribute.html#.oneToOne">oneToOne</a></li>
+            
+                <li data-name="RelationAttribute#ascendingBy"><a href="RelationAttribute.html#ascendingBy">ascendingBy</a></li>
+            
+                <li data-name="RelationAttribute#descendingBy"><a href="RelationAttribute.html#descendingBy">descendingBy</a></li>
+            
+                <li data-name="RelationAttribute#init"><a href="RelationAttribute.html#init">init</a></li>
+            
+                <li data-name="RelationAttribute#orderBy"><a href="RelationAttribute.html#orderBy">orderBy</a></li>
+            
+                <li data-name="RelationAttribute#where"><a href="RelationAttribute.html#where">where</a></li>
+            
+                <li data-name="RelationAttribute#with"><a href="RelationAttribute.html#with">with</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="RelationQuery">
+            <span class="title">
+                <a href="RelationQuery.html">RelationQuery</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="RelationQuery#_name"><a href="RelationQuery.html#_name">_name</a></li>
+            
+                <li data-name="RelationQuery#_order"><a href="RelationQuery.html#_order">_order</a></li>
+            
+                <li data-name="RelationQuery#_wheres"><a href="RelationQuery.html#_wheres">_wheres</a></li>
+            
+                <li data-name="RelationQuery#_with"><a href="RelationQuery.html#_with">_with</a></li>
+            
+                <li data-name="RelationQuery#hasLinked"><a href="RelationQuery.html#hasLinked">hasLinked</a></li>
+            
+                <li data-name="RelationQuery#linked"><a href="RelationQuery.html#linked">linked</a></li>
+            
+                <li data-name="RelationQuery#name"><a href="RelationQuery.html#name">name</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="RelationQuery#applyTo"><a href="RelationQuery.html#applyTo">applyTo</a></li>
+            
+                <li data-name="RelationQuery#ascendingBy"><a href="RelationQuery.html#ascendingBy">ascendingBy</a></li>
+            
+                <li data-name="RelationQuery#descendingBy"><a href="RelationQuery.html#descendingBy">descendingBy</a></li>
+            
+                <li data-name="RelationQuery#orderBy"><a href="RelationQuery.html#orderBy">orderBy</a></li>
+            
+                <li data-name="RelationQuery#where"><a href="RelationQuery.html#where">where</a></li>
+            
+                <li data-name="RelationQuery#with"><a href="RelationQuery.html#with">with</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="RepositoryProxy">
+            <span class="title">
+                <a href="RepositoryProxy.html">RepositoryProxy</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="RepositoryProxy#_gatekeepers"><a href="RepositoryProxy.html#_gatekeepers">_gatekeepers</a></li>
+            
+                <li data-name="RepositoryProxy#_repository"><a href="RepositoryProxy.html#_repository">_repository</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="RepositoryProxy#_passGate"><a href="RepositoryProxy.html#_passGate">_passGate</a></li>
+            
+                <li data-name="RepositoryProxy#_proxyMethod"><a href="RepositoryProxy.html#_proxyMethod">_proxyMethod</a></li>
+            
+                <li data-name="RepositoryProxy#_pullDocument"><a href="RepositoryProxy.html#_pullDocument">_pullDocument</a></li>
+            
+                <li data-name="RepositoryProxy#_pullDocumentKey"><a href="RepositoryProxy.html#_pullDocumentKey">_pullDocumentKey</a></li>
+            
+                <li data-name="RepositoryProxy#_pullParam"><a href="RepositoryProxy.html#_pullParam">_pullParam</a></li>
+            
+                <li data-name="RepositoryProxy#_pullQuery"><a href="RepositoryProxy.html#_pullQuery">_pullQuery</a></li>
+            
+                <li data-name="RepositoryProxy#_serializeCollection"><a href="RepositoryProxy.html#_serializeCollection">_serializeCollection</a></li>
+            
+                <li data-name="RepositoryProxy#_serializeDocument"><a href="RepositoryProxy.html#_serializeDocument">_serializeDocument</a></li>
+            
+                <li data-name="RepositoryProxy#avg"><a href="RepositoryProxy.html#avg">avg</a></li>
+            
+                <li data-name="RepositoryProxy#count"><a href="RepositoryProxy.html#count">count</a></li>
+            
+                <li data-name="RepositoryProxy#delete"><a href="RepositoryProxy.html#delete">delete</a></li>
+            
+                <li data-name="RepositoryProxy#exists"><a href="RepositoryProxy.html#exists">exists</a></li>
+            
+                <li data-name="RepositoryProxy#get"><a href="RepositoryProxy.html#get">get</a></li>
+            
+                <li data-name="RepositoryProxy#max"><a href="RepositoryProxy.html#max">max</a></li>
+            
+                <li data-name="RepositoryProxy#min"><a href="RepositoryProxy.html#min">min</a></li>
+            
+                <li data-name="RepositoryProxy#protect"><a href="RepositoryProxy.html#protect">protect</a></li>
+            
+                <li data-name="RepositoryProxy#protectAll"><a href="RepositoryProxy.html#protectAll">protectAll</a></li>
+            
+                <li data-name="RepositoryProxy#protectRead"><a href="RepositoryProxy.html#protectRead">protectRead</a></li>
+            
+                <li data-name="RepositoryProxy#protectWrite"><a href="RepositoryProxy.html#protectWrite">protectWrite</a></li>
+            
+                <li data-name="RepositoryProxy#search"><a href="RepositoryProxy.html#search">search</a></li>
+            
+                <li data-name="RepositoryProxy#store"><a href="RepositoryProxy.html#store">store</a></li>
+            
+                <li data-name="RepositoryProxy#sum"><a href="RepositoryProxy.html#sum">sum</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="RepositoryRequestMap">
+            <span class="title">
+                <a href="RepositoryRequestMap.html">RepositoryRequestMap</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="RepositoryRequestMap#_basePath"><a href="RepositoryRequestMap.html#_basePath">_basePath</a></li>
+            
+                <li data-name="RepositoryRequestMap#_keyName"><a href="RepositoryRequestMap.html#_keyName">_keyName</a></li>
+            
+                <li data-name="RepositoryRequestMap#_map"><a href="RepositoryRequestMap.html#_map">_map</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="RepositoryRequestMap#_addComponent"><a href="RepositoryRequestMap.html#_addComponent">_addComponent</a></li>
+            
+                <li data-name="RepositoryRequestMap#_addParam"><a href="RepositoryRequestMap.html#_addParam">_addParam</a></li>
+            
+                <li data-name="RepositoryRequestMap#_configure"><a href="RepositoryRequestMap.html#_configure">_configure</a></li>
+            
+                <li data-name="RepositoryRequestMap#create"><a href="RepositoryRequestMap.html#create">create</a></li>
+            
+                <li data-name="RepositoryRequestMap#createAvgRequest"><a href="RepositoryRequestMap.html#createAvgRequest">createAvgRequest</a></li>
+            
+                <li data-name="RepositoryRequestMap#createCountRequest"><a href="RepositoryRequestMap.html#createCountRequest">createCountRequest</a></li>
+            
+                <li data-name="RepositoryRequestMap#createDeleteRequest"><a href="RepositoryRequestMap.html#createDeleteRequest">createDeleteRequest</a></li>
+            
+                <li data-name="RepositoryRequestMap#createExistsRequest"><a href="RepositoryRequestMap.html#createExistsRequest">createExistsRequest</a></li>
+            
+                <li data-name="RepositoryRequestMap#createGetRequest"><a href="RepositoryRequestMap.html#createGetRequest">createGetRequest</a></li>
+            
+                <li data-name="RepositoryRequestMap#createMaxRequest"><a href="RepositoryRequestMap.html#createMaxRequest">createMaxRequest</a></li>
+            
+                <li data-name="RepositoryRequestMap#createMinRequest"><a href="RepositoryRequestMap.html#createMinRequest">createMinRequest</a></li>
+            
+                <li data-name="RepositoryRequestMap#createSearchRequest"><a href="RepositoryRequestMap.html#createSearchRequest">createSearchRequest</a></li>
+            
+                <li data-name="RepositoryRequestMap#createStoreRequest"><a href="RepositoryRequestMap.html#createStoreRequest">createStoreRequest</a></li>
+            
+                <li data-name="RepositoryRequestMap#createSumRequest"><a href="RepositoryRequestMap.html#createSumRequest">createSumRequest</a></li>
+            
+                <li data-name="RepositoryRequestMap#factory"><a href="RepositoryRequestMap.html#factory">factory</a></li>
+            
+                <li data-name="RepositoryRequestMap#forEach"><a href="RepositoryRequestMap.html#forEach">forEach</a></li>
+            
+                <li data-name="RepositoryRequestMap#map"><a href="RepositoryRequestMap.html#map">map</a></li>
+            
+                <li data-name="RepositoryRequestMap#method"><a href="RepositoryRequestMap.html#method">method</a></li>
+            
+                <li data-name="RepositoryRequestMap#route"><a href="RepositoryRequestMap.html#route">route</a></li>
+            
+                <li data-name="RepositoryRequestMap#validation"><a href="RepositoryRequestMap.html#validation">validation</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Request">
+            <span class="title">
+                <a href="Request.html">Request</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Request#_body"><a href="Request.html#_body">_body</a></li>
+            
+                <li data-name="Request#_errors"><a href="Request.html#_errors">_errors</a></li>
+            
+                <li data-name="Request#_headers"><a href="Request.html#_headers">_headers</a></li>
+            
+                <li data-name="Request#_method"><a href="Request.html#_method">_method</a></li>
+            
+                <li data-name="Request#_options"><a href="Request.html#_options">_options</a></li>
+            
+                <li data-name="Request#_query"><a href="Request.html#_query">_query</a></li>
+            
+                <li data-name="Request#_route"><a href="Request.html#_route">_route</a></li>
+            
+                <li data-name="Request#_validated"><a href="Request.html#_validated">_validated</a></li>
+            
+                <li data-name="Request#_validation"><a href="Request.html#_validation">_validation</a></li>
+            
+                <li data-name="Request#body"><a href="Request.html#body">body</a></li>
+            
+                <li data-name="Request#errors"><a href="Request.html#errors">errors</a></li>
+            
+                <li data-name="Request#headers"><a href="Request.html#headers">headers</a></li>
+            
+                <li data-name="Request#query"><a href="Request.html#query">query</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Request#get"><a href="Request.html#get">get</a></li>
+            
+                <li data-name="Request#getHeader"><a href="Request.html#getHeader">getHeader</a></li>
+            
+                <li data-name="Request#method"><a href="Request.html#method">method</a></li>
+            
+                <li data-name="Request#options"><a href="Request.html#options">options</a></li>
+            
+                <li data-name="Request#route"><a href="Request.html#route">route</a></li>
+            
+                <li data-name="Request#routeTo"><a href="Request.html#routeTo">routeTo</a></li>
+            
+                <li data-name="Request#send"><a href="Request.html#send">send</a></li>
+            
+                <li data-name="Request#setHeader"><a href="Request.html#setHeader">setHeader</a></li>
+            
+                <li data-name="Request#transport"><a href="Request.html#transport">transport</a></li>
+            
+                <li data-name="Request#usingMethod"><a href="Request.html#usingMethod">usingMethod</a></li>
+            
+                <li data-name="Request#validate"><a href="Request.html#validate">validate</a></li>
+            
+                <li data-name="Request#validation"><a href="Request.html#validation">validation</a></li>
+            
+                <li data-name="Request#validator"><a href="Request.html#validator">validator</a></li>
+            
+                <li data-name="Request#withValidation"><a href="Request.html#withValidation">withValidation</a></li>
+            
+                <li data-name="Request#withValidation"><a href="Request.html#withValidation">withValidation</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="RequestMap">
+            <span class="title">
+                <a href="RequestMap.html">RequestMap</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="RequestMap#_map"><a href="RequestMap.html#_map">_map</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="RequestMap#_configure"><a href="RequestMap.html#_configure">_configure</a></li>
+            
+                <li data-name="RequestMap#create"><a href="RequestMap.html#create">create</a></li>
+            
+                <li data-name="RequestMap#factory"><a href="RequestMap.html#factory">factory</a></li>
+            
+                <li data-name="RequestMap#forEach"><a href="RequestMap.html#forEach">forEach</a></li>
+            
+                <li data-name="RequestMap#map"><a href="RequestMap.html#map">map</a></li>
+            
+                <li data-name="RequestMap#method"><a href="RequestMap.html#method">method</a></li>
+            
+                <li data-name="RequestMap#route"><a href="RequestMap.html#route">route</a></li>
+            
+                <li data-name="RequestMap#validation"><a href="RequestMap.html#validation">validation</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="ResidentRepository">
+            <span class="title">
+                <a href="ResidentRepository.html">ResidentRepository</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="ResidentRepository#_items"><a href="ResidentRepository.html#_items">_items</a></li>
+            
+                <li data-name="ResidentRepository#_keyName"><a href="ResidentRepository.html#_keyName">_keyName</a></li>
+            
+                <li data-name="ResidentRepository#_nextKey"><a href="ResidentRepository.html#_nextKey">_nextKey</a></li>
+            
+                <li data-name="ResidentRepository#_type"><a href="ResidentRepository.html#_type">_type</a></li>
+            
+                <li data-name="ResidentRepository#keyName"><a href="ResidentRepository.html#keyName">keyName</a></li>
+            
+                <li data-name="ResidentRepository#type"><a href="ResidentRepository.html#type">type</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="ResidentRepository#_avgInternal"><a href="ResidentRepository.html#_avgInternal">_avgInternal</a></li>
+            
+                <li data-name="ResidentRepository#_consumeDocument"><a href="ResidentRepository.html#_consumeDocument">_consumeDocument</a></li>
+            
+                <li data-name="ResidentRepository#_countInternal"><a href="ResidentRepository.html#_countInternal">_countInternal</a></li>
+            
+                <li data-name="ResidentRepository#_deleteInternal"><a href="ResidentRepository.html#_deleteInternal">_deleteInternal</a></li>
+            
+                <li data-name="ResidentRepository#_devirtualizeCondition"><a href="ResidentRepository.html#_devirtualizeCondition">_devirtualizeCondition</a></li>
+            
+                <li data-name="ResidentRepository#_devirtualizeOrder"><a href="ResidentRepository.html#_devirtualizeOrder">_devirtualizeOrder</a></li>
+            
+                <li data-name="ResidentRepository#_devirtualizeQuery"><a href="ResidentRepository.html#_devirtualizeQuery">_devirtualizeQuery</a></li>
+            
+                <li data-name="ResidentRepository#_existsInternal"><a href="ResidentRepository.html#_existsInternal">_existsInternal</a></li>
+            
+                <li data-name="ResidentRepository#_findIndex"><a href="ResidentRepository.html#_findIndex">_findIndex</a></li>
+            
+                <li data-name="ResidentRepository#_getInternal"><a href="ResidentRepository.html#_getInternal">_getInternal</a></li>
+            
+                <li data-name="ResidentRepository#_getNextKey"><a href="ResidentRepository.html#_getNextKey">_getNextKey</a></li>
+            
+                <li data-name="ResidentRepository#_makeCollection"><a href="ResidentRepository.html#_makeCollection">_makeCollection</a></li>
+            
+                <li data-name="ResidentRepository#_makeDocument"><a href="ResidentRepository.html#_makeDocument">_makeDocument</a></li>
+            
+                <li data-name="ResidentRepository#_maxInternal"><a href="ResidentRepository.html#_maxInternal">_maxInternal</a></li>
+            
+                <li data-name="ResidentRepository#_minInternal"><a href="ResidentRepository.html#_minInternal">_minInternal</a></li>
+            
+                <li data-name="ResidentRepository#_normalizeQuery"><a href="ResidentRepository.html#_normalizeQuery">_normalizeQuery</a></li>
+            
+                <li data-name="ResidentRepository#_pickValues"><a href="ResidentRepository.html#_pickValues">_pickValues</a></li>
+            
+                <li data-name="ResidentRepository#_searchInternal"><a href="ResidentRepository.html#_searchInternal">_searchInternal</a></li>
+            
+                <li data-name="ResidentRepository#_storeInternal"><a href="ResidentRepository.html#_storeInternal">_storeInternal</a></li>
+            
+                <li data-name="ResidentRepository#_sumInternal"><a href="ResidentRepository.html#_sumInternal">_sumInternal</a></li>
+            
+                <li data-name="ResidentRepository#_updateDocument"><a href="ResidentRepository.html#_updateDocument">_updateDocument</a></li>
+            
+                <li data-name="ResidentRepository#_updateNextKey"><a href="ResidentRepository.html#_updateNextKey">_updateNextKey</a></li>
+            
+                <li data-name="ResidentRepository#attachTo"><a href="ResidentRepository.html#attachTo">attachTo</a></li>
+            
+                <li data-name="ResidentRepository#avg"><a href="ResidentRepository.html#avg">avg</a></li>
+            
+                <li data-name="ResidentRepository#count"><a href="ResidentRepository.html#count">count</a></li>
+            
+                <li data-name="ResidentRepository#delete"><a href="ResidentRepository.html#delete">delete</a></li>
+            
+                <li data-name="ResidentRepository#exists"><a href="ResidentRepository.html#exists">exists</a></li>
+            
+                <li data-name="ResidentRepository#finalizeQuery"><a href="ResidentRepository.html#finalizeQuery">finalizeQuery</a></li>
+            
+                <li data-name="ResidentRepository#get"><a href="ResidentRepository.html#get">get</a></li>
+            
+                <li data-name="ResidentRepository#max"><a href="ResidentRepository.html#max">max</a></li>
+            
+                <li data-name="ResidentRepository#min"><a href="ResidentRepository.html#min">min</a></li>
+            
+                <li data-name="ResidentRepository#newDocument"><a href="ResidentRepository.html#newDocument">newDocument</a></li>
+            
+                <li data-name="ResidentRepository#purge"><a href="ResidentRepository.html#purge">purge</a></li>
+            
+                <li data-name="ResidentRepository#search"><a href="ResidentRepository.html#search">search</a></li>
+            
+                <li data-name="ResidentRepository#store"><a href="ResidentRepository.html#store">store</a></li>
+            
+                <li data-name="ResidentRepository#sum"><a href="ResidentRepository.html#sum">sum</a></li>
+            
+                <li data-name="ResidentRepository#virtualFilters"><a href="ResidentRepository.html#virtualFilters">virtualFilters</a></li>
+            
+                <li data-name="ResidentRepository#virtualSorters"><a href="ResidentRepository.html#virtualSorters">virtualSorters</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Response">
+            <span class="title">
+                <a href="Response.html">Response</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Response#_body"><a href="Response.html#_body">_body</a></li>
+            
+                <li data-name="Response#_headers"><a href="Response.html#_headers">_headers</a></li>
+            
+                <li data-name="Response#_message"><a href="Response.html#_message">_message</a></li>
+            
+                <li data-name="Response#_status"><a href="Response.html#_status">_status</a></li>
+            
+                <li data-name="Response#body"><a href="Response.html#body">body</a></li>
+            
+                <li data-name="Response#headers"><a href="Response.html#headers">headers</a></li>
+            
+                <li data-name="Response#message"><a href="Response.html#message">message</a></li>
+            
+                <li data-name="Response#status"><a href="Response.html#status">status</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Response#get"><a href="Response.html#get">get</a></li>
+            
+                <li data-name="Response#getHeader"><a href="Response.html#getHeader">getHeader</a></li>
+            
+                <li data-name="Response#setHeader"><a href="Response.html#setHeader">setHeader</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="RestRepository">
+            <span class="title">
+                <a href="RestRepository.html">RestRepository</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="RestRepository#_keyName"><a href="RestRepository.html#_keyName">_keyName</a></li>
+            
+                <li data-name="RestRepository#_mapping"><a href="RestRepository.html#_mapping">_mapping</a></li>
+            
+                <li data-name="RestRepository#_type"><a href="RestRepository.html#_type">_type</a></li>
+            
+                <li data-name="RestRepository#keyName"><a href="RestRepository.html#keyName">keyName</a></li>
+            
+                <li data-name="RestRepository#type"><a href="RestRepository.html#type">type</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="RestRepository#_avgInternal"><a href="RestRepository.html#_avgInternal">_avgInternal</a></li>
+            
+                <li data-name="RestRepository#_consumeDocument"><a href="RestRepository.html#_consumeDocument">_consumeDocument</a></li>
+            
+                <li data-name="RestRepository#_countInternal"><a href="RestRepository.html#_countInternal">_countInternal</a></li>
+            
+                <li data-name="RestRepository#_deleteInternal"><a href="RestRepository.html#_deleteInternal">_deleteInternal</a></li>
+            
+                <li data-name="RestRepository#_devirtualizeCondition"><a href="RestRepository.html#_devirtualizeCondition">_devirtualizeCondition</a></li>
+            
+                <li data-name="RestRepository#_devirtualizeOrder"><a href="RestRepository.html#_devirtualizeOrder">_devirtualizeOrder</a></li>
+            
+                <li data-name="RestRepository#_devirtualizeQuery"><a href="RestRepository.html#_devirtualizeQuery">_devirtualizeQuery</a></li>
+            
+                <li data-name="RestRepository#_existsInternal"><a href="RestRepository.html#_existsInternal">_existsInternal</a></li>
+            
+                <li data-name="RestRepository#_getInternal"><a href="RestRepository.html#_getInternal">_getInternal</a></li>
+            
+                <li data-name="RestRepository#_makeCollection"><a href="RestRepository.html#_makeCollection">_makeCollection</a></li>
+            
+                <li data-name="RestRepository#_makeDocument"><a href="RestRepository.html#_makeDocument">_makeDocument</a></li>
+            
+                <li data-name="RestRepository#_maxInternal"><a href="RestRepository.html#_maxInternal">_maxInternal</a></li>
+            
+                <li data-name="RestRepository#_minInternal"><a href="RestRepository.html#_minInternal">_minInternal</a></li>
+            
+                <li data-name="RestRepository#_normalizeQuery"><a href="RestRepository.html#_normalizeQuery">_normalizeQuery</a></li>
+            
+                <li data-name="RestRepository#_request"><a href="RestRepository.html#_request">_request</a></li>
+            
+                <li data-name="RestRepository#_searchInternal"><a href="RestRepository.html#_searchInternal">_searchInternal</a></li>
+            
+                <li data-name="RestRepository#_serializeQuery"><a href="RestRepository.html#_serializeQuery">_serializeQuery</a></li>
+            
+                <li data-name="RestRepository#_storeInternal"><a href="RestRepository.html#_storeInternal">_storeInternal</a></li>
+            
+                <li data-name="RestRepository#_sumInternal"><a href="RestRepository.html#_sumInternal">_sumInternal</a></li>
+            
+                <li data-name="RestRepository#_updateDocument"><a href="RestRepository.html#_updateDocument">_updateDocument</a></li>
+            
+                <li data-name="RestRepository#avg"><a href="RestRepository.html#avg">avg</a></li>
+            
+                <li data-name="RestRepository#count"><a href="RestRepository.html#count">count</a></li>
+            
+                <li data-name="RestRepository#delete"><a href="RestRepository.html#delete">delete</a></li>
+            
+                <li data-name="RestRepository#exists"><a href="RestRepository.html#exists">exists</a></li>
+            
+                <li data-name="RestRepository#finalizeQuery"><a href="RestRepository.html#finalizeQuery">finalizeQuery</a></li>
+            
+                <li data-name="RestRepository#get"><a href="RestRepository.html#get">get</a></li>
+            
+                <li data-name="RestRepository#max"><a href="RestRepository.html#max">max</a></li>
+            
+                <li data-name="RestRepository#min"><a href="RestRepository.html#min">min</a></li>
+            
+                <li data-name="RestRepository#newDocument"><a href="RestRepository.html#newDocument">newDocument</a></li>
+            
+                <li data-name="RestRepository#search"><a href="RestRepository.html#search">search</a></li>
+            
+                <li data-name="RestRepository#store"><a href="RestRepository.html#store">store</a></li>
+            
+                <li data-name="RestRepository#sum"><a href="RestRepository.html#sum">sum</a></li>
+            
+                <li data-name="RestRepository#virtualFilters"><a href="RestRepository.html#virtualFilters">virtualFilters</a></li>
+            
+                <li data-name="RestRepository#virtualSorters"><a href="RestRepository.html#virtualSorters">virtualSorters</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Rule">
+            <span class="title">
+                <a href="Rule.html">Rule</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Rule#_options"><a href="Rule.html#_options">_options</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Rule#validate"><a href="Rule.html#validate">validate</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="SerializedQuery">
+            <span class="title">
+                <a href="SerializedQuery.html">SerializedQuery</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="SerializedQuery#_serializeCondition"><a href="SerializedQuery.html#_serializeCondition">_serializeCondition</a></li>
+            
+                <li data-name="SerializedQuery#_serializeCondition"><a href="SerializedQuery.html#_serializeCondition">_serializeCondition</a></li>
+            
+                <li data-name="SerializedQuery#_serializeGroup"><a href="SerializedQuery.html#_serializeGroup">_serializeGroup</a></li>
+            
+                <li data-name="SerializedQuery#_serializeGroup"><a href="SerializedQuery.html#_serializeGroup">_serializeGroup</a></li>
+            
+                <li data-name="SerializedQuery#_serializeOrder"><a href="SerializedQuery.html#_serializeOrder">_serializeOrder</a></li>
+            
+                <li data-name="SerializedQuery#_serializeOrder"><a href="SerializedQuery.html#_serializeOrder">_serializeOrder</a></li>
+            
+                <li data-name="SerializedQuery#_serializeScopes"><a href="SerializedQuery.html#_serializeScopes">_serializeScopes</a></li>
+            
+                <li data-name="SerializedQuery#_unserializeCondition"><a href="SerializedQuery.html#_unserializeCondition">_unserializeCondition</a></li>
+            
+                <li data-name="SerializedQuery#_unserializeCondition"><a href="SerializedQuery.html#_unserializeCondition">_unserializeCondition</a></li>
+            
+                <li data-name="SerializedQuery#_unserializeGroup"><a href="SerializedQuery.html#_unserializeGroup">_unserializeGroup</a></li>
+            
+                <li data-name="SerializedQuery#_unserializeGroup"><a href="SerializedQuery.html#_unserializeGroup">_unserializeGroup</a></li>
+            
+                <li data-name="SerializedQuery#_unserializeOrder"><a href="SerializedQuery.html#_unserializeOrder">_unserializeOrder</a></li>
+            
+                <li data-name="SerializedQuery#_unserializeOrder"><a href="SerializedQuery.html#_unserializeOrder">_unserializeOrder</a></li>
+            
+                <li data-name="SerializedQuery#_unserializeScopes"><a href="SerializedQuery.html#_unserializeScopes">_unserializeScopes</a></li>
+            
+                <li data-name="SerializedQuery#export"><a href="SerializedQuery.html#export">export</a></li>
+            
+                <li data-name="SerializedQuery#instantiate"><a href="SerializedQuery.html#instantiate">instantiate</a></li>
+            
+                <li data-name="SerializedQuery#toObject"><a href="SerializedQuery.html#toObject">toObject</a></li>
+            
+                <li data-name="SerializedQuery#toQuery"><a href="SerializedQuery.html#toQuery">toQuery</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="SerializedQuery">
+            <span class="title">
+                <a href="SerializedQuery.html">SerializedQuery</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="SerializedQuery#_serializeCondition"><a href="SerializedQuery.html#_serializeCondition">_serializeCondition</a></li>
+            
+                <li data-name="SerializedQuery#_serializeCondition"><a href="SerializedQuery.html#_serializeCondition">_serializeCondition</a></li>
+            
+                <li data-name="SerializedQuery#_serializeGroup"><a href="SerializedQuery.html#_serializeGroup">_serializeGroup</a></li>
+            
+                <li data-name="SerializedQuery#_serializeGroup"><a href="SerializedQuery.html#_serializeGroup">_serializeGroup</a></li>
+            
+                <li data-name="SerializedQuery#_serializeOrder"><a href="SerializedQuery.html#_serializeOrder">_serializeOrder</a></li>
+            
+                <li data-name="SerializedQuery#_serializeOrder"><a href="SerializedQuery.html#_serializeOrder">_serializeOrder</a></li>
+            
+                <li data-name="SerializedQuery#_serializeScopes"><a href="SerializedQuery.html#_serializeScopes">_serializeScopes</a></li>
+            
+                <li data-name="SerializedQuery#_unserializeCondition"><a href="SerializedQuery.html#_unserializeCondition">_unserializeCondition</a></li>
+            
+                <li data-name="SerializedQuery#_unserializeCondition"><a href="SerializedQuery.html#_unserializeCondition">_unserializeCondition</a></li>
+            
+                <li data-name="SerializedQuery#_unserializeGroup"><a href="SerializedQuery.html#_unserializeGroup">_unserializeGroup</a></li>
+            
+                <li data-name="SerializedQuery#_unserializeGroup"><a href="SerializedQuery.html#_unserializeGroup">_unserializeGroup</a></li>
+            
+                <li data-name="SerializedQuery#_unserializeOrder"><a href="SerializedQuery.html#_unserializeOrder">_unserializeOrder</a></li>
+            
+                <li data-name="SerializedQuery#_unserializeOrder"><a href="SerializedQuery.html#_unserializeOrder">_unserializeOrder</a></li>
+            
+                <li data-name="SerializedQuery#_unserializeScopes"><a href="SerializedQuery.html#_unserializeScopes">_unserializeScopes</a></li>
+            
+                <li data-name="SerializedQuery#export"><a href="SerializedQuery.html#export">export</a></li>
+            
+                <li data-name="SerializedQuery#instantiate"><a href="SerializedQuery.html#instantiate">instantiate</a></li>
+            
+                <li data-name="SerializedQuery#toObject"><a href="SerializedQuery.html#toObject">toObject</a></li>
+            
+                <li data-name="SerializedQuery#toQuery"><a href="SerializedQuery.html#toQuery">toQuery</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="SortOrder">
+            <span class="title">
+                <a href="SortOrder.html">SortOrder</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="SortOrder#_dir"><a href="SortOrder.html#_dir">_dir</a></li>
+            
+                <li data-name="SortOrder#_dir"><a href="SortOrder.html#_dir">_dir</a></li>
+            
+                <li data-name="SortOrder#_prop"><a href="SortOrder.html#_prop">_prop</a></li>
+            
+                <li data-name="SortOrder#_prop"><a href="SortOrder.html#_prop">_prop</a></li>
+            
+                <li data-name="SortOrder#direction"><a href="SortOrder.html#direction">direction</a></li>
+            
+                <li data-name="SortOrder#direction"><a href="SortOrder.html#direction">direction</a></li>
+            
+                <li data-name="SortOrder#isAscending"><a href="SortOrder.html#isAscending">isAscending</a></li>
+            
+                <li data-name="SortOrder#isAscending"><a href="SortOrder.html#isAscending">isAscending</a></li>
+            
+                <li data-name="SortOrder#isDescending"><a href="SortOrder.html#isDescending">isDescending</a></li>
+            
+                <li data-name="SortOrder#isDescending"><a href="SortOrder.html#isDescending">isDescending</a></li>
+            
+                <li data-name="SortOrder#prop"><a href="SortOrder.html#prop">prop</a></li>
+            
+                <li data-name="SortOrder#prop"><a href="SortOrder.html#prop">prop</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="SortOrder">
+            <span class="title">
+                <a href="SortOrder.html">SortOrder</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="SortOrder#_dir"><a href="SortOrder.html#_dir">_dir</a></li>
+            
+                <li data-name="SortOrder#_dir"><a href="SortOrder.html#_dir">_dir</a></li>
+            
+                <li data-name="SortOrder#_prop"><a href="SortOrder.html#_prop">_prop</a></li>
+            
+                <li data-name="SortOrder#_prop"><a href="SortOrder.html#_prop">_prop</a></li>
+            
+                <li data-name="SortOrder#direction"><a href="SortOrder.html#direction">direction</a></li>
+            
+                <li data-name="SortOrder#direction"><a href="SortOrder.html#direction">direction</a></li>
+            
+                <li data-name="SortOrder#isAscending"><a href="SortOrder.html#isAscending">isAscending</a></li>
+            
+                <li data-name="SortOrder#isAscending"><a href="SortOrder.html#isAscending">isAscending</a></li>
+            
+                <li data-name="SortOrder#isDescending"><a href="SortOrder.html#isDescending">isDescending</a></li>
+            
+                <li data-name="SortOrder#isDescending"><a href="SortOrder.html#isDescending">isDescending</a></li>
+            
+                <li data-name="SortOrder#prop"><a href="SortOrder.html#prop">prop</a></li>
+            
+                <li data-name="SortOrder#prop"><a href="SortOrder.html#prop">prop</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="SqlCondition">
+            <span class="title">
+                <a href="SqlCondition.html">SqlCondition</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="SqlCondition#_builder"><a href="SqlCondition.html#_builder">_builder</a></li>
+            
+                <li data-name="SqlCondition#_fragment"><a href="SqlCondition.html#_fragment">_fragment</a></li>
+            
+                <li data-name="SqlCondition#_logic"><a href="SqlCondition.html#_logic">_logic</a></li>
+            
+                <li data-name="SqlCondition#_negation"><a href="SqlCondition.html#_negation">_negation</a></li>
+            
+                <li data-name="SqlCondition#_wheres"><a href="SqlCondition.html#_wheres">_wheres</a></li>
+            
+                <li data-name="SqlCondition#isEmpty"><a href="SqlCondition.html#isEmpty">isEmpty</a></li>
+            
+                <li data-name="SqlCondition#wheres"><a href="SqlCondition.html#wheres">wheres</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="SqlCondition#_addOrCase"><a href="SqlCondition.html#_addOrCase">_addOrCase</a></li>
+            
+                <li data-name="SqlCondition#_and"><a href="SqlCondition.html#_and">_and</a></li>
+            
+                <li data-name="SqlCondition#_append"><a href="SqlCondition.html#_append">_append</a></li>
+            
+                <li data-name="SqlCondition#_appendExpr"><a href="SqlCondition.html#_appendExpr">_appendExpr</a></li>
+            
+                <li data-name="SqlCondition#_chain"><a href="SqlCondition.html#_chain">_chain</a></li>
+            
+                <li data-name="SqlCondition#_enclose"><a href="SqlCondition.html#_enclose">_enclose</a></li>
+            
+                <li data-name="SqlCondition#_lastOr"><a href="SqlCondition.html#_lastOr">_lastOr</a></li>
+            
+                <li data-name="SqlCondition#_makeAssertion"><a href="SqlCondition.html#_makeAssertion">_makeAssertion</a></li>
+            
+                <li data-name="SqlCondition#_makeSubquery"><a href="SqlCondition.html#_makeSubquery">_makeSubquery</a></li>
+            
+                <li data-name="SqlCondition#_not"><a href="SqlCondition.html#_not">_not</a></li>
+            
+                <li data-name="SqlCondition#_or"><a href="SqlCondition.html#_or">_or</a></li>
+            
+                <li data-name="SqlCondition#_pushAssertion"><a href="SqlCondition.html#_pushAssertion">_pushAssertion</a></li>
+            
+                <li data-name="SqlCondition#and"><a href="SqlCondition.html#and">and</a></li>
+            
+                <li data-name="SqlCondition#between"><a href="SqlCondition.html#between">between</a></li>
+            
+                <li data-name="SqlCondition#clone"><a href="SqlCondition.html#clone">clone</a></li>
+            
+                <li data-name="SqlCondition#contains"><a href="SqlCondition.html#contains">contains</a></li>
+            
+                <li data-name="SqlCondition#copy"><a href="SqlCondition.html#copy">copy</a></li>
+            
+                <li data-name="SqlCondition#doesntHave"><a href="SqlCondition.html#doesntHave">doesntHave</a></li>
+            
+                <li data-name="SqlCondition#eq"><a href="SqlCondition.html#eq">eq</a></li>
+            
+                <li data-name="SqlCondition#exists"><a href="SqlCondition.html#exists">exists</a></li>
+            
+                <li data-name="SqlCondition#gt"><a href="SqlCondition.html#gt">gt</a></li>
+            
+                <li data-name="SqlCondition#gte"><a href="SqlCondition.html#gte">gte</a></li>
+            
+                <li data-name="SqlCondition#has"><a href="SqlCondition.html#has">has</a></li>
+            
+                <li data-name="SqlCondition#in"><a href="SqlCondition.html#in">in</a></li>
+            
+                <li data-name="SqlCondition#isNotNull"><a href="SqlCondition.html#isNotNull">isNotNull</a></li>
+            
+                <li data-name="SqlCondition#isNull"><a href="SqlCondition.html#isNull">isNull</a></li>
+            
+                <li data-name="SqlCondition#json"><a href="SqlCondition.html#json">json</a></li>
+            
+                <li data-name="SqlCondition#lt"><a href="SqlCondition.html#lt">lt</a></li>
+            
+                <li data-name="SqlCondition#lte"><a href="SqlCondition.html#lte">lte</a></li>
+            
+                <li data-name="SqlCondition#neq"><a href="SqlCondition.html#neq">neq</a></li>
+            
+                <li data-name="SqlCondition#not"><a href="SqlCondition.html#not">not</a></li>
+            
+                <li data-name="SqlCondition#notBetween"><a href="SqlCondition.html#notBetween">notBetween</a></li>
+            
+                <li data-name="SqlCondition#notExists"><a href="SqlCondition.html#notExists">notExists</a></li>
+            
+                <li data-name="SqlCondition#notIn"><a href="SqlCondition.html#notIn">notIn</a></li>
+            
+                <li data-name="SqlCondition#or"><a href="SqlCondition.html#or">or</a></li>
+            
+                <li data-name="SqlCondition#quote"><a href="SqlCondition.html#quote">quote</a></li>
+            
+                <li data-name="SqlCondition#raw"><a href="SqlCondition.html#raw">raw</a></li>
+            
+                <li data-name="SqlCondition#startsWith"><a href="SqlCondition.html#startsWith">startsWith</a></li>
+            
+                <li data-name="SqlCondition#where"><a href="SqlCondition.html#where">where</a></li>
+            
+                <li data-name="SqlCondition#whereColumn"><a href="SqlCondition.html#whereColumn">whereColumn</a></li>
+            
+                <li data-name="SqlCondition#whereJson"><a href="SqlCondition.html#whereJson">whereJson</a></li>
+            
+                <li data-name="SqlCondition#whereRaw"><a href="SqlCondition.html#whereRaw">whereRaw</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="SqlFragment">
+            <span class="title">
+                <a href="SqlFragment.html">SqlFragment</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="SqlFragment#_bindings"><a href="SqlFragment.html#_bindings">_bindings</a></li>
+            
+                <li data-name="SqlFragment#_parts"><a href="SqlFragment.html#_parts">_parts</a></li>
+            
+                <li data-name="SqlFragment#bindings"><a href="SqlFragment.html#bindings">bindings</a></li>
+            
+                <li data-name="SqlFragment#size"><a href="SqlFragment.html#size">size</a></li>
+            
+                <li data-name="SqlFragment#sql"><a href="SqlFragment.html#sql">sql</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="SqlFragment#add"><a href="SqlFragment.html#add">add</a></li>
+            
+                <li data-name="SqlFragment#addBingings"><a href="SqlFragment.html#addBingings">addBingings</a></li>
+            
+                <li data-name="SqlFragment#join"><a href="SqlFragment.html#join">join</a></li>
+            
+                <li data-name="SqlFragment#merge"><a href="SqlFragment.html#merge">merge</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="SqlRepository">
+            <span class="title">
+                <a href="SqlRepository.html">SqlRepository</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="SqlRepository#_aggregate"><a href="SqlRepository.html#_aggregate">_aggregate</a></li>
+            
+                <li data-name="SqlRepository#_avgInternal"><a href="SqlRepository.html#_avgInternal">_avgInternal</a></li>
+            
+                <li data-name="SqlRepository#_buildAssertion"><a href="SqlRepository.html#_buildAssertion">_buildAssertion</a></li>
+            
+                <li data-name="SqlRepository#_buildCondition"><a href="SqlRepository.html#_buildCondition">_buildCondition</a></li>
+            
+                <li data-name="SqlRepository#_buildExpression"><a href="SqlRepository.html#_buildExpression">_buildExpression</a></li>
+            
+                <li data-name="SqlRepository#_countInternal"><a href="SqlRepository.html#_countInternal">_countInternal</a></li>
+            
+                <li data-name="SqlRepository#_deleteInternal"><a href="SqlRepository.html#_deleteInternal">_deleteInternal</a></li>
+            
+                <li data-name="SqlRepository#_existsInternal"><a href="SqlRepository.html#_existsInternal">_existsInternal</a></li>
+            
+                <li data-name="SqlRepository#_getInternal"><a href="SqlRepository.html#_getInternal">_getInternal</a></li>
+            
+                <li data-name="SqlRepository#_maxInternal"><a href="SqlRepository.html#_maxInternal">_maxInternal</a></li>
+            
+                <li data-name="SqlRepository#_minInternal"><a href="SqlRepository.html#_minInternal">_minInternal</a></li>
+            
+                <li data-name="SqlRepository#_performInsert"><a href="SqlRepository.html#_performInsert">_performInsert</a></li>
+            
+                <li data-name="SqlRepository#_performUpdate"><a href="SqlRepository.html#_performUpdate">_performUpdate</a></li>
+            
+                <li data-name="SqlRepository#_searchInternal"><a href="SqlRepository.html#_searchInternal">_searchInternal</a></li>
+            
+                <li data-name="SqlRepository#_storeInternal"><a href="SqlRepository.html#_storeInternal">_storeInternal</a></li>
+            
+                <li data-name="SqlRepository#_sumInternal"><a href="SqlRepository.html#_sumInternal">_sumInternal</a></li>
+            
+                <li data-name="SqlRepository#_toSqlBuilder"><a href="SqlRepository.html#_toSqlBuilder">_toSqlBuilder</a></li>
+            
+                <li data-name="SqlRepository#_toSqlInput"><a href="SqlRepository.html#_toSqlInput">_toSqlInput</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="TypedAttribute">
+            <span class="title">
+                <a href="TypedAttribute.html">TypedAttribute</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="TypedAttribute#_mutator"><a href="TypedAttribute.html#_mutator">_mutator</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="TypedAttribute#_makeMutator"><a href="TypedAttribute.html#_makeMutator">_makeMutator</a></li>
+            
+                <li data-name="TypedAttribute#set"><a href="TypedAttribute.html#set">set</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="TypedCollection">
+            <span class="title">
+                <a href="TypedCollection.html">TypedCollection</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="TypedCollection#_items"><a href="TypedCollection.html#_items">_items</a></li>
+            
+                <li data-name="TypedCollection#_mutator"><a href="TypedCollection.html#_mutator">_mutator</a></li>
+            
+                <li data-name="TypedCollection#_type"><a href="TypedCollection.html#_type">_type</a></li>
+            
+                <li data-name="TypedCollection#length"><a href="TypedCollection.html#length">length</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="TypedCollection#all"><a href="TypedCollection.html#all">all</a></li>
+            
+                <li data-name="TypedCollection#clear"><a href="TypedCollection.html#clear">clear</a></li>
+            
+                <li data-name="TypedCollection#clone"><a href="TypedCollection.html#clone">clone</a></li>
+            
+                <li data-name="TypedCollection#concat"><a href="TypedCollection.html#concat">concat</a></li>
+            
+                <li data-name="TypedCollection#difference"><a href="TypedCollection.html#difference">difference</a></li>
+            
+                <li data-name="TypedCollection#distinct"><a href="TypedCollection.html#distinct">distinct</a></li>
+            
+                <li data-name="TypedCollection#every"><a href="TypedCollection.html#every">every</a></li>
+            
+                <li data-name="TypedCollection#filter"><a href="TypedCollection.html#filter">filter</a></li>
+            
+                <li data-name="TypedCollection#find"><a href="TypedCollection.html#find">find</a></li>
+            
+                <li data-name="TypedCollection#findIndex"><a href="TypedCollection.html#findIndex">findIndex</a></li>
+            
+                <li data-name="TypedCollection#first"><a href="TypedCollection.html#first">first</a></li>
+            
+                <li data-name="TypedCollection#forEach"><a href="TypedCollection.html#forEach">forEach</a></li>
+            
+                <li data-name="TypedCollection#get"><a href="TypedCollection.html#get">get</a></li>
+            
+                <li data-name="TypedCollection#group"><a href="TypedCollection.html#group">group</a></li>
+            
+                <li data-name="TypedCollection#indexOf"><a href="TypedCollection.html#indexOf">indexOf</a></li>
+            
+                <li data-name="TypedCollection#intersect"><a href="TypedCollection.html#intersect">intersect</a></li>
+            
+                <li data-name="TypedCollection#last"><a href="TypedCollection.html#last">last</a></li>
+            
+                <li data-name="TypedCollection#map"><a href="TypedCollection.html#map">map</a></li>
+            
+                <li data-name="TypedCollection#newCollection"><a href="TypedCollection.html#newCollection">newCollection</a></li>
+            
+                <li data-name="TypedCollection#pop"><a href="TypedCollection.html#pop">pop</a></li>
+            
+                <li data-name="TypedCollection#push"><a href="TypedCollection.html#push">push</a></li>
+            
+                <li data-name="TypedCollection#reduce"><a href="TypedCollection.html#reduce">reduce</a></li>
+            
+                <li data-name="TypedCollection#reduceRight"><a href="TypedCollection.html#reduceRight">reduceRight</a></li>
+            
+                <li data-name="TypedCollection#remove"><a href="TypedCollection.html#remove">remove</a></li>
+            
+                <li data-name="TypedCollection#removeIndex"><a href="TypedCollection.html#removeIndex">removeIndex</a></li>
+            
+                <li data-name="TypedCollection#set"><a href="TypedCollection.html#set">set</a></li>
+            
+                <li data-name="TypedCollection#shift"><a href="TypedCollection.html#shift">shift</a></li>
+            
+                <li data-name="TypedCollection#slice"><a href="TypedCollection.html#slice">slice</a></li>
+            
+                <li data-name="TypedCollection#some"><a href="TypedCollection.html#some">some</a></li>
+            
+                <li data-name="TypedCollection#sort"><a href="TypedCollection.html#sort">sort</a></li>
+            
+                <li data-name="TypedCollection#splice"><a href="TypedCollection.html#splice">splice</a></li>
+            
+                <li data-name="TypedCollection#unshift"><a href="TypedCollection.html#unshift">unshift</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="UnknownIdentityError">
+            <span class="title">
+                <a href="UnknownIdentityError.html">UnknownIdentityError</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="ValidationError">
+            <span class="title">
+                <a href="ValidationError.html">ValidationError</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="ValidationError#_errors"><a href="ValidationError.html#_errors">_errors</a></li>
+            
+                <li data-name="ValidationError#errors"><a href="ValidationError.html#errors">errors</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="ValidationError#getErrors"><a href="ValidationError.html#getErrors">getErrors</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Validator">
+            <span class="title">
+                <a href="Validator.html">Validator</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Validator#_chain"><a href="Validator.html#_chain">_chain</a></li>
+            
+                <li data-name="Validator#_every"><a href="Validator.html#_every">_every</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Validator#_join"><a href="Validator.html#_join">_join</a></li>
+            
+                <li data-name="Validator#after"><a href="Validator.html#after">after</a></li>
+            
+                <li data-name="Validator#and"><a href="Validator.html#and">and</a></li>
+            
+                <li data-name="Validator#before"><a href="Validator.html#before">before</a></li>
+            
+                <li data-name="Validator#between"><a href="Validator.html#between">between</a></li>
+            
+                <li data-name="Validator#custom"><a href="Validator.html#custom">custom</a></li>
+            
+                <li data-name="Validator#date"><a href="Validator.html#date">date</a></li>
+            
+                <li data-name="Validator#datetime"><a href="Validator.html#datetime">datetime</a></li>
+            
+                <li data-name="Validator#each"><a href="Validator.html#each">each</a></li>
+            
+                <li data-name="Validator#email"><a href="Validator.html#email">email</a></li>
+            
+                <li data-name="Validator#equals"><a href="Validator.html#equals">equals</a></li>
+            
+                <li data-name="Validator#except"><a href="Validator.html#except">except</a></li>
+            
+                <li data-name="Validator#format"><a href="Validator.html#format">format</a></li>
+            
+                <li data-name="Validator#in"><a href="Validator.html#in">in</a></li>
+            
+                <li data-name="Validator#integer"><a href="Validator.html#integer">integer</a></li>
+            
+                <li data-name="Validator#length"><a href="Validator.html#length">length</a></li>
+            
+                <li data-name="Validator#max"><a href="Validator.html#max">max</a></li>
+            
+                <li data-name="Validator#min"><a href="Validator.html#min">min</a></li>
+            
+                <li data-name="Validator#nested"><a href="Validator.html#nested">nested</a></li>
+            
+                <li data-name="Validator#newConditionalValidator"><a href="Validator.html#newConditionalValidator">newConditionalValidator</a></li>
+            
+                <li data-name="Validator#newValidator"><a href="Validator.html#newValidator">newValidator</a></li>
+            
+                <li data-name="Validator#number"><a href="Validator.html#number">number</a></li>
+            
+                <li data-name="Validator#or"><a href="Validator.html#or">or</a></li>
+            
+                <li data-name="Validator#present"><a href="Validator.html#present">present</a></li>
+            
+                <li data-name="Validator#required"><a href="Validator.html#required">required</a></li>
+            
+                <li data-name="Validator#type"><a href="Validator.html#type">type</a></li>
+            
+                <li data-name="Validator#url"><a href="Validator.html#url">url</a></li>
+            
+                <li data-name="Validator#validate"><a href="Validator.html#validate">validate</a></li>
+            
+                <li data-name="Validator#when"><a href="Validator.html#when">when</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="Webtoken">
+            <span class="title">
+                <a href="Webtoken.html">Webtoken</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="Webtoken#_keyPair"><a href="Webtoken.html#_keyPair">_keyPair</a></li>
+            
+                <li data-name="Webtoken#_password"><a href="Webtoken.html#_password">_password</a></li>
+            
+                <li data-name="Webtoken#_ttl"><a href="Webtoken.html#_ttl">_ttl</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="Webtoken#_loadKeypair"><a href="Webtoken.html#_loadKeypair">_loadKeypair</a></li>
+            
+                <li data-name="Webtoken#_sign"><a href="Webtoken.html#_sign">_sign</a></li>
+            
+                <li data-name="Webtoken#_verify"><a href="Webtoken.html#_verify">_verify</a></li>
+            
+                <li data-name="Webtoken#sign"><a href="Webtoken.html#sign">sign</a></li>
+            
+                <li data-name="Webtoken#verify"><a href="Webtoken.html#verify">verify</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+    </ul>
+</div>
+    <div class="main">
+        <h1 class="page-title" data-filename="lib_query_validator.js.html">Source: lib/query/validator.js</h1>
+        
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source "><code>import { assertIsArray,
+    assertIsObject,
+    assertIsString,
+    assertIsPrimitive,
+    forEach, 
+    isArray,  
+    isObject,
+    isNumber,
+    assertIsNumber } from '../helpers.js';
+import { Assert,
+    Sort } from './query.js';
+
+class QueryValidator 
+{
+    /**
+     * @protected
+     * @var {Array}
+     */
+    _where = [];
+
+    /**
+     * @protected
+     * @var {Array}
+     */
+    _sort = [];
+
+    /**
+     * @protected
+     * @var {Array}
+     */
+    _group = [];
+
+    /**
+     * @protected
+     * @var {Number}
+     */
+    _offset = 0;
+
+    /**
+     * @protected
+     * @var {Number|false}
+     */
+    _limit = false;
+
+    /**
+     * @protected
+     * @var {Array}
+     */
+    _errors = [];
+
+    /**
+     * @param {Object} data 
+     */
+    constructor(data) {
+        assertIsObject(data);
+        if (data.where !== undefined) {
+            this._decomposeCondition(data.where);
+        }
+        if (data.sort !== undefined) {
+            this._decomposeSort(data.sort);
+        }
+        if (data.group !== undefined) {
+            this._decomposeGroup(data.group);
+        }
+        if (data.start !== undefined) {
+            assertIsNumber(data.start);
+            this._offset = data.start;
+        }
+        if (data.limit !== undefined) {
+            assertIsNumber(data.limit);
+            this._limit = data.limit;
+        }
+    }
+
+    /**
+     * Perform query validation
+     * 
+     * @param {Object} options
+     * @returns {Promise}
+     */
+    async validate(options) {
+        let {filterable, sortable, groupable, limit} = options;
+        await this._validateCondition(filterable);
+        this._validateSort(sortable);
+        this._validateGroup(groupable);
+        this._validateLimit(limit);
+        if (this._errors.length !== 0) {
+            return Promise.reject(this._errors);
+        }
+    }
+
+    /**
+     * @var {Array}
+     */
+    get errors() {
+        return this._errors;
+    }
+
+    /**
+     * @protected
+     * @param {Object} data 
+     */
+    _decomposeCondition(data) {
+        assertIsArray(data);
+        switch (data[0]) {
+            case Assert.IS:
+                assertIsArray(data[1]);
+                data[1].forEach((or) => {
+                    assertIsArray(or);
+                    or.forEach((and) => {
+                        this._decomposeCondition(and);
+                    });
+                });
+                break;
+            case Assert.IS_NOT:
+                this._decomposeCondition(data[1]);
+                break;
+            case Assert.IN:
+            case Assert.NOT_IN:
+                assertIsArray(data[2]);
+                this._decomposeAssertion(data);
+                break;
+            case Assert.CONTAINS:
+            case Assert.STARTS:
+                assertIsString(data[2]);
+                this._decomposeAssertion(data);
+                break;
+            case Assert.EQ:
+            case Assert.NEQ:
+            case Assert.LT:
+            case Assert.LTE:
+            case Assert.GT:
+            case Assert.GTE:
+                assertIsPrimitive(data[2]);
+                this._decomposeAssertion(data);
+                break;
+            default:
+                throw new Error('Invalid assertion operator');
+        }
+    }
+
+    /**
+     * @protected
+     * @param {Object} data 
+     */
+    _decomposeAssertion(data) {
+        let [_op, prop, argument] = data;
+        let args = this._where[prop];
+        if (args === undefined) {
+            args = [];
+            this._where[prop] = args;
+        }
+        (isArray(argument) ? argument : [argument])
+            .forEach((arg) => {
+                if (args.indexOf(arg) === -1) {
+                    args.push(arg);
+                }
+            });
+    }
+
+    /**
+     * @protected
+     * @param {Object} data 
+     */
+    _decomposeSort(data) {
+        assertIsArray(data);
+        data.forEach((sort) => {
+            assertIsArray(sort);
+            let [prop, dir] = sort;
+            assertIsString(prop);
+            switch (dir) {
+                case Sort.ASC:
+                case Sort.DESC:
+                    if (this._sort.indexOf(prop) === -1) {
+                        this._sort.push(prop);
+                    }
+                    break;
+                default:
+                    throw new Error('Invalid sort direction');
+            }
+        });
+    }
+
+    /**
+     * @protected
+     * @param {Object} data 
+     */
+    _decomposeGroup(data) {
+        assertIsArray(data);
+        data.forEach((prop) => {
+            assertIsString(prop);
+            if (this._group.indexOf(prop) === -1) {
+                this._group.push(prop);
+            }
+        });
+    }
+
+    /**
+     * @protected
+     * @param {any} filterable 
+     * @returns {Promise}
+     */
+    _validateCondition(filterable) {
+        if (isArray(filterable) || isObject(filterable)) {
+            let attributes = isArray(filterable) 
+                ? filterable 
+                : Object.keys(filterable);
+            Object.keys(this._where).forEach((prop) => {
+                if (attributes.indexOf(prop) === -1) {
+                    this._addError(`Attribute is not filterable`, prop);
+                }
+            });
+            if (isObject(filterable)) {
+                let tasks = [];
+                forEach(filterable, (chain, attribute) => {
+                    if (isObject(chain) &amp;&amp; this._where[attribute] !== undefined) {
+                        tasks.push(
+                            this._validateAttribute(chain, attribute, this._where[attribute])
+                        );
+                    }
+                });
+                return Promise.all(tasks);
+            }
+        } else if (filterable === false &amp;&amp; Object.keys(this._where).length !== 0) {
+            this._addError('Condition is not allowed for this query');
+        }
+        return Promise.resolve();
+    }
+
+    /**
+     * @protected
+     * @param {Validator} chain 
+     * @param {String} attribute 
+     * @param {Array} values
+     */    
+    async _validateAttribute(chain, attribute, values) {
+        try {
+            for (let value of values) {
+                await chain.validate('value', {value});
+            }
+        } catch (err) {
+            Object.keys(err).map((key) => {
+                err[key].forEach((error) => {
+                    this._addError(error, attribute);
+                });
+            });
+        }
+    }
+
+    /**
+     * @protected
+     * @param {any} sortable 
+     */
+    _validateSort(sortable) {
+        if (isArray(sortable)) {
+            this._sort.forEach((prop) => {
+                if (sortable.indexOf(prop) === -1) {
+                    this._addError(`Attribute is not sortable`, prop);
+                }
+            });
+        } else if (sortable === false &amp;&amp; decomposed._sort.length !== 0) {
+            this._addError('Sorting is not allowed for this query');
+        }
+    }
+
+    /**
+     * @protected
+     * @param {any} groupable 
+     */
+    _validateGroup(groupable) {
+        if (isArray(groupable)) {
+            this._group.forEach((prop) => {
+                if (groupable.indexOf(prop) === -1) {
+                    this._addError(`Attribute is not groupable`, prop);
+                }
+            });
+        } else if (groupable === false &amp;&amp; this._group.length !== 0) {
+            this._addError('Grouping is not allowed for this query');
+        }
+    }
+
+    /**
+     * @protected
+     * @param {Number} limit 
+     */
+    _validateLimit(limit) {
+        if (isNumber(limit)) {
+            if (this._limit === false || this._limit > limit) {
+                this._addError(`Query limit should be set to a number less or equal to ${limit}`);
+            }
+        }
+    }
+
+    /**
+     * @protected
+     * @param {String} error 
+     * @param {String} attribute 
+     */
+    _addError(error, attribute) {
+        this._errors.push({error, attribute});
+    }
+}
+
+const validateQuery = (data, options, attribute) => {
+    try {
+        let queryValidator = new QueryValidator(data);
+        return queryValidator
+            .validate(options)
+            .catch((err) => {
+                let errors = {};
+                err.forEach((e) => {
+                    let key = e.attribute ? `${attribute}.${e.attribute}` : attribute;
+                    if (errors[key] === undefined) {
+                        errors[key] = [e.error];
+                    } else {
+                        errors[key].push(e.error);
+                    }
+                });
+                return errors;
+            });
+    } catch (err) {
+        return assign(attribute, ['Invalid query structure']);
+    }
+}
+
+export default validateQuery;</code></pre>
+        </article>
+    </section>
+
+
+
+
+
+
+        
+
+        <footer>
+            Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Wed Nov 17 2021 15:22:33 GMT+0200 (Eastern European Standard Time)
+        </footer>
+    </div>
+</div>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+<script src="scripts/main.js"></script>
+</body>
+</html>
