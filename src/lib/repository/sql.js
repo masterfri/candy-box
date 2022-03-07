@@ -126,7 +126,7 @@ class SqlRepository extends AbstractRepository
      * @inheritdoc
      */
     _countInternal(query) {
-        return this._aggregate('count(*)', query);
+        return this._aggregate(query, 'count(*)', 'count()');
     }
     
     /**
@@ -134,7 +134,7 @@ class SqlRepository extends AbstractRepository
      * @inheritdoc
      */
     _sumInternal(attribute, query) {
-        return this._aggregate((builder) => `sum(${builder.quote(attribute)})`, query);
+        return this._aggregate(query, (builder) => `sum(${builder.quote(attribute)})`, 'sum()');
     }
     
     /**
@@ -142,7 +142,7 @@ class SqlRepository extends AbstractRepository
      * @inheritdoc
      */
     _avgInternal(attribute, query) {
-        return this._aggregate((builder) => `avg(${builder.quote(attribute)})`, query);
+        return this._aggregate(query, (builder) => `avg(${builder.quote(attribute)})`, 'avg()');
     }
     
     /**
@@ -150,7 +150,7 @@ class SqlRepository extends AbstractRepository
      * @inheritdoc
      */
     _minInternal(attribute, query) {
-        return this._aggregate((builder) => `min(${builder.quote(attribute)})`, query);
+        return this._aggregate(query, (builder) => `min(${builder.quote(attribute)})`, 'min()');
     }
     
     /**
@@ -158,7 +158,7 @@ class SqlRepository extends AbstractRepository
      * @inheritdoc
      */
     _maxInternal(attribute, query) {
-        return this._aggregate((builder) => `max(${builder.quote(attribute)})`, query);
+        return this._aggregate(query, (builder) => `max(${builder.quote(attribute)})`, 'max()');
     }
 
     /**
@@ -191,12 +191,12 @@ class SqlRepository extends AbstractRepository
                 this._buildCondition(query.condition, where);
             });
         }
-        if (!skipOrder && query.order.length !== 0) {
+        if (skipOrder === false && query.order.length !== 0) {
             query.order.forEach((sort) => {
                 builder.orderBy(sort.prop, sort.direction);
             });
         }
-        if (!skipGroup && query.group.length !== 0) {
+        if (skipGroup === false && query.group.length !== 0) {
             builder.groupBy(...query.group);
         }
         return builder;
@@ -285,15 +285,32 @@ class SqlRepository extends AbstractRepository
     /**
      * Run aggregation query
      * 
-     * @param {String} select
      * @param {Query} query 
+     * @param {String} select
+     * @param {String} alias
      * @returns {Promise}
      */
-    _aggregate(select, query) {
-        let builder = this._toSqlBuilder(query, true, true);
-        let sql = builder.columnRaw(isFunction(select) ? select(builder) : select)
-            .select();
-        return this._client.fetchValue(sql);
+    _aggregate(query, select, alias) {
+        let builder = this._toSqlBuilder(query);
+        let {group} = query;
+        let sel = isFunction(select) ? select(builder) : select;
+        let numerize = (v) => isNaN(v) ? v : Number(v);
+        if (group.length === 0) {
+            builder.columnRaw(builder.alias(sel, alias));
+            return this._client
+                .fetchValue(builder.select())
+                .then((result) => numerize(result));
+        }
+        builder.column(...group);
+        builder.columnRaw(builder.alias(sel, alias));
+        return this._client.fetch(builder.select(query.limit, query.start))
+            .then((rows) => {
+                return rows.map((row) => {
+                    let result = Object.assign({}, row);
+                    result[alias] = numerize(result[alias]);
+                    return result;
+                });
+            });
     }
 }
 

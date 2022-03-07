@@ -14,6 +14,7 @@ class TestDocument extends Document
                 default: 'orange',
             },
             weight: Number,
+            price: Number,
         };
     }
 }
@@ -179,6 +180,44 @@ describe('Resident repository', function() {
                 done(err);
             });
         });
+        it('count() + group should return proper result', function(done) {
+            let repository = new ResidentRepository(TestDocument);
+            Promise.all([
+                repository.store(new TestDocument({color: 'orange', weight: 100})),
+                repository.store(new TestDocument({color: 'red', weight: 200})),
+                repository.store(new TestDocument({color: 'red', weight: 80})),
+                repository.store(new TestDocument({color: 'blue', weight: 150})),
+                repository.store(new TestDocument({color: 'red', weight: 80})),
+                repository.store(new TestDocument({color: 'orange', weight: 80})),
+            ]).then(() => {
+                let query = (new Query)
+                    .groupBy('color')
+                    .orderBy('count()', 'desc')
+                    .limitTo(2);
+                return repository.count(query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 2);
+                assert.strictEqual(result[0]['color'], 'red');
+                assert.strictEqual(result[0]['count()'], 3);
+                assert.strictEqual(result[1]['color'], 'orange');
+                assert.strictEqual(result[1]['count()'], 2);
+                let query = (new Query)
+                    .groupBy('color', 'weight')
+                    .orderBy('weight', 'asc')
+                    .orderBy('count()', 'asc')
+                    .limitTo(3);
+                return repository.count(query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 3);
+                assert.strictEqual(result[0]['color'], 'orange');
+                assert.strictEqual(result[0]['count()'], 1);
+                assert.strictEqual(result[1]['color'], 'red');
+                assert.strictEqual(result[1]['count()'], 2);
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
     });
     describe('#sum', function() {
         it('sum() should return proper result', function(done) {
@@ -194,6 +233,43 @@ describe('Resident repository', function() {
                 return repository.sum('weight');
             }).then((result) => {
                 assert.strictEqual(result, 310);
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
+        it('sum() + group should return proper result', function(done) {
+            let repository = new ResidentRepository(TestDocument);
+            Promise.all([
+                repository.store(new TestDocument({color: 'orange', weight: 200, price: 10})),
+                repository.store(new TestDocument({color: 'red', weight: 200, price: 15})),
+                repository.store(new TestDocument({color: 'red', weight: 80, price: 10})),
+                repository.store(new TestDocument({color: 'blue', weight: 150, price: 25})),
+                repository.store(new TestDocument({color: 'red', weight: 80, price: 20})),
+                repository.store(new TestDocument({color: 'orange', weight: 200, price: 15})),
+            ]).then(() => {
+                let query = (new Query)
+                    .groupBy('color')
+                    .orderBy('sum()', 'desc')
+                    .limitTo(2);
+                return repository.sum('weight', query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 2);
+                assert.strictEqual(result[0]['color'], 'orange');
+                assert.strictEqual(result[0]['sum()'], 400);
+                assert.strictEqual(result[1]['color'], 'red');
+                assert.strictEqual(result[1]['sum()'], 360);
+                let query = (new Query)
+                    .groupBy('color', 'weight')
+                    .orderBy('sum()', 'desc')
+                    .limitTo(3);
+                return repository.sum('price', query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 3);
+                assert.strictEqual(result[0]['color'], 'red');
+                assert.strictEqual(result[0]['sum()'], 30);
+                assert.strictEqual(result[1]['color'], 'orange');
+                assert.strictEqual(result[1]['sum()'], 25);
                 done();
             }).catch((err) => {
                 done(err);
@@ -219,6 +295,43 @@ describe('Resident repository', function() {
                 done(err);
             });
         });
+        it('avg() + group should return proper result', function(done) {
+            let repository = new ResidentRepository(TestDocument);
+            Promise.all([
+                repository.store(new TestDocument({color: 'orange', weight: 200, price: 10})),
+                repository.store(new TestDocument({color: 'red', weight: 200, price: 15})),
+                repository.store(new TestDocument({color: 'red', weight: 80, price: 10})),
+                repository.store(new TestDocument({color: 'blue', weight: 150, price: 25})),
+                repository.store(new TestDocument({color: 'red', weight: 80, price: 20})),
+                repository.store(new TestDocument({color: 'orange', weight: 200, price: 15})),
+            ]).then(() => {
+                let query = (new Query)
+                    .groupBy('color')
+                    .orderBy('avg()', 'desc')
+                    .limitTo(2);
+                return repository.avg('weight', query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 2);
+                assert.strictEqual(result[0]['color'], 'orange');
+                assert.strictEqual(result[0]['avg()'], 200);
+                assert.strictEqual(result[1]['color'], 'blue');
+                assert.strictEqual(result[1]['avg()'], 150);
+                let query = (new Query)
+                    .groupBy('color', 'weight')
+                    .orderBy('avg()', 'desc')
+                    .limitTo(3);
+                return repository.avg('price', query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 3);
+                assert.strictEqual(result[0]['color'], 'blue');
+                assert.strictEqual(result[0]['avg()'], 25);
+                assert.strictEqual(result[1]['color'], 'red');
+                assert.strictEqual(result[1]['avg()'], 15);
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
     });
     describe('#min', function() {
         it('min() should return proper result', function(done) {
@@ -239,6 +352,43 @@ describe('Resident repository', function() {
                 done(err);
             });
         });
+        it('min() + group should return proper result', function(done) {
+            let repository = new ResidentRepository(TestDocument);
+            Promise.all([
+                repository.store(new TestDocument({color: 'orange', weight: 200, price: 10})),
+                repository.store(new TestDocument({color: 'red', weight: 200, price: 15})),
+                repository.store(new TestDocument({color: 'red', weight: 80, price: 10})),
+                repository.store(new TestDocument({color: 'blue', weight: 150, price: 25})),
+                repository.store(new TestDocument({color: 'red', weight: 80, price: 20})),
+                repository.store(new TestDocument({color: 'orange', weight: 200, price: 15})),
+            ]).then(() => {
+                let query = (new Query)
+                    .groupBy('color')
+                    .orderBy('min()', 'asc')
+                    .limitTo(2);
+                return repository.min('weight', query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 2);
+                assert.strictEqual(result[0]['color'], 'red');
+                assert.strictEqual(result[0]['min()'], 80);
+                assert.strictEqual(result[1]['color'], 'blue');
+                assert.strictEqual(result[1]['min()'], 150);
+                let query = (new Query)
+                    .groupBy('color', 'weight')
+                    .orderBy('min()', 'asc')
+                    .limitTo(3);
+                return repository.min('price', query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 3);
+                assert.strictEqual(result[0]['color'], 'orange');
+                assert.strictEqual(result[0]['min()'], 10);
+                assert.strictEqual(result[1]['color'], 'red');
+                assert.strictEqual(result[1]['min()'], 10);
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
     });
     describe('#max', function() {
         it('max() should return proper result', function(done) {
@@ -254,6 +404,43 @@ describe('Resident repository', function() {
                 return repository.max('weight');
             }).then((result) => {
                 assert.strictEqual(result, 300);
+                done();
+            }).catch((err) => {
+                done(err);
+            });
+        });
+        it('max() + group should return proper result', function(done) {
+            let repository = new ResidentRepository(TestDocument);
+            Promise.all([
+                repository.store(new TestDocument({color: 'orange', weight: 200, price: 10})),
+                repository.store(new TestDocument({color: 'red', weight: 200, price: 15})),
+                repository.store(new TestDocument({color: 'red', weight: 80, price: 10})),
+                repository.store(new TestDocument({color: 'blue', weight: 150, price: 25})),
+                repository.store(new TestDocument({color: 'red', weight: 80, price: 20})),
+                repository.store(new TestDocument({color: 'orange', weight: 200, price: 15})),
+            ]).then(() => {
+                let query = (new Query)
+                    .groupBy('color')
+                    .orderBy('max()', 'asc')
+                    .limitTo(2);
+                return repository.max('weight', query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 2);
+                assert.strictEqual(result[0]['color'], 'blue');
+                assert.strictEqual(result[0]['max()'], 150);
+                assert.strictEqual(result[1]['color'], 'orange');
+                assert.strictEqual(result[1]['max()'], 200);
+                let query = (new Query)
+                    .groupBy('color', 'weight')
+                    .orderBy('max()', 'asc')
+                    .limitTo(3);
+                return repository.max('price', query);
+            }).then((result) => {
+                assert.strictEqual(result.length, 3);
+                assert.strictEqual(result[0]['color'], 'orange');
+                assert.strictEqual(result[0]['max()'], 15);
+                assert.strictEqual(result[1]['color'], 'red');
+                assert.strictEqual(result[1]['max()'], 15);
                 done();
             }).catch((err) => {
                 done(err);

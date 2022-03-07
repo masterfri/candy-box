@@ -149,8 +149,7 @@ class AbstractRepository
      */
     exists(query) {
         let finalized = this.finalizeQuery(query);
-        return this._existsInternal(finalized)
-            .then((result) => Boolean(result));
+        return this._existsInternal(finalized);
     }
 
     /**
@@ -161,8 +160,7 @@ class AbstractRepository
      */
     count(query = null) {
         let finalized = this.finalizeQuery(query);
-        return this._countInternal(finalized)
-            .then((result) => Number(result));
+        return this._countInternal(finalized);
     }
 
     /**
@@ -174,8 +172,7 @@ class AbstractRepository
      */
     sum(attribute, query = null) {
         let finalized = this.finalizeQuery(query);
-        return this._sumInternal(attribute, finalized)
-            .then((result) => Number(result));
+        return this._sumInternal(attribute, finalized);
     }
 
     /**
@@ -187,8 +184,7 @@ class AbstractRepository
      */
     avg(attribute, query = null) {
         let finalized = this.finalizeQuery(query);
-        return this._avgInternal(attribute, finalized)
-            .then((result) => Number(result));
+        return this._avgInternal(attribute, finalized);
     }
 
     /**
@@ -200,8 +196,7 @@ class AbstractRepository
      */
     min(attribute, query = null) {
         let finalized = this.finalizeQuery(query);
-        return this._minInternal(attribute, finalized)
-            .then((result) => Number(result));
+        return this._minInternal(attribute, finalized);
     }
     
     /**
@@ -213,8 +208,7 @@ class AbstractRepository
      */
     max(attribute, query = null) {
         let finalized = this.finalizeQuery(query);
-        return this._maxInternal(attribute, finalized)
-            .then((result) => Number(result));
+        return this._maxInternal(attribute, finalized);
     }
 
     /**

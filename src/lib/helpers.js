@@ -119,6 +119,14 @@ const set = (object, path, value) => {
     }
 }
 
+const combine = (keys, values) => {
+    let result = {};
+    keys.forEach((key, index) => {
+        result[key] = values[index];
+    });
+    return result;
+}
+
 const inject = (target, ...extensions) => {
     Array.from(extensions).forEach((extension) => {
         let descriptors = Object.getOwnPropertyDescriptors(extension);
@@ -136,13 +144,9 @@ const valueOf = (v) => {
 }
 
 const sum = (values) => {
-    let sum = 0;
-    forEach(values, (val) => {
-        if (!isNaN(val)) {
-            sum += Number(val);
-        }
-    });
-    return sum;
+    return reduce(values, (sum, val) => {
+        return isNaN(val) ? sum : sum + Number(val);
+    }, 0);
 }
 
 const avg = (values) => {
@@ -157,27 +161,22 @@ const avg = (values) => {
 }
 
 const min = (values) => {
-    let res = undefined;
-    forEach(values, (val) => {
-        if (!isNil(val)) {
-            if (res === undefined || res > val) {
-                res = val;
-            }
-        }
-    });
-    return res;
+    return reduce(values, (res, val) => {
+        return isNil(val) || res < val ? res : val;
+    }, Infinity);
 }
 
 const max = (values) => {
-    let res = undefined;
-    forEach(values, (val) => {
-        if (!isNil(val)) {
-            if (res === undefined || res < val) {
-                res = val;
-            }
-        }
-    });
-    return res;
+    return reduce(values, (res, val) => {
+        return isNil(val) || res > val ? res : val;
+    }, -Infinity);
+}
+
+const count = (values) => {
+    if (isArray(values)) {
+        return values.length;
+    }
+    return reduce(values, (res) => (res + 1), 0);
 }
 
 const forEach = (object, callback) => {
@@ -236,8 +235,26 @@ const dedupe = (array) => {
     return Array.from(new Set(array));
 }
 
-const group = (array, ...args) => {
-    let groups = new Map();
+const reduce = (iterable, reducer, initial = undefined) => {
+    let result = initial;
+    forEach(iterable, (item) => {
+        result = reducer(result, item);
+    });
+    return result;
+}
+
+const group = (iterable, ...args) => {
+    return groupReduce(iterable, (items, item) => {
+        if (items === undefined) {
+            return [item];
+        }
+        items.push(item);
+        return items;
+    }, ...args);
+}
+
+const groupReduce = (iterable, reducer, ...args) => {
+    let groups = [];
     let tree = new Map();
     let keys = Array.from(args);
     let [first] = keys;
@@ -246,30 +263,34 @@ const group = (array, ...args) => {
         : (keys.length === 1 
             ? (item) => item[first]
             : (item) => keys.map((key) => item[key]));
-    const putItem = (map, item, keys, i) => {
+    const mapget = (map, key, init) => {
+        if (map.has(key)) {
+            return map.get(key);
+        }
+        let val = init();
+        map.set(key, val);
+        return val;
+    }
+    const put = (map, item, keys, i) => {
         let key = keys[i];
         if (i === keys.length - 1) {
-            if (map.has(key)) {
-                map.get(key).push(item);
-            } else {
-                let leaf = [item];
-                groups.set(i === 0 ? key : keys, leaf);
-                map.set(key, leaf);
-            }
+            let leaf = mapget(map, key, () => {
+                let val = {
+                    key: i === 0 ? key : keys,
+                    value: undefined,
+                };
+                groups.push(val);
+                return val;
+            });
+            leaf.value = reducer(leaf.value, item, keys);
         } else {
-            let branch;
-            if (map.has(key)) {
-                branch = map.get(key);
-            } else {
-                branch = new Map();
-                map.set(key, branch);
-            }
-            putItem(branch, item, keys, i + 1);
+            let branch = mapget(map, key, () => new Map());
+            put(branch, item, keys, i + 1);
         }
     }
-    array.forEach((item) => {
+    forEach(iterable, (item) => {
         let key = makeKey(item);
-        putItem(tree, item, isArray(key) ? key : [key], 0);
+        put(tree, item, isArray(key) ? key : [key], 0);
     });
     return groups;
 }
@@ -441,19 +462,23 @@ export {
     assign,
     get,
     set,
+    combine,
     inject,
     valueOf,
     sum,
     avg,
     min,
     max,
+    count,
     forEach,
     filter,
     map,
     intersect,
     difference,
     dedupe,
+    reduce,
     group,
+    groupReduce,
     isScalar,
     objectsEqual,
     arraysEqual,

@@ -1,28 +1,20 @@
 import { 
+    get,
     assertType,
     filter,
     map,
-    group,
+    groupReduce,
     sum,
     avg,
     min,
-    max } from '../helpers.js';
+    max,
+    count, 
+    combine } from '../helpers.js';
 import AbstractRepository from './base.js';
 import { 
     testCondition,
     compare } from '../query/assertions.js';
-
-const makeSorter = (sort) => {
-    return (a, b) => {
-        for (let order of sort) {
-            let sign = compare(a[order.prop], b[order.prop], order.isDescending);
-            if (sign !== 0) {
-                return sign;
-            }
-        }
-        return 0;
-    }
-}
+import { SortOrder } from '../query/query.js';
 
 /**
  * Repository that stores documents in memory
@@ -133,23 +125,10 @@ class ResidentRepository extends AbstractRepository
      */
     _searchInternal(query) {
         return new Promise((resolve) => {
-            let condition = query.condition;
-            let results = condition.isEmpty 
-                ? [...this._items]
-                : this._items.filter((item) => testCondition(condition, item));
-            if (query.order.length !== 0) {
-                results = results.sort(makeSorter(query.order));
-            }
-            if (query.group.length !== 0) {
-                results = [
-                    ...map(group(results, ...query.group).values(), (v) => v[0]),
-                ];
-            }
-            if (query.limit !== false) {
-                results = results.slice(query.start, query.start + query.limit);
-            } else if (query.start !== 0) {
-                results = results.slice(query.start);
-            }
+            let results = [...this._pickItems(query.condition)];
+            results = this._applyGroup(results, query);
+            results = this._applyOrder(results, query);
+            results = this._applyLimit(results, query);
             resolve(results);
         });
     }
@@ -199,10 +178,9 @@ class ResidentRepository extends AbstractRepository
     _existsInternal(query) {
         return new Promise((resolve) => {
             let condition = query.condition;
-            let result = this._items.some((item) => {
+            resolve(this._items.some((item) => {
                 return testCondition(condition, item);
-            });
-            resolve(result);
+            }));
         });
     }
     
@@ -211,16 +189,22 @@ class ResidentRepository extends AbstractRepository
      * @inheritdoc
      */
     _countInternal(query) {
-        let cond = query.condition;
-        if (cond.isEmpty) {
-            return Promise.resolve(this._items.length);
+        let {condition, group} = query;
+        let items = this._pickItems(condition);
+        if (group.length === 0) {
+            return Promise.resolve(count(items));
         }
-        let count = 0;
-        let filtered = filter(this._items, (v) => testCondition(cond, v));
-        for (let val of filtered) {
-            count++;
-        }
-        return Promise.resolve(count);
+        let results = groupReduce(items, (count) => {
+            return count === undefined ? 1 : count + 1;
+        }, ...group).map((item) => {
+            return combine(
+                [].concat(group, 'count()'),
+                [].concat(item.key, item.value),
+            );
+        });
+        results = this._applyOrder(results, query);
+        results = this._applyLimit(results, query);
+        return Promise.resolve(results);
     }
     
     /**
@@ -228,9 +212,26 @@ class ResidentRepository extends AbstractRepository
      * @inheritdoc
      */
     _sumInternal(attribute, query) {
-        return Promise.resolve(
-            sum(this._pickValues(attribute, query.condition))
-        );
+        let {condition, group} = query;
+        let items = this._pickItems(condition);
+        if (group.length === 0) {
+            return Promise.resolve(sum(map(items, attribute)));
+        }
+        let results = groupReduce(items, (sum, item) => {
+            let val = get(item, attribute);
+            if (!isNaN(val)) {
+                return (sum === undefined ? 0 : sum) + Number(val);
+            }
+            return sum;
+        }, ...group).map((item) => {
+            return combine(
+                [].concat(group, 'sum()'),
+                [].concat(item.key, item.value),
+            );
+        });
+        results = this._applyOrder(results, query);
+        results = this._applyLimit(results, query);
+        return Promise.resolve(results);
     }
     
     /**
@@ -238,9 +239,28 @@ class ResidentRepository extends AbstractRepository
      * @inheritdoc
      */
     _avgInternal(attribute, query) {
-        return Promise.resolve(
-            avg(this._pickValues(attribute, query.condition))
-        );
+        let {condition, group} = query;
+        let items = this._pickItems(condition);
+        if (group.length === 0) {
+            return Promise.resolve(avg(map(items, attribute)));
+        }
+        let results = groupReduce(items, (avg, item) => {
+            let val = get(item, attribute);
+            let agg = avg === undefined ? [0, 0] : avg;
+            if (!isNaN(val)) {
+                agg[0]++;
+                agg[1] += Number(val);
+            }
+            return agg;
+        }, ...group).map((item) => {
+            return combine(
+                [].concat(group, 'avg()'),
+                [].concat(item.key, item.value[0] === 0 ? 0 : item.value[1] / item.value[0]),
+            );
+        });
+        results = this._applyOrder(results, query);
+        results = this._applyLimit(results, query);
+        return Promise.resolve(results);
     }
     
     /**
@@ -248,9 +268,24 @@ class ResidentRepository extends AbstractRepository
      * @inheritdoc
      */
     _minInternal(attribute, query) {
-        return Promise.resolve(
-            min(this._pickValues(attribute, query.condition))
-        );
+        let {condition, group} = query;
+        let items = this._pickItems(condition);
+        if (group.length === 0) {
+            return Promise.resolve(min(map(items, attribute)));
+        }
+        let results = groupReduce(items, (min, item) => {
+            return min === undefined 
+                ? get(item, attribute)
+                : Math.min(min, get(item, attribute));
+        }, ...group).map((item) => {
+            return combine(
+                [].concat(group, 'min()'),
+                [].concat(item.key, item.value),
+            );
+        });
+        results = this._applyOrder(results, query);
+        results = this._applyLimit(results, query);
+        return Promise.resolve(results);
     }
     
     /**
@@ -258,22 +293,102 @@ class ResidentRepository extends AbstractRepository
      * @inheritdoc
      */
     _maxInternal(attribute, query) {
-        return Promise.resolve(
-            max(this._pickValues(attribute, query.condition))
-        );
+        let {condition, group} = query;
+        let items = this._pickItems(condition);
+        if (group.length === 0) {
+            return Promise.resolve(max(map(items, attribute)));
+        }
+        let results = groupReduce(items, (max, item) => {
+            return max === undefined 
+                ? get(item, attribute)
+                : Math.max(max, get(item, attribute));
+        }, ...group).map((item) => {
+            return combine(
+                [].concat(group, 'max()'),
+                [].concat(item.key, item.value),
+            );
+        });
+        results = this._applyOrder(results, query);
+        results = this._applyLimit(results, query);
+        return Promise.resolve(results);
     }
 
     /**
-     * Pick attribute values from collection items
+     * Pick items from collection
      * 
-     * @param {String} attribute 
      * @param {Condition} condition 
+     * @returns {Generator|Array}
      */
-    _pickValues(attribute, condition) {
-        let items = condition.isEmpty 
+    _pickItems(condition) {
+        return condition.isEmpty 
             ? this._items
             : filter(this._items, (v) => testCondition(condition, v));
-        return map(items, attribute);
+    }
+
+    /**
+     * Apply query group to search results
+     * 
+     * @param {Array} results 
+     * @param {Query} query 
+     * @returns {Array}
+     */
+    _applyGroup(results, query) {
+        if (query.group.length !== 0) {
+            return groupReduce(results, 
+                (first, item) => first === undefined ? item : first, 
+                ...query.group).map((v) => v.value);
+        }
+        return results;
+    }
+
+    /**
+     * Apply query order to search results
+     * 
+     * @param {Array} results 
+     * @param {Query} query 
+     * @returns {Array}
+     */
+    _applyOrder(results, query) {
+        if (query.order.length !== 0) {
+            return results.sort(this._makeSorter(query.order));
+        }
+        return results;
+    }
+
+    /**
+     * Apply query limit to search results
+     * 
+     * @param {Array} results 
+     * @param {Query} query 
+     * @returns {Array}
+     */
+    _applyLimit(results, query) {
+        if (query.limit !== false) {
+            return results.slice(query.start, query.start + query.limit);
+        }
+        if (query.start !== 0) {
+            results = results.slice(query.start);
+        }
+        return results;
+    }
+
+    /**
+     * Make sort function
+     * 
+     * @protected
+     * @param {SortOrder} sort 
+     * @returns {Function}
+     */
+    _makeSorter(sort) {
+        return (a, b) => {
+            for (let order of sort) {
+                let sign = compare(a[order.prop], b[order.prop], order.isDescending);
+                if (sign !== 0) {
+                    return sign;
+                }
+            }
+            return 0;
+        }
     }
 }
 

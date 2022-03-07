@@ -1133,6 +1133,17 @@ class QueryBuilder
     }
 
     /**
+     * Produce an alias
+     * 
+     * @param {String} expr 
+     * @param {String} alias 
+     * @returns {String}
+     */
+    alias(expr, alias) {
+        return `${expr} as ${this.quote(alias)}`;
+    }
+
+    /**
      * Get sql fragment by its key
      * 
      * @protected
@@ -1174,9 +1185,9 @@ class QueryBuilder
      */
     _appendAlias(frag, expr, alias) {
         if (is(expr, SqlFragment)) {
-            frag.add(`${expr.sql} as ${this.quote(alias)}`, expr.bindings);
+            frag.add(this.alias(expr.sql, alias), expr.bindings);
         } else {
-            frag.add(`${this.quote(expr)} as ${this.quote(alias)}`);
+            frag.add(this.alias(this.quote(expr), alias));
         }
     }
 
