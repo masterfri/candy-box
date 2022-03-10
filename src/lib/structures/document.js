@@ -2,8 +2,10 @@ import {
     makeMutator,
     toArray,
     is,
+    isArray,
     valueOf,
-    isNil } from '../helpers.js';
+    isNil,
+    mapObject } from '../helpers.js';
 import collect from './typed-collection.js';
 
 class Attribute
@@ -276,7 +278,7 @@ class Document
      * @returns {Object}
      */
     export() {
-        return Object.assign({}, this._attributes);
+        return mapObject(this._attributes, (v) => this._exportValue(v));
     }
     
     /**
@@ -338,6 +340,22 @@ class Document
                 (new TypedAttribute(attrs[name])).init(this, name);
             }
         }
+    }
+
+    /**
+     * Export attribute value
+     * 
+     * @param {any} val 
+     * @returns {any}
+     */
+    _exportValue(val) {
+        if (is(val, Document)) {
+            return val.export();
+        }
+        if (isArray(val)) {
+            return val.map((v) => this._exportValue(v));
+        }
+        return val;
     }
 }
 

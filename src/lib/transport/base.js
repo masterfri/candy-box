@@ -27,6 +27,12 @@ class AbstractTransport
     _stickyHeaders = {};
 
     /**
+     * @protected
+     * @var {Array}
+     */
+    _middleware = [];
+
+    /**
      * Add sticky query parameter
      * 
      * @param {String} name 
@@ -84,6 +90,42 @@ class AbstractTransport
     }
 
     /**
+     * Append middleware
+     * 
+     * @param {Function} func 
+     * @returns {AbstractTransport}
+     */
+    appendMiddleware(func) {
+        this._middleware.push(func);
+        return this;
+    }
+
+    /**
+     * Prepend middleware
+     * 
+     * @param {Function} func 
+     * @returns {AbstractTransport}
+     */
+    prependMiddleware(func) {
+        this._middleware.unshift(func);
+        return this;
+    }
+
+    /**
+     * Remove middleware
+     * 
+     * @param {Function} func 
+     * @returns {AbstractTransport}
+     */
+    removeMiddleware(func) {
+        let index = this._middleware.indexOf(func);
+        if (index !== -1) {
+            this._middleware.splice(index, 1);
+        }
+        return this;
+    }
+
+    /**
      * Send request
      * 
      * @param {BaseRequest} request 
@@ -92,18 +134,48 @@ class AbstractTransport
      * @returns {any}
      */
     send(request, options = {}, expectation = Response) {
-        return this._sendInternal(request, options)
-            .then((result) => {
-                let {data, status, statusText, headers} = result;
-                if (status === Status.UNPROCESSABLE_ENTITY) {
-                    throw new ValidationError(data);
-                }
-                let response = new expectation(data, status, statusText, headers);
-                if (isErrorCode(status)) {
-                    throw response;
-                }
-                return response;
-            });
+        return this._runPipeline(request, (req) => {
+            return this._sendInternal(req, options)
+                .then((result) => {
+                    let {data, status, statusText, headers} = result;
+                    if (status === Status.UNPROCESSABLE_ENTITY) {
+                        throw new ValidationError(data);
+                    }
+                    let response = new expectation(data, status, statusText, headers);
+                    if (isErrorCode(status)) {
+                        throw response;
+                    }
+                    return response;
+                });
+        });
+    }
+
+    /**
+     * Run request through pipeline
+     * 
+     * @param {BaseRequest} request 
+     * @param {Function} func 
+     * @returns {any}
+     */
+    _runPipeline(request, func) {
+        let pipe = func;
+        for (let i = this._middleware.length - 1; i >= 0; i--) {
+            pipe = this._wrapMiddleware(this._middleware[i], pipe);
+        }
+        return pipe(request);
+    }
+
+    /**
+     * Add pipe section
+     * 
+     * @param {Function} middleware 
+     * @param {Function} next 
+     * @returns {any}
+     */
+    _wrapMiddleware(middleware, next) {
+        return (request) => {
+            return middleware(request, next);
+        }
     }
 
     /**

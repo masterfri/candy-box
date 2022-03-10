@@ -1,5 +1,6 @@
 import {
     is,
+    isNil,
     isObject, 
     isFunction,
     abstractMethodError } from '../helpers.js';
@@ -361,7 +362,7 @@ class AbstractRepository
      * @returns {Query}
      */
     _normalizeQuery(query) {
-        if (query === null) {
+        if (isNil(query)) {
             return new Query();
         }
         if (is(query, Query)) {

@@ -47,24 +47,36 @@ const toArray = (v) => {
     return [v];
 }
 
-const pickProps = (source, props) => {
+const filterObject = (source, test) => {
     let result = {};
     Object.keys(source).forEach((prop) => {
-        if (props.indexOf(prop) !== -1) {
+        if (test(prop, source)) {
             result[prop] = source[prop];
         }
     });
     return result;
 }
 
-const skipProps = (source, props) => {
+const mapObject = (source, callback) => {
     let result = {};
     Object.keys(source).forEach((prop) => {
-        if (props.indexOf(prop) === -1) {
-            result[prop] = source[prop];
-        }
+        result[prop] = callback(source[prop], prop, source);
     });
     return result;
+}
+
+const pickProps = (source, props) => {
+    let test = isFunction(props)
+        ? props 
+        : ((k) => props.indexOf(k) !== -1);
+    return filterObject(source, test);
+}
+
+const skipProps = (source, props) => {
+    let test = isFunction(props) 
+        ? ((k, o) => !props(k, o))
+        : ((k) => props.indexOf(k) === -1);
+    return filterObject(source, test);
 }
 
 const getProps = (source, props) => {
@@ -141,6 +153,16 @@ const inject = (target, ...extensions) => {
 
 const valueOf = (v) => {
     return isFunction(v) ? v() : v;
+}
+
+const singleton = (factory) => {
+    let instance = undefined;
+    return () => {
+        if (instance === undefined) {
+            instance = factory();
+        }
+        return instance;
+    }
 }
 
 const sum = (values) => {
@@ -233,6 +255,14 @@ const difference = (...args) => {
 
 const dedupe = (array) => {
     return Array.from(new Set(array));
+}
+
+const eachToEach = (array, callback) => {
+    for (let i = 0; i < array.length - 1; i++) {
+        for (let j = i + 1; j < array.length; j++) {
+            callback(array[i], array[j], i, j);
+        }
+    }
 }
 
 const reduce = (iterable, reducer, initial = undefined) => {
@@ -457,6 +487,8 @@ export {
     toArray,
     getProps,
     getProp,
+    filterObject,
+    mapObject,
     pickProps,
     skipProps,
     assign,
@@ -465,6 +497,7 @@ export {
     combine,
     inject,
     valueOf,
+    singleton,
     sum,
     avg,
     min,
@@ -475,6 +508,7 @@ export {
     map,
     intersect,
     difference,
+    eachToEach,
     dedupe,
     reduce,
     group,

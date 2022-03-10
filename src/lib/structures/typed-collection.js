@@ -9,6 +9,10 @@ const collect = (values = [], type = undefined) => {
     let mutator = makeMutator(type);
     let col = Object.create({
         constructor: Array.prototype.constructor,
+        indexOf: Array.prototype.indexOf,
+        find: Array.prototype.find,
+        some: Array.prototype.some,
+        every: Array.prototype.every,
         slice: Array.prototype.slice,
         keys: Array.prototype.keys,
         length: Array.prototype.length,
