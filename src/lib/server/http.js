@@ -3,6 +3,8 @@ import AbstractServer from './base.js';
 import {
     is,
     isString,
+    isObject,
+    isFunction,
     forEach } from '../helpers.js';
 import Response, {
     Status,
@@ -98,7 +100,7 @@ class HttpServer extends AbstractServer
      * @inheritdoc
      * @override
      */
-    register(method, path, requestFactory, target) {
+    _registerInternal(method, path, requestFactory, handler) {
         this._router[method.toLowerCase()](path, (req, res) => {
             let request = requestFactory(req.body, {
                 ...(is(req.params, Array) ? {params: req.params} : req.params),
@@ -106,46 +108,57 @@ class HttpServer extends AbstractServer
             }, req.headers);
             request.validate()
                 .then(() => {
-                    return this._delegate(target, request);
+                    return this._delegate(handler, request);
                 })
                 .then((response) => {
                     this._respond(res, response);
                 })
                 .catch((error) => {
-                    if (is(error, ValidationError)) {
-                        res.status(Status.UNPROCESSABLE_ENTITY)
-                            .send(error.getErrors());
-                    } else if (is(error, AuthorizationError)) {
-                        if (error.reason === DenyReason.FORBIDDEN) {
-                            res.status(Status.FORBIDDEN)
-                                .send('Forbidden');
-                        } else {
-                            res.status(Status.UNAUTHORIZED)
-                                .send('Unauthorized');
-                        }
-                    } else if (is(error, HttpError)) {
-                        res.status(error.code)
-                            .send(error.message);
-                    } else {
-                        this._logger.error(error);
-                        res.status(Status.INTERNAL_SERVER_ERROR)
-                            .send('Server error: ' + error);
-                    }
+                    this._respondError(res, error);
                 });
         });
     }
 
     /**
-     * Delegate request to the certain target
+     * Send a response to client
      * 
      * @protected
-     * @param {Function} target 
+     * @param {Express.Response} res 
+     * @param {any} error 
+     */
+    _respondError(res, error) {
+        if (is(error, ValidationError)) {
+            res.status(Status.UNPROCESSABLE_ENTITY)
+                .send(error.getErrors());
+        } else if (is(error, AuthorizationError)) {
+            if (error.reason === DenyReason.FORBIDDEN) {
+                res.status(Status.FORBIDDEN)
+                    .send('Forbidden');
+            } else {
+                res.status(Status.UNAUTHORIZED)
+                    .send('Unauthorized');
+            }
+        } else if (is(error, HttpError)) {
+            res.status(error.code)
+                .send(error.message);
+        } else {
+            this._logger.error(error);
+            res.status(Status.INTERNAL_SERVER_ERROR)
+                .send('Server error: ' + error);
+        }
+    }
+
+    /**
+     * Delegate request to the certain handler
+     * 
+     * @protected
+     * @param {Function} handler 
      * @param {BaseRequest} request 
      * @returns {Promise}
      */
-    _delegate(target, request) {
+    _delegate(handler, request) {
         try {
-            let response = target(request);
+            let response = handler(request);
             if (is(response, Promise)) {
                 return response;
             }
@@ -182,9 +195,21 @@ class HttpServer extends AbstractServer
             res.end();
         } else if (isString(body)) {
             res.send(body);
+        } else if (this._isStream(body)) {
+            body.pipe(res);
         } else {
-            res.json(body)
+            res.json(body);
         }
+    }
+
+    /**
+     * Check if data is a stream
+     * 
+     * @param {any} data 
+     * @returns {Boolean}
+     */
+    _isStream(data) {
+        return isObject(data) && isFunction(data.pipe);
     }
 }
 

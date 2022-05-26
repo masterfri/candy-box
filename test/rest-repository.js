@@ -5,8 +5,8 @@ import Document, {
     Attribute } from '../src/lib/structures/document.js';
 import ResidentRepository from '../src/lib/repository/resident.js';
 import RestRepository from '../src/lib/repository/rest.js';
-import RepositoryProxy from '../src/lib/repository/proxy.js';
-import RepositoryRequestMap from '../src/lib/repository/request-map.js';
+import RestRepositoryEndpoint from '../src/lib/repository/rest-endpoint.js';
+import RestRepositoryRequestMap from '../src/lib/repository/rest-requests.js';
 import {
     BaseRequest,
     Method } from '../src/lib/transport/request.js';
@@ -73,10 +73,10 @@ class SearchDocumentRequest extends BaseRequest
 }
 
 let repository = new ResidentRepository(TestDocument);
-let proxy = new RepositoryProxy(repository);
-let noValidationMapping = new RepositoryRequestMap('/item');
-let mapping = new RepositoryRequestMap('/item');
-let mapping2 = new RepositoryRequestMap('/item2');
+let proxy = new RestRepositoryEndpoint(repository);
+let noValidationMapping = new RestRepositoryRequestMap('/item');
+let mapping = new RestRepositoryRequestMap('/item');
+let mapping2 = new RestRepositoryRequestMap('/item2');
 mapping.map('store', StoreDocumentRequest);
 mapping2.map('search', SearchDocumentRequest);
 
@@ -319,7 +319,7 @@ describe('Rest repository', function() {
                 repository.store(new TestDocument({color: 'orange', weight: 200, price: 10})),
                 repository.store(new TestDocument({color: 'red', weight: 200, price: 15})),
                 repository.store(new TestDocument({color: 'red', weight: 80, price: 10})),
-                repository.store(new TestDocument({color: 'blue', weight: 150, price: 25})),
+                repository.store(new TestDocument({color: 'blue', weight: 150, price: 24})),
                 repository.store(new TestDocument({color: 'red', weight: 80, price: 20})),
                 repository.store(new TestDocument({color: 'orange', weight: 200, price: 15})),
             ]).then(() => {
@@ -430,7 +430,7 @@ describe('Rest repository', function() {
         it('min() + group should return proper result', function(done) {
             let repository = new RestRepository(TestDocument, mapping);
             Promise.all([
-                repository.store(new TestDocument({color: 'orange', weight: 200, price: 10})),
+                repository.store(new TestDocument({color: 'orange', weight: 200, price: 9})),
                 repository.store(new TestDocument({color: 'red', weight: 200, price: 15})),
                 repository.store(new TestDocument({color: 'red', weight: 80, price: 10})),
                 repository.store(new TestDocument({color: 'blue', weight: 150, price: 25})),
@@ -456,7 +456,7 @@ describe('Rest repository', function() {
             }).then((result) => {
                 assert.strictEqual(result.length, 3);
                 assert.strictEqual(result[0]['color'], 'orange');
-                assert.strictEqual(result[0]['min()'], 10);
+                assert.strictEqual(result[0]['min()'], 9);
                 assert.strictEqual(result[1]['color'], 'red');
                 assert.strictEqual(result[1]['min()'], 10);
                 done();
@@ -487,8 +487,8 @@ describe('Rest repository', function() {
         it('max() + group should return proper result', function(done) {
             let repository = new RestRepository(TestDocument, mapping);
             Promise.all([
-                repository.store(new TestDocument({color: 'orange', weight: 200, price: 10})),
-                repository.store(new TestDocument({color: 'red', weight: 200, price: 15})),
+                repository.store(new TestDocument({color: 'orange', weight: 200, price: 11})),
+                repository.store(new TestDocument({color: 'red', weight: 210, price: 15})),
                 repository.store(new TestDocument({color: 'red', weight: 80, price: 10})),
                 repository.store(new TestDocument({color: 'blue', weight: 150, price: 25})),
                 repository.store(new TestDocument({color: 'red', weight: 80, price: 20})),

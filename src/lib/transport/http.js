@@ -1,6 +1,10 @@
 import axios from 'axios';
 import { safeCall } from '../helpers.js';
 import AbstractTransport from './base.js';
+import { ValidationError } from '../validation/validator.js';
+import Response, {
+    Status,
+    isErrorCode } from './response.js';
 
 /**
  * BaseRequest for HTTP transport
@@ -65,6 +69,7 @@ class HttpRequest
             },
             cancelToken: this._source.token,
         });
+        safeCall(config.onNewRequest, this);
     }
     
     /**
@@ -155,6 +160,15 @@ class HttpRequest
     get isCancellable() {
         return true;
     }
+
+    /**
+     * Request promise
+     * 
+     * @var {Promise}
+     */
+    get promise() {
+        return this._promise;
+    }
 }
 
 /**
@@ -210,7 +224,29 @@ class HttpTransport extends AbstractTransport
             ...this._buildOptions(request),
             ...options,
             validateStatus: () => true,
+        }).promise.then((result) => {
+            return this._processResponse(result, options);
         });
+    }
+
+    /**
+     * Process response
+     * 
+     * @param {Object} result 
+     * @param {Object} options 
+     * @returns {Response}
+     */
+    _processResponse(result, options) {
+        let {data, status, statusText, headers} = result;
+        if (status === Status.UNPROCESSABLE_ENTITY) {
+            throw new ValidationError(data);
+        }
+        let responseClass = options.expect || Response;
+        let response = new responseClass(data, status, statusText, headers);
+        if (isErrorCode(status)) {
+            throw response;
+        }
+        return response;
     }
 }
 

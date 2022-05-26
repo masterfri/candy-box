@@ -148,6 +148,15 @@ class BufferRepository extends ResidentRepository
         }
         return this._fetch;
     }
+
+    /**
+     * Original repository
+     * 
+     * @var {AbstractRepository}
+     */
+    get endpoint() {
+        return this._endpoint;
+    }
 }
 
 export default BufferRepository;

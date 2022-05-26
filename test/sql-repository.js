@@ -390,11 +390,11 @@ describe('SQL repository', function() {
             let repository = new SqlRepository(TestDocument, 'test', db);
             Promise.all([
                 repository.store(new TestDocument({color: 'orange', weight: 200, price: 11})),
-                repository.store(new TestDocument({color: 'red', weight: 200, price: 15})),
+                repository.store(new TestDocument({color: 'red', weight: 210, price: 15})),
                 repository.store(new TestDocument({color: 'red', weight: 80, price: 10})),
                 repository.store(new TestDocument({color: 'blue', weight: 150, price: 25})),
                 repository.store(new TestDocument({color: 'red', weight: 80, price: 20})),
-                repository.store(new TestDocument({color: 'orange', weight: 200, price: 15})),
+                repository.store(new TestDocument({color: 'orange', weight: 200, price: 13})),
             ]).then(() => {
                 let query = (new Query)
                     .groupBy('color')
@@ -415,7 +415,7 @@ describe('SQL repository', function() {
             }).then((result) => {
                 assert.strictEqual(result.length, 3);
                 assert.strictEqual(result[0]['color'], 'orange');
-                assert.strictEqual(result[0]['max()'], 15);
+                assert.strictEqual(result[0]['max()'], 13);
                 assert.strictEqual(result[1]['color'], 'red');
                 assert.strictEqual(result[1]['max()'], 15);
                 done();

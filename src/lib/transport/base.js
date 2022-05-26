@@ -1,10 +1,7 @@
 import { abstractMethodError } from '../helpers.js';
 import qs from 'qs';
 import App from '../app.js';
-import { ValidationError } from '../validation/validator.js';
-import Response, {
-    Status,
-    isErrorCode } from './response.js';
+import Middleware from './middleware.js';
 
 /**
  * Abstract class for transports
@@ -28,9 +25,9 @@ class AbstractTransport
 
     /**
      * @protected
-     * @var {Array}
+     * @var {Middleware}
      */
-    _middleware = [];
+    _middleware = new Middleware();
 
     /**
      * Add sticky query parameter
@@ -92,36 +89,33 @@ class AbstractTransport
     /**
      * Append middleware
      * 
-     * @param {Function} func 
+     * @param {Function|Middleware} func 
      * @returns {AbstractTransport}
      */
     appendMiddleware(func) {
-        this._middleware.push(func);
+        this._middleware.append(func);
         return this;
     }
 
     /**
      * Prepend middleware
      * 
-     * @param {Function} func 
+     * @param {Function|Middleware} func 
      * @returns {AbstractTransport}
      */
     prependMiddleware(func) {
-        this._middleware.unshift(func);
+        this._middleware.prepend(func);
         return this;
     }
 
     /**
      * Remove middleware
      * 
-     * @param {Function} func 
+     * @param {Function|Middleware} func 
      * @returns {AbstractTransport}
      */
     removeMiddleware(func) {
-        let index = this._middleware.indexOf(func);
-        if (index !== -1) {
-            this._middleware.splice(index, 1);
-        }
+        this._middleware.remove(func);
         return this;
     }
 
@@ -130,52 +124,12 @@ class AbstractTransport
      * 
      * @param {BaseRequest} request 
      * @param {Object} [options={}] 
-     * @param {Function} [expectation=Response]
      * @returns {any}
      */
-    send(request, options = {}, expectation = Response) {
-        return this._runPipeline(request, (req) => {
-            return this._sendInternal(req, options)
-                .then((result) => {
-                    let {data, status, statusText, headers} = result;
-                    if (status === Status.UNPROCESSABLE_ENTITY) {
-                        throw new ValidationError(data);
-                    }
-                    let response = new expectation(data, status, statusText, headers);
-                    if (isErrorCode(status)) {
-                        throw response;
-                    }
-                    return response;
-                });
+    send(request, options = {}) {
+        return this._middleware.run(request, (req) => {
+            return this._sendInternal(req, options);
         });
-    }
-
-    /**
-     * Run request through pipeline
-     * 
-     * @param {BaseRequest} request 
-     * @param {Function} func 
-     * @returns {any}
-     */
-    _runPipeline(request, func) {
-        let pipe = func;
-        for (let i = this._middleware.length - 1; i >= 0; i--) {
-            pipe = this._wrapMiddleware(this._middleware[i], pipe);
-        }
-        return pipe(request);
-    }
-
-    /**
-     * Add pipe section
-     * 
-     * @param {Function} middleware 
-     * @param {Function} next 
-     * @returns {any}
-     */
-    _wrapMiddleware(middleware, next) {
-        return (request) => {
-            return middleware(request, next);
-        }
     }
 
     /**

@@ -152,7 +152,9 @@ describe('Request', function() {
         });
         it('Get request should be instance of CustomResponse', function(done) {
             let request = new GetRequest({id: 123});
-            request.send(CustomResponse).then((response) => {
+            request.send({
+                expect: CustomResponse,
+            }).then((response) => {
                 assert.ok(response instanceof CustomResponse);
                 assert.strictEqual(response.getID(), 123);
                 done();

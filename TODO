@@ -1,1 +1,7 @@
+- export modules
 - sql data types
+- query evaluator class
+- custom query serializer 
+- buffer repository tests
+- many to many relation
+- ? typed collection redesign (numeric keys issue ?)

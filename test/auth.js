@@ -18,8 +18,8 @@ import { WebtokenResolver,
     WebtokenTrace } from '../src/lib/auth/webtoken.js';
 import IdentityRepository from '../src/lib/auth/repository.js';
 import RestRepository from '../src/lib/repository/rest.js';
-import RepositoryProxy from '../src/lib/repository/proxy.js';
-import RepositoryRequestMap from '../src/lib/repository/request-map.js';
+import RestRepositoryEndpoint from '../src/lib/repository/rest-endpoint.js';
+import RestRepositoryRequestMap from '../src/lib/repository/rest-requests.js';
 
 class LoginRequest extends BaseRequest
 {
@@ -71,8 +71,8 @@ let auth = new Authenticator(source, [
     new WebtokenResolver()
 ], new WebtokenTrace());
 let gate = new Gate(auth);
-let proxy = new RepositoryProxy(repository);
-let mapping = new RepositoryRequestMap('/users');
+let proxy = new RestRepositoryEndpoint(repository);
+let mapping = new RestRepositoryRequestMap('/users');
 proxy
     .protectWrite('admin')
     .protectRead('manager');

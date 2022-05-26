@@ -1,13 +1,9 @@
 import Query, {
     SerializedQuery } from '../query/query.js';
 import Response, {
-    Status,
-    HttpError } from '../transport/response.js';
+    Status } from '../transport/response.js';
 import { NotExistsError } from './base.js';
-import { 
-    is,
-    isFunction,
-    promise } from '../helpers.js';
+import { is } from '../helpers.js';
 import { gate } from '../auth/auth.js';
 
 /**
@@ -15,7 +11,7 @@ import { gate } from '../auth/auth.js';
  * 
  * @class
  */
-class RepositoryProxy
+class RestRepositoryEndpoint
 {
     /**
      * @protected
@@ -44,14 +40,16 @@ class RepositoryProxy
      * @see AbstractRepository
      */
     get(request) {
-        return this._proxyMethod(
-            request,
-            'get', 
-            [
-                () => this._pullDocumentKey(request),
-            ], 
-            (result) => this._serializeDocument(result)
-        );
+        let key = request.require(this._repository.keyName);
+        return this._passGate(request, 'get', [key])
+            .then(() => this._repository.get(key))
+            .then((doc) => this._respondDocument(doc))
+            .catch((error) => {
+                if (is(error, NotExistsError)) {
+                    return new Response(error.message, Status.NOT_FOUND)
+                }
+                throw error;
+            });
     }
 
     /**
@@ -62,14 +60,10 @@ class RepositoryProxy
      * @see AbstractRepository
      */
     search(request) {
-        return this._proxyMethod(
-            request,
-            'search', 
-            [
-                () => this._pullQuery(request),
-            ], 
-            (results) => this._serializeCollection(results)
-        );
+        let query = this._getQuery(request);
+        return this._passGate(request, 'search', [query])
+            .then(() => this._repository.search(query))
+            .then((result) => this._respondCollection(result));
     }
     
     /**
@@ -80,15 +74,15 @@ class RepositoryProxy
      * @see AbstractRepository
      */
     store(request) {
-        let document = this._pullDocument(request);
+        let document = this._getDocument(request);
         let isUpdate = document.hasKey();
-        return this._proxyMethod(
-            request,
-            'store', 
-            [document], 
-            (stored) => this._serializeDocument(stored),
-            isUpdate ? Status.OK : Status.CREATED
-        );
+        return this._passGate(request, 'store', [document])
+            .then(() => this._repository.store(document))
+            .then((doc) => {
+                return this._respondDocument(
+                    doc, isUpdate ? Status.OK : Status.CREATED
+                );
+            });
     }
 
     /**
@@ -99,14 +93,16 @@ class RepositoryProxy
      * @see AbstractRepository
      */
     delete(request) {
-        return this._proxyMethod(
-            request,
-            'delete', 
-            [
-                () => this._pullDocumentKey(request),
-            ], 
-            () => new Response()
-        );
+        let key = request.require(this._repository.keyName);
+        return this._passGate(request, 'delete', [key])
+            .then(() => this._repository.delete(key))
+            .then(() => new Response())
+            .catch((error) => {
+                if (is(error, NotExistsError)) {
+                    return new Response(error.message, Status.NOT_FOUND)
+                }
+                throw error;
+            });
     }
 
     /**
@@ -117,13 +113,10 @@ class RepositoryProxy
      * @see AbstractRepository
      */
     exists(request) {
-        return this._proxyMethod(
-            request,
-            'exists', 
-            [
-                () => this._pullQuery(request),
-            ]
-        );
+        let query = this._getQuery(request);
+        return this._passGate(request, 'exists', [query])
+            .then(() => this._repository.exists(query))
+            .then((result) => new Response(result));
     }
     
     /**
@@ -134,13 +127,10 @@ class RepositoryProxy
      * @see AbstractRepository
      */
     count(request) {
-        return this._proxyMethod(
-            request,
-            'count', 
-            [
-                () => this._pullQuery(request),
-            ]
-        );
+        let query = this._getQuery(request);
+        return this._passGate(request, 'count', [query])
+            .then(() => this._repository.count(query))
+            .then((result) => new Response(result));
     }
 
     /**
@@ -151,14 +141,11 @@ class RepositoryProxy
      * @see AbstractRepository
      */
     sum(request) {
-        return this._proxyMethod(
-            request,
-            'sum', 
-            [
-                () => this._pullParam(request, 'attribute'),
-                () => this._pullQuery(request),
-            ]
-        );
+        let attribute = request.require('attribute');
+        let query = this._getQuery(request);
+        return this._passGate(request, 'sum', [query, attribute])
+            .then(() => this._repository.sum(attribute, query))
+            .then((result) => new Response(result));
     }
     
     /**
@@ -169,14 +156,11 @@ class RepositoryProxy
      * @see AbstractRepository
      */
     avg(request) {
-        return this._proxyMethod(
-            request,
-            'avg', 
-            [
-                () => this._pullParam(request, 'attribute'),
-                () => this._pullQuery(request),
-            ]
-        );
+        let attribute = request.require('attribute');
+        let query = this._getQuery(request);
+        return this._passGate(request, 'avg', [query, attribute])
+            .then(() => this._repository.avg(attribute, query))
+            .then((result) => new Response(result));
     }
     
     /**
@@ -187,14 +171,11 @@ class RepositoryProxy
      * @see AbstractRepository
      */
     min(request) {
-        return this._proxyMethod(
-            request,
-            'min', 
-            [
-                () => this._pullParam(request, 'attribute'),
-                () => this._pullQuery(request),
-            ]
-        );
+        let attribute = request.require('attribute');
+        let query = this._getQuery(request);
+        return this._passGate(request, 'min', [query, attribute])
+            .then(() => this._repository.min(attribute, query))
+            .then((result) => new Response(result));
     }
     
     /**
@@ -205,14 +186,11 @@ class RepositoryProxy
      * @see AbstractRepository
      */
     max(request) {
-        return this._proxyMethod(
-            request,
-            'max', 
-            [
-                () => this._pullParam(request, 'attribute'),
-                () => this._pullQuery(request),
-            ]
-        );
+        let attribute = request.require('attribute');
+        let query = this._getQuery(request);
+        return this._passGate(request, 'max', [query, attribute])
+            .then(() => this._repository.max(attribute, query))
+            .then((result) => new Response(result));
     }
 
     /**
@@ -280,41 +258,14 @@ class RepositoryProxy
     }
 
     /**
-     * Get parameter from request
-     * 
-     * @param {BaseRequest} request 
-     * @param {String} param 
-     * @param {Boolean} [allowNull=false] 
-     * @returns {any}
-     */
-    _pullParam(request, param, allowNull = false) {
-        let value = request.get(param);
-        if (value === null && allowNull === false) {
-            throw new HttpError(Status.BAD_REQUEST);
-        }
-        return value;
-    }
-
-    /**
-     * Get key value from request
-     * 
-     * @protected
-     * @param {BaseRequest} request 
-     * @returns {Number}
-     */
-    _pullDocumentKey(request) {
-        return this._pullParam(request, this._repository.keyName);
-    }
-
-    /**
      * Get query from request
      * 
      * @protected
      * @param {BaseRequest} request 
      * @returns {Query}
      */
-    _pullQuery(request) {
-        let data = this._pullParam(request, 'query');
+    _getQuery(request) {
+        let data = request.require('query');
         return (new SerializedQuery(data)).instantiate();
     }
 
@@ -325,45 +276,8 @@ class RepositoryProxy
      * @param {BaseRequest} request 
      * @returns {Document}
      */
-    _pullDocument(request) {
+    _getDocument(request) {
         return this._repository.newDocument(request.body);
-    }
-
-    /**
-     * Forward request to a certain method
-     * 
-     * @protected
-     * @param {BaseRequest} request
-     * @param {String} method 
-     * @param {Object} params
-     * @param {Function} [transformer=null]
-     * @param {Number} [code=Status.OK]
-     * @returns {Promise}
-     */
-    _proxyMethod(request, method, params, transformer = null, code = Status.OK) {
-        return Promise.all(params.map((param) => promise(param)))
-            .then((args) => {
-                return this._passGate(request, method, args)
-                    .then(() => this._repository[method](...args))
-                    .then((result) => {
-                        if (transformer !== null) {
-                            result = transformer(result);
-                        }
-                        if (!is(result, Response)) {
-                            result = new Response(result, code);
-                        }
-                        return result;
-                    })
-                    .catch((error) => {
-                        if (is(error, Response)) {
-                            return error;
-                        }
-                        if (is(error, NotExistsError)) {
-                            return new Response(error.message, Status.NOT_FOUND)
-                        }
-                        throw error;
-                    });
-            });
     }
 
     /**
@@ -383,24 +297,26 @@ class RepositoryProxy
     }
 
     /**
-     * Serialize document
+     * Convert document to HTTP response
      * 
      * @param {Document} document 
-     * @returns {Object}
+     * @returns {Response}
      */
-    _serializeDocument(document) {
-        return document.export();
+    _respondDocument(document, code = Status.OK) {
+        return new Response(document.export(), code);
     }
 
     /**
-     * Serialize collection
+     * Convert collection to HTTP response
      * 
      * @param {Array} collection 
-     * @returns {Array}
+     * @returns {Response}
      */
-    _serializeCollection(collection) {
-        return collection.map((item) => this._serializeDocument(item));
+    _respondCollection(collection) {
+        return new Response(
+            collection.map((document) => document.export())
+        );
     }
 }
 
-export default RepositoryProxy;
+export default RestRepositoryEndpoint;

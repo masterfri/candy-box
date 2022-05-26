@@ -5,8 +5,11 @@ import {
     isArray,
     valueOf,
     isNil,
-    mapObject } from '../helpers.js';
+    mapObject,
+    forEach } from '../helpers.js';
 import collect from './typed-collection.js';
+
+const AttributesConfigSymbol = Symbol('AttributesConfig');
 
 class Attribute
 {
@@ -332,14 +335,25 @@ class Document
      * @protected
      */
     _setupAttributes() {
-        let attrs = this.attributes();
-        for (let name in attrs) {
-            if (is(attrs[name], Attribute)) {
-                attrs[name].init(this, name);
-            } else {
-                (new TypedAttribute(attrs[name])).init(this, name);
-            }
+        forEach(this._getAttributesConfig(), (attr, name) => {
+            attr.init(this, name);
+        });
+    }
+
+    /**
+     * Get cached attributes configuration
+     * 
+     * @returns {Object}
+     */
+    _getAttributesConfig() {
+        let config = this.constructor[AttributesConfigSymbol];
+        if (config === undefined) {
+            config = mapObject(this.attributes(), (v) => {
+                return is(v, Attribute) ? v : new TypedAttribute(v);
+            });
+            this.constructor[AttributesConfigSymbol] = config;
         }
+        return config;
     }
 
     /**

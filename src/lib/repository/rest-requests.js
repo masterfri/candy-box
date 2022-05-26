@@ -8,7 +8,7 @@ import {
  * @class
  * @augments RequestMap
  */
-class RepositoryRequestMap extends RequestMap
+class RestRepositoryRequestMap extends RequestMap
 {
     /**
      * @protected
@@ -200,4 +200,4 @@ class RepositoryRequestMap extends RequestMap
     }
 }
 
-export default RepositoryRequestMap;
+export default RestRepositoryRequestMap;

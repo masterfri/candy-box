@@ -14,26 +14,15 @@ class Relation
 {
     /**
      * @var {Document}
+     * @protected
      */
     _holder;
 
     /**
+     * @var {RelationConfig}
      * @protected
-     * @var {AbstractRepository}
      */
-    _repository;
-
-    /**
-     * @protected
-     * @var {String}
-     */
-    _localKey;
-
-    /**
-     * @protected
-     * @var {String}
-     */
-    _foreignKey;
+    _config;
 
     /**
      * @protected
@@ -48,24 +37,15 @@ class Relation
     _promise = null;
 
     /**
-     * @protected
-     * @var {RelationQuery}
-     */
-    _query;
-
-    /**
      * @param {Document} holder
      * @param {AbstractRepository} repository 
      * @param {String} localKey
      * @param {String} foreignKey
      * @param {RelationQuery} query
      */
-    constructor(holder, repository, localKey, foreignKey, query) {
+    constructor(holder, config) {
         this._holder = holder;
-        this._repository = repository;
-        this._localKey = localKey;
-        this._foreignKey = foreignKey;
-        this._query = query;
+        this._config = config;
     }
 
     /**
@@ -100,11 +80,11 @@ class Relation
      * @returns {Promise}
      */
     slice(start, count) {
-        let key = this._holder.get(this._localKey);
+        let key = this._holder.get(this.localKey);
         let query = this._newQuery([key])
             .startFrom(start)
             .limitTo(count);
-        return this._repository.search(query);
+        return this.repository.search(query);
     }
 
     /**
@@ -224,7 +204,7 @@ class Relation
      * @var {AbstractRepository}
      */
     get repository() {
-        return this._repository;
+        return this._config.repository;
     }
 
     /**
@@ -233,7 +213,7 @@ class Relation
      * @var {String}
      */
     get localKey() {
-        return this._localKey;
+        return this._config.localKey;
     }
 
     /**
@@ -242,7 +222,7 @@ class Relation
      * @var {String}
      */
     get foreignKey() {
-        return this._foreignKey;
+        return this._config.foreignKey;
     }
 
     /**
@@ -251,13 +231,14 @@ class Relation
      * @returns {Promise}
      */
     _resolve() {
-        let key = this._holder.get(this._localKey);
-        return this._repository
+        let key = this._holder.get(this.localKey);
+        return this.repository
             .search(this._newQuery([key]))
             .then((result) => {
+                let query = this._config.query;
                 this._value = this._consumeResult(result);
-                if (this._query.hasLinked) {
-                    return Relation.resolve(result, this._query.linked, false)
+                if (query.hasLinked) {
+                    return Relation.resolve(result, query.linked, false)
                         .then(() => this._value);
                 }
                 return this._value;
@@ -275,24 +256,25 @@ class Relation
      */
      _resolveFor(holders, relationQuery, skipResolved) {
         let attr = relationQuery.name;
+        let localKey = this.localKey;
         let effective = skipResolved
             ? holders.filter((holder) => !holder[attr].isResolved)
             : holders;
         let keys = effective
-            .map((holder) => holder.get(this._localKey))
+            .map((holder) => holder.get(localKey))
             .filter((key) => key !== null);
         if (keys.length === 0) {
             return Promise.resolve([]);
         }
         let query = this._newQuery(dedupe(keys));
         relationQuery.applyTo(query);
-        return this._repository
-            .search(query)
+        return this.repository.search(query)
             .then((result) => {
                 effective.forEach((holder) => {
-                    let key = holder.get(this._localKey);
+                    let key = holder.get(localKey);
+                    let foreignKey = this.foreignKey;
                     holder[attr].set(this._consumeResult(
-                        result.filter((document) => document.get(this._foreignKey) === key)
+                        result.filter((document) => document.get(foreignKey) === key)
                     ));
                 });
                 if (relationQuery.hasLinked) {
@@ -322,7 +304,6 @@ class Relation
                 result.push(value);
             }
         });
-        // TODO: use function dedupe
         return dedupe(result);
     }
 
@@ -364,7 +345,7 @@ class Relation
         if (is(value, Document)) {
             return value;
         }
-        return this._repository.newDocument(value);
+        return this.repository.newDocument(value);
     }
  
     /**
@@ -376,8 +357,8 @@ class Relation
      */
     _newQuery(keys) {
         let query = new Query();
-        query.where(this._foreignKey, Assert.IN, keys);
-        this._query.applyTo(query);
+        query.where(this.foreignKey, Assert.IN, keys);
+        this._config.query.applyTo(query);
         return query;
     }
 }
@@ -588,9 +569,9 @@ class OneToOne extends Relation
     set(value) {
         super.set(value);
         if (!isNil(this._value)) {
-            let valueKey = this._value.get(this._foreignKey);
+            let valueKey = this._value.get(this.foreignKey);
             if (valueKey) {
-                this._holder.set(this._localKey, valueKey);
+                this._holder.set(this.localKey, valueKey);
             }
         }
     }
@@ -626,27 +607,22 @@ class OneToMany extends Relation
      */
     set(value) {
         super.set(value);
-        let key = this._holder.get(this._localKey);
+        let key = this._holder.get(this.localKey);
         if (key) {
             this._value.forEach((document) => {
-                document.set(this._foreignKey, key);
+                document.set(this.foreignKey, key);
             });
         }
     }
 }
 
-class RelationAttribute extends Attribute
+class RelationConfig 
 {
-    /**
-     * @var {Function}
-     */
-    _relation;
-
     /**
      * @protected
      * @var {AbstractRepository}
      */
-    _repository;
+     _repository;
 
      /**
       * @protected
@@ -667,15 +643,75 @@ class RelationAttribute extends Attribute
     _query;
 
     /**
+     * @param {AbstractRepository} repository
+     * @param {String} localKey
+     * @param {String} foreignKey
+     */
+    constructor(repository, localKey, foreignKey) {
+        this._repository = repository;
+        this._localKey = localKey;
+        this._foreignKey = foreignKey;
+        this._query = new RelationQuery();
+    }
+
+    /**
+     * Repository which relation is referred to
+     * 
+     * @var {AbstractRepository}
+     */
+    get repository() {
+        return this._repository;
+    }
+
+    /**
+     * Local key name
+     * 
+     * @var {String}
+     */
+    get localKey() {
+        return this._localKey;
+    }
+
+    /**
+     * Foreign key name
+     * 
+     * @var {String}
+     */
+    get foreignKey() {
+        return this._foreignKey;
+    }
+
+    /**
+     * Relation query
+     * 
+     * @var {RelationQuery}
+     */
+    get query() {
+        return this._query;
+    }
+}
+
+class RelationAttribute extends Attribute
+{
+    /**
+     * @var {Function}
+     * @protected
+     */
+    _relation;
+
+    /**
+     * @var {RelationConfig}
+     * @protected
+     */
+    _config;
+
+    /**
      * @param {Relation} relation
      */
     constructor(relation, repository, localKey, foreignKey) {
         super();
         this._relation = relation;
-        this._repository = repository;
-        this._localKey = localKey;
-        this._foreignKey = foreignKey;
-        this._query = new RelationQuery();
+        this._config = new RelationConfig(repository, localKey, foreignKey);
     }
    
     /**
@@ -685,13 +721,7 @@ class RelationAttribute extends Attribute
      * @param {String} name 
      */
     init(target, name) {
-        let relation = new this._relation(
-            target, 
-            this._repository, 
-            this._localKey, 
-            this._foreignKey,
-            this._query
-        );
+        let relation = new this._relation(target, this._config);
         Object.defineProperty(target, name, {
             enumerable: true,
             configurable: false,
@@ -709,7 +739,7 @@ class RelationAttribute extends Attribute
      * @returns {RelationAttribute}
      */
     where(...args) {
-        this._query.where(...args);
+        this._config.query.where(...args);
         return this;
     }
 
@@ -720,7 +750,7 @@ class RelationAttribute extends Attribute
      * @returns {RelationAttribute}
      */
     orderBy(...args) {
-        this._query.orderBy(...args);
+        this._config.query.orderBy(...args);
         return this;
     }
 
@@ -751,7 +781,7 @@ class RelationAttribute extends Attribute
      * @returns {RelationAttribute}
      */
     with(...args) {
-        this._query.with(...args);
+        this._config.query.with(...args);
         return this;
     }
 
@@ -784,6 +814,7 @@ export default RelationAttribute;
 
 export {
     Relation,
+    RelationConfig,
     OneToOne,
     OneToMany,
 };

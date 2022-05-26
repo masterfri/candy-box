@@ -232,4 +232,11 @@ describe('Relations', function() {
             assert.strictEqual(vik.parent_id, 999);
         });
     });
+    describe('#Relation instancing', function() {
+        it('Two documents should have onw relation instance', function() {
+            let bob = new HumanDocument();
+            let jack = new HumanDocument();
+            assert.ok(bob.parent !== jack.parent);
+        });
+    });
 });

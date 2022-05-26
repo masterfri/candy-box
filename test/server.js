@@ -1,4 +1,5 @@
 import assert from 'assert';
+import fs from 'fs';
 import './_boot.js';
 import {
     BaseRequest,
@@ -29,6 +30,13 @@ class GetRequest extends BaseRequest
 {
     route() {
         return '/entity/:id';
+    }
+}
+
+class StreamRequest extends BaseRequest
+{
+    route() {
+        return '/stream';
     }
 }
 
@@ -69,6 +77,11 @@ describe('Http server', function() {
                     value: request.get('value'),
                 });
             })
+            .route(StreamRequest, (request) => {
+                return new Response(
+                    fs.createReadStream('test/_test.txt')
+                );
+            })
             .start()
             .then(done);
        
@@ -91,6 +104,14 @@ describe('Http server', function() {
                 assert.ok(response.body.post);
                 assert.equal(response.body.id, 123);
                 assert.equal(response.body.value, 345);
+                done();
+            }).catch(done);
+        });
+        it('Stream request should return file contents', function(done) {
+            let request = new StreamRequest();
+            request.send().then((response) => {
+                assert.ok(response.body.indexOf('TEST DATA BEGIN') !== -1);
+                assert.ok(response.body.indexOf('TEST DATA END') !== -1);
                 done();
             }).catch(done);
         });

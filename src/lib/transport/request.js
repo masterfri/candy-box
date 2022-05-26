@@ -13,7 +13,9 @@ import {
     ValidationError,
     ValidatorSymbol } from '../validation/validator.js';
 import App from '../app.js';
-import Response from './response.js';
+import {
+    Status,
+    HttpError } from './response.js';
 
 const GET = 'GET';
 const POST = 'POST';
@@ -93,6 +95,18 @@ class BaseRequest extends Message
     }
 
     /**
+     * Require parameter from request data or query
+     * 
+     * @param {String} key 
+     * @returns {any}
+     */
+    require(key) {
+        return this.get(key, () => {
+            throw new HttpError(Status.BAD_REQUEST);
+        });
+    }
+
+    /**
      * Make request transport instance
      * 
      * @returns {AbstractTransport}
@@ -131,18 +145,14 @@ class BaseRequest extends Message
     /**
      * Send this request to its destination
      * 
-     * @param {Function} [expectation=Response]
+     * @param {Object} [options={}]
      * @returns {Promise}
      */
-    send(expectation = Response) {
+    send(options = {}) {
         return this.validate().then(() => {
-            return new Promise((resolve, reject) => {
-                this.transport().send(this, this.options(), expectation)
-                    .then((response) => {
-                        resolve(response);
-                    }).catch((error) => {
-                        reject(error);
-                    });
+            return this.transport().send(this, {
+                ...this.options(),
+                ...options,
             });
         });
     }
